@@ -1,0 +1,104 @@
+{% load static %}
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page_title }} - باقات WE Gold</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'dashboard/style.css' %}" />
+  </head>
+  <body class="min-h-screen bg-[#F8F5FA] text-slate-900 antialiased flex flex-col">
+    <main class="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+      <header class="mb-6 rounded-2xl border border-white/70 bg-gradient-to-r from-[#6A1B9A] to-[#9C27B0] p-4 text-white shadow-lg shadow-purple-300/30">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h1 class="text-2xl font-black">{{ page_title }}</h1>
+            <p class="mt-1 text-sm text-white/85">إدارة بيانات الخط الأساسي وحفظها في قاعدة البيانات.</p>
+          </div>
+          <img src="{% static 'dashboard/LOGO.png' %}" alt="WE Gold" class="h-16 w-16 flex-shrink-0" />
+        </div>
+      </header>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/60 sm:p-5">
+        <form method="post" class="grid gap-4 sm:grid-cols-2">
+          {% csrf_token %}
+
+          {% for field in form %}
+          <label class="block {% if field.name == 'plan' or field.name == 'phone' %}sm:col-span-2{% endif %}">
+            <span class="mb-1.5 block text-sm font-bold text-slate-700">{{ field.label }}</span>
+            {{ field }}
+            {% if field.errors %}
+            <span class="mt-1 block text-xs text-rose-600">{{ field.errors|striptags }}</span>
+            {% endif %}
+          </label>
+          {% endfor %}
+
+          <div class="mt-2 flex items-center justify-end gap-2 sm:col-span-2">
+            <a href="{% url 'home' %}" class="rounded-full border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600">إلغاء</a>
+            <button type="submit" class="rounded-full bg-[#6A1B9A] px-4 py-2 text-sm font-bold text-white">حفظ</button>
+          </div>
+        </form>
+      </section>
+
+      <footer class="mt-8 rounded-2xl border border-white/70 bg-white/90 px-4 py-3 text-center text-[11px] text-slate-600 shadow-lg shadow-violet-200/40 backdrop-blur">
+        جميع الحقوق محفوظة © <a href="https://elekhwa.store/portfolio.html" target="_blank" rel="noopener noreferrer" class="font-black text-[#6A1B9A] transition hover:underline">A,Ala3m</a>
+      </footer>
+    </main>
+
+    <script>
+      const baseClasses = [
+        'w-full',
+        'rounded-xl',
+        'border',
+        'border-slate-200',
+        'bg-slate-50',
+        'px-3',
+        'py-2',
+        'text-sm',
+        'font-medium',
+        'text-slate-800',
+        'outline-none',
+        'focus:border-violet-300',
+        'focus:bg-white',
+        'focus:ring-4',
+        'focus:ring-violet-100',
+      ];
+
+      document.querySelectorAll('input, select').forEach((field) => {
+        field.classList.add(...baseClasses);
+
+        if (field.disabled) {
+          field.classList.add('cursor-not-allowed', 'bg-slate-100', 'text-slate-500');
+        }
+      });
+
+      const planLimits = {
+        'WE Gold 525': { data: 30, minutes: 3700 },
+        'WE Gold 775': { data: 60, minutes: 6000 },
+        'WE Gold 1050': { data: 90, minutes: 8000 },
+        'WE Gold 1300': { data: 110, minutes: 9000 },
+        'WE Gold 2000': { data: 200, minutes: 10000 },
+      };
+
+      const planField = document.getElementById('id_plan');
+      const totalDataField = document.getElementById('id_total_data');
+      const totalMinutesField = document.getElementById('id_total_minutes');
+      const carryoverData = Number('{{ line.carryover_data|default:0 }}');
+      const carryoverMinutes = Number('{{ line.carryover_minutes|default:0 }}');
+
+      const updateTotalsPreview = () => {
+        if (!planField || !totalDataField || !totalMinutesField) return;
+        const selected = planLimits[planField.value];
+        if (!selected) return;
+        totalDataField.value = selected.data + carryoverData;
+        totalMinutesField.value = selected.minutes + carryoverMinutes;
+      };
+
+      if (planField) {
+        planField.addEventListener('change', updateTotalsPreview);
+        updateTotalsPreview();
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,298 @@
+{% load static %}
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page_title }} - باقات WE Gold</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'dashboard/style.css' %}" />
+  </head>
+  <body class="min-h-screen bg-[#F8F5FA] text-slate-900 antialiased flex flex-col">
+    <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+      <header class="mb-5 overflow-hidden rounded-[1.5rem] border border-white/70 bg-gradient-to-r from-[#5B1687] via-[#6A1B9A] to-[#7B1FA2] text-white shadow-lg shadow-purple-300/25">
+        <div class="relative px-3 py-3 sm:px-4 sm:py-4">
+          <div class="flex flex-col-reverse items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <h1 class="text-2xl font-black tracking-tight sm:text-3xl">المحاسبة</h1>
+              <p class="mt-1 max-w-2xl text-[11px] leading-5 text-white/85 sm:text-xs">
+                احسب الربح والخسارة من تكلفة الباقات، الإيرادات، والمصروفات اليدوية في مكان واحد.
+              </p>
+            </div>
+            <img src="{% static 'dashboard/LOGO.png' %}" alt="WE Gold" class="h-14 w-14 self-end sm:h-20 sm:w-20" />
+          </div>
+        </div>
+      </header>
+
+      <nav class="mb-4 flex items-center gap-2 text-right text-sm" dir="rtl">
+        <a href="{% url 'home' %}" class="flex items-center gap-1 font-semibold text-[#6A1B9A] transition hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M12 12.75h.008v.008H12v-.008Z" />
+          </svg>
+          الرئيسية
+        </a>
+        <span class="text-slate-400">/</span>
+        <span class="font-semibold text-slate-700">المحاسبة</span>
+      </nav>
+
+      <section class="rounded-[1.6rem] border border-white/70 bg-white/85 p-3 shadow-sm shadow-violet-100/40 backdrop-blur sm:p-4">
+        <div class="grid gap-3 grid-cols-2 lg:grid-cols-3">
+          <article class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-4 shadow-sm">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-slate-500">إيرادات هذا الشهر</p>
+                <p class="mt-1 text-lg font-black text-emerald-700 sm:text-xl"><span class="num">{{ current_income }}</span> EGP</p>
+              </div>
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-4 w-4" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                </svg>
+              </span>
+            </div>
+            <p class="mt-1 text-[10px] font-semibold text-emerald-600/80 leading-5">مدفوعات الأفراد + الإيرادات اليدوية</p>
+          </article>
+          <article class="rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50 to-white p-4 shadow-sm">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-slate-500">مصروفات هذا الشهر</p>
+                <p class="mt-1 text-lg font-black text-rose-700 sm:text-xl"><span class="num">{{ current_expense }}</span> EGP</p>
+              </div>
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-rose-100 text-rose-700 ring-1 ring-rose-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-4 w-4" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5" />
+                </svg>
+              </span>
+            </div>
+            <p class="mt-1 text-[10px] font-semibold text-rose-600/80 leading-5">تكلفة الباقات + المصروفات اليدوية</p>
+          </article>
+          <article class="col-span-2 rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 to-white p-4 shadow-sm lg:col-span-1">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-slate-500">صافي هذا الشهر</p>
+                <p class="mt-1 text-lg font-black sm:text-xl {% if current_net >= 0 %}text-emerald-700{% else %}text-rose-700{% endif %}"><span class="num">{{ current_net }}</span> EGP</p>
+              </div>
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-violet-100 text-violet-700 ring-1 ring-violet-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-4 w-4" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5 9 15l4 4 6-6" />
+                </svg>
+              </span>
+            </div>
+            <p class="mt-1 text-[10px] font-semibold text-violet-600/80 leading-5">{{ current_net|yesno:"ربح,خسارة" }}</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="mt-6 rounded-[1.6rem] border border-white/70 bg-white/85 p-3 shadow-sm shadow-violet-100/40 backdrop-blur sm:p-4">
+        <div class="grid gap-3 grid-cols-2 lg:grid-cols-3">
+          <article class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-4 shadow-sm">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-slate-500">إجمالي الإيرادات</p>
+                <p class="mt-1 text-lg font-black text-emerald-700 sm:text-xl"><span class="num">{{ overall_income }}</span> EGP</p>
+              </div>
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-4 w-4" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                </svg>
+              </span>
+            </div>
+          </article>
+          <article class="rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50 to-white p-4 shadow-sm">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-slate-500">إجمالي المصروفات</p>
+                <p class="mt-1 text-lg font-black text-rose-700 sm:text-xl"><span class="num">{{ overall_expense }}</span> EGP</p>
+              </div>
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-rose-100 text-rose-700 ring-1 ring-rose-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-4 w-4" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5" />
+                </svg>
+              </span>
+            </div>
+          </article>
+          <article class="col-span-2 rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 to-white p-4 shadow-sm lg:col-span-1">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-slate-500">الصافي الكلي</p>
+                <p class="mt-1 text-lg font-black sm:text-xl {% if overall_net >= 0 %}text-emerald-700{% else %}text-rose-700{% endif %}"><span class="num">{{ overall_net }}</span> EGP</p>
+              </div>
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-violet-100 text-violet-700 ring-1 ring-violet-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-4 w-4" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5 9 15l4 4 6-6" />
+                </svg>
+              </span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="mt-6 rounded-[1.6rem] border border-white/70 bg-white/80 p-4 shadow-sm shadow-violet-100/40 backdrop-blur">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-lg font-black text-slate-800">إضافة حركة</h2>
+            <p class="mt-1 text-xs text-slate-500">اضغط على نوع الحركة ثم عبّي النموذج.</p>
+          </div>
+          <div class="grid w-full gap-2 sm:w-auto sm:grid-cols-2">
+            <button type="button" data-open-modal="incomeModal" class="inline-flex w-full items-center justify-center rounded-full bg-[#6A1B9A] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#7B1FA2]">+ إضافة إيراد</button>
+            <button type="button" data-open-modal="expenseModal" class="inline-flex w-full items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800">+ إضافة مصروف</button>
+          </div>
+        </div>
+      </section>
+
+      <div id="incomeModal" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/55 px-3 py-4 sm:px-4 sm:py-6">
+        <div class="w-full max-w-xl rounded-[1.6rem] bg-white p-4 shadow-2xl shadow-slate-900/20 sm:p-6">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h3 class="text-xl font-black text-slate-900">إضافة إيراد</h3>
+              <p class="mt-1 text-sm text-slate-500">سجل أي مبلغ يدخل كنقد أو قسيمة أو TOD.</p>
+            </div>
+            <button type="button" data-close-modal class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-bold text-slate-600 transition hover:bg-slate-200">إغلاق</button>
+          </div>
+          <form method="post" action="{% url 'accounting_income_create' %}" class="mt-5 grid gap-4">
+            {% csrf_token %}
+            {% for field in income_form %}
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-bold text-slate-700">{{ field.label }}</span>
+              {{ field }}
+              {% if field.errors %}
+              <span class="mt-1 block text-xs text-rose-600">{{ field.errors|striptags }}</span>
+              {% endif %}
+            </label>
+            {% endfor %}
+            <div class="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
+              <button type="button" data-close-modal class="rounded-full border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600">إلغاء</button>
+              <button type="submit" class="rounded-full bg-[#6A1B9A] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#7B1FA2]">حفظ الإيراد</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="expenseModal" class="modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/55 px-3 py-4 sm:px-4 sm:py-6">
+        <div class="w-full max-w-xl rounded-[1.6rem] bg-white p-4 shadow-2xl shadow-slate-900/20 sm:p-6">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h3 class="text-xl font-black text-slate-900">إضافة مصروف</h3>
+              <p class="mt-1 text-sm text-slate-500">سجل أي تكلفة مثل إعلان أو تشغيل أو صيانة.</p>
+            </div>
+            <button type="button" data-close-modal class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-bold text-slate-600 transition hover:bg-slate-200">إغلاق</button>
+          </div>
+          <form method="post" action="{% url 'accounting_expense_create' %}" class="mt-5 grid gap-4">
+            {% csrf_token %}
+            {% for field in expense_form %}
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-bold text-slate-700">{{ field.label }}</span>
+              {{ field }}
+              {% if field.errors %}
+              <span class="mt-1 block text-xs text-rose-600">{{ field.errors|striptags }}</span>
+              {% endif %}
+            </label>
+            {% endfor %}
+            <div class="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
+              <button type="button" data-close-modal class="rounded-full border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600">إلغاء</button>
+              <button type="submit" class="rounded-full bg-slate-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800">حفظ المصروف</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <section class="mt-6 rounded-[1.6rem] border border-white/70 bg-white/85 p-4 shadow-sm shadow-violet-100/40 backdrop-blur sm:p-5">
+        <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 class="text-lg font-black text-slate-800">آخر الحركات</h2>
+          <span class="rounded-full bg-violet-50 px-3 py-1 text-[11px] font-bold text-violet-700">{{ recent_entries|length }} حركة</span>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {% for entry in recent_entries %}
+          <article class="rounded-2xl border {% if entry.kind == 'income' %}border-emerald-100 bg-emerald-50/70{% else %}border-rose-100 bg-rose-50/70{% endif %} p-3 shadow-sm">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-[10px] font-bold {% if entry.kind == 'income' %}text-emerald-700{% else %}text-rose-700{% endif %}">{% if entry.kind == 'income' %}إيراد{% else %}مصروف{% endif %}</p>
+                <h3 class="mt-0.5 text-sm font-black text-slate-800">{{ entry.title }}</h3>
+              </div>
+              <span class="rounded-full bg-white px-2 py-1 text-[10px] font-black text-slate-700 ring-1 ring-slate-200"><span class="num">{{ entry.amount }}</span> EGP</span>
+            </div>
+            <p class="mt-2 text-[10px] text-slate-500">{{ entry.entry_date }}</p>
+            {% if entry.notes %}
+            <p class="mt-1 text-[11px] leading-5 text-slate-600">{{ entry.notes }}</p>
+            {% endif %}
+            <form method="post" action="{% url 'accounting_delete' entry.id %}" class="mt-3 text-left">
+              {% csrf_token %}
+              <button type="submit" class="rounded-full bg-slate-900 px-3 py-1 text-[10px] font-bold text-white transition hover:bg-slate-800">حذف</button>
+            </form>
+          </article>
+          {% empty %}
+          <article class="col-span-full rounded-2xl border border-dashed border-violet-200 bg-white/80 p-6 text-center text-slate-600">
+            <p class="text-sm font-semibold">لا توجد حركات بعد</p>
+            <p class="mt-1 text-xs">ابدأ بإضافة إيراد أو مصروف من الأعلى.</p>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+
+      <footer class="mt-8 rounded-2xl border border-white/70 bg-white/90 px-4 py-3 text-center text-[11px] text-slate-600 shadow-lg shadow-violet-200/40 backdrop-blur">
+        جميع الحقوق محفوظة © <a href="https://elekhwa.store/portfolio.html" target="_blank" rel="noopener noreferrer" class="font-black text-[#6A1B9A] transition hover:underline">A,Ala3m</a>
+      </footer>
+    </main>
+
+    <script>
+      const baseClasses = [
+        'w-full',
+        'rounded-xl',
+        'border',
+        'border-slate-200',
+        'bg-slate-50',
+        'px-3',
+        'py-2',
+        'text-sm',
+        'font-medium',
+        'text-slate-800',
+        'outline-none',
+        'focus:border-violet-300',
+        'focus:bg-white',
+        'focus:ring-4',
+        'focus:ring-violet-100',
+      ];
+
+      document.querySelectorAll('input, select, textarea').forEach((field) => {
+        field.classList.add(...baseClasses);
+      });
+
+      const openButtons = document.querySelectorAll('[data-open-modal]');
+      const modals = document.querySelectorAll('.modal');
+
+      const closeAllModals = () => {
+        modals.forEach((modal) => modal.classList.add('hidden'));
+      };
+
+      openButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const modalId = button.dataset.openModal;
+          const modal = modalId ? document.getElementById(modalId) : null;
+          if (modal) {
+            closeAllModals();
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+          }
+        });
+      });
+
+      document.querySelectorAll('[data-close-modal]').forEach((button) => {
+        button.addEventListener('click', closeAllModals);
+      });
+
+      modals.forEach((modal) => {
+        modal.addEventListener('click', (event) => {
+          if (event.target === modal) {
+            closeAllModals();
+          }
+        });
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeAllModals();
+        }
+      });
+    </script>
+  </body>
+</html>

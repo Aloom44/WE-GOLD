@@ -1,0 +1,431 @@
+{% load static %}
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الأفراد - باقات WE Gold</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{% static 'dashboard/style.css' %}" />
+  </head>
+  <body class="min-h-screen bg-[#F8F5FA] text-slate-900 antialiased flex flex-col">
+    <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+      <section class="mb-5 rounded-[1.75rem] border border-[#9C27B0]/20 bg-gradient-to-r from-[#5B1687] via-[#6A1B9A] to-[#7B1FA2] px-4 py-2 text-white shadow-lg shadow-purple-300/25 sm:px-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 text-right">
+          <img src="{% static 'dashboard/LOGO.png' %}" alt="WE Gold" class="h-16 w-16 sm:h-20 sm:w-20" />
+          <a href="{% url 'home' %}" class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/18 text-white ring-1 ring-white/30 shadow-sm shadow-black/10 transition hover:bg-white/25" aria-label="الرجوع للرئيسية" title="الرجوع للرئيسية">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0ZM4.5 20.118a7.5 7.5 0 0115 0A17.933 17.933 0 0112 21.75a17.933 17.933 0 01-7.5-1.632Z" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <nav class="mb-4 flex items-center gap-2 text-right text-sm" dir="rtl">
+        <a href="{% url 'home' %}" class="flex items-center gap-1 font-semibold text-[#6A1B9A] transition hover:underline">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M12 12.75h.008v.008H12v-.008Z" />
+          </svg>
+          الرئيسية
+        </a>
+        <span class="text-slate-400">/</span>
+        <span class="font-semibold text-slate-700">الأفراد</span>
+      </nav>
+
+      <header class="mb-5 overflow-hidden rounded-[1.25rem] border border-white/70 bg-gradient-to-r from-[#6A1B9A] via-[#7B1FA2] to-[#9C27B0] text-white shadow-lg shadow-purple-300/25">
+        <div class="relative px-3 py-3 text-right sm:px-4 sm:py-4">
+          <div class="pointer-events-none absolute inset-0 opacity-30">
+            <div class="absolute -left-16 top-0 h-44 w-44 rounded-full bg-white/20 blur-3xl"></div>
+            <div class="absolute right-0 top-10 h-56 w-56 rounded-full bg-fuchsia-200/20 blur-3xl"></div>
+          </div>
+
+          <div class="relative grid gap-4 xl:grid-cols-[1.2fr_0.9fr] xl:items-center">
+            <div class="space-y-2">
+              <h1 class="text-2xl font-black tracking-tight sm:text-3xl">الأفراد</h1>
+              <p class="max-w-xl text-[11px] leading-5 text-white/85 sm:text-xs">
+                تفاصيل الأعضاء المرتبطين بالخط الأساسي المحدد مع عرض الاستهلاك والاشتراك بشكل منظم.
+              </p>
+              <div class="inline-flex flex-wrap items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-[11px] font-medium text-white/85 ring-1 ring-white/10">
+                <span class="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-white/75">الخط المختار</span>
+                <span class="num text-sm font-black text-white"><span class="num">{{ active_line.phone }}</span></span>
+                <span class="text-white/55">•</span>
+                <span>{{ active_line.plan }}</span>
+                <span class="text-white/55">•</span>
+                <span><span class="num">{{ active_line.display_renewal_day }}</span></span>
+              </div>
+            </div>
+
+            <article class="overflow-hidden rounded-2xl border border-white/15 bg-white/10 p-3 text-right backdrop-blur-sm">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="text-[10px] font-semibold text-white/70">Chart الاستهلاك</p>
+                  <p class="mt-1 text-xs leading-5 text-white/80">تحليل بصري مزدوج للجيجات والدقائق</p>
+                </div>
+                <span class="rounded-full bg-white/10 px-2 py-1 text-[10px] font-bold text-white/80 ring-1 ring-white/10">Live</span>
+              </div>
+
+              <div class="mt-3 flex items-center gap-2.5">
+                <div class="grid min-w-0 flex-1 gap-2">
+                  <p class="text-[10px] font-semibold text-white/70">إجمالي الباقة</p>
+                  <div class="grid grid-cols-2 gap-2 text-[10px]">
+                    <button type="button" class="summary-toggle rounded-xl bg-violet-500/25 px-2 py-2 text-right ring-1 ring-violet-400/50" data-metric="data" data-label="المتبقي من الجيجات" data-percent="{{ data_remaining_percentage }}">
+                      <p class="text-white/70">إجمالي الجيجات</p>
+                      <p class="mt-0.5 text-sm font-black">GB <span class="num">{{ active_line.total_data }}</span></p>
+                    </button>
+                    <button type="button" class="summary-toggle rounded-xl bg-violet-500/25 px-2 py-2 text-right ring-1 ring-violet-400/50" data-metric="minutes" data-label="المتبقي من الدقائق" data-percent="{{ minutes_remaining_percentage }}">
+                      <p class="text-white/70">إجمالي الدقائق</p>
+                      <p class="mt-0.5 text-sm font-black"><span class="text-xs font-bold">MIN</span> <span class="num">{{ active_line.total_minutes }}</span></p>
+                    </button>
+                    <button type="button" class="summary-toggle is-active rounded-xl bg-violet-500/25 px-2 py-2 text-right ring-1 ring-violet-400/50" data-metric="data" data-label="المتبقي من الجيجات" data-percent="{{ data_remaining_percentage }}">
+                      <p class="text-white/70">المتبقي من الجيجات</p>
+                      <p class="mt-0.5 text-sm font-black">GB <span class="num">{{ active_line.remaining_data }}</span></p>
+                    </button>
+                    <button type="button" class="summary-toggle is-active rounded-xl bg-violet-500/25 px-2 py-2 text-right ring-1 ring-violet-400/50" data-metric="minutes" data-label="المتبقي من الدقائق" data-percent="{{ minutes_remaining_percentage }}">
+                      <p class="text-white/70">المتبقي من الدقائق</p>
+                      <p class="mt-0.5 text-sm font-black"><span class="text-xs font-bold">MIN</span> <span class="num">{{ active_line.remaining_minutes }}</span></p>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="chart-stack chart-stack--side shrink-0" id="usageChart" data-mode="data">
+                  <svg class="chart-svg chart-svg--outer" viewBox="0 0 120 120" aria-hidden="true">
+                    <circle class="chart-track" cx="60" cy="60" r="54"></circle>
+                    <circle class="chart-progress chart-progress--data" id="dataRing" cx="60" cy="60" r="54"/>
+                  </svg>
+                  <svg class="chart-svg chart-svg--inner" viewBox="0 0 120 120" aria-hidden="true">
+                    <circle class="chart-track chart-track--soft" cx="60" cy="60" r="40"></circle>
+                    <circle class="chart-progress chart-progress--minutes" id="minutesRing" cx="60" cy="60" r="40"/>
+                  </svg>
+                  <div class="chart-center">
+                    <span class="text-[9px] font-medium text-white/75">النسبة</span>
+                    <span class="text-base font-black leading-none sm:text-lg"><span class="num" id="chartPercent">{{ data_remaining_percentage }}</span>%</span>
+                    <span class="text-[9px] text-white/70" id="chartMetricLabel">المتبقي من الجيجات</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </header>
+
+      <section class="mb-4 flex items-center justify-between text-right">
+        <h2 class="text-xl font-black sm:text-2xl">بطاقات الأفراد</h2>
+        <a href="{% url 'member_create' active_line.id %}" class="rounded-full bg-[#6A1B9A] px-3 py-1.5 text-[11px] font-bold text-white shadow-sm shadow-purple-200/50 transition hover:bg-[#7B1FA2]">
+          + إضافة فرد
+        </a>
+      </section>
+
+      <section class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3" id="membersContainer">
+        {% for member in active_members %}
+        <article class="member-card card-enter flex h-full flex-col rounded-xl border border-white/70 bg-white p-3 text-right shadow-sm shadow-purple-200/20 transition hover:-translate-y-0.5 hover:shadow" data-member-phone="{{ member.phone }}">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <h3 class="text-[13px] font-black leading-tight whitespace-nowrap"><span class="num">{{ member.name }}</span></h3>
+              <p class="mt-0.5 text-[10px] text-slate-500 whitespace-nowrap"><span class="num">{{ member.phone }}</span></p>
+            </div>
+
+            {% if member.status == 'paid' %}
+            <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-200">مدفوع</span>
+            {% elif member.status == 'partial' %}
+            <span class="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700 ring-1 ring-amber-200">جزئي</span>
+            {% else %}
+            <span class="rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-700 ring-1 ring-rose-200">غير مدفوع</span>
+            {% endif %}
+          </div>
+
+          <div class="mt-2 grid grid-cols-2 gap-1 text-[10px]">
+            <div class="rounded-md bg-violet-50 p-1.5 ring-1 ring-violet-100">
+              <p class="text-[9px] font-semibold text-violet-600">📶 جيجات</p>
+              <p class="mt-0.5 font-black">GB <span class="num">{{ member.data_allocation }}</span></p>
+            </div>
+            <div class="rounded-md bg-sky-50 p-1.5 ring-1 ring-sky-100">
+              <p class="text-[9px] font-semibold text-sky-600">📞 دقائق</p>
+              <p class="mt-0.5 font-black">MIN <span class="num">{{ member.minute_allocation }}</span></p>
+            </div>
+          </div>
+
+          <div class="mt-2 rounded-md bg-slate-50 p-1.5 ring-1 ring-slate-200">
+            <p class="text-[9px] text-slate-500">المبلغ</p>
+            <p class="text-[10px] font-black"><span class="num">{{ member.amount_paid }}</span> / <span class="num">{{ member.amount_due }}</span> EGP</p>
+          </div>
+
+          <div class="mt-2 flex items-center justify-end gap-1">
+            <a href="{% url 'member_update' active_line.id member.id %}" class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 ring-1 ring-amber-200">تعديل</a>
+            <form method="post" action="{% url 'member_delete' active_line.id member.id %}" class="js-delete-member-form" data-member-name="{{ member.name }}">
+              {% csrf_token %}
+              <button type="submit" class="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700 ring-1 ring-rose-200">حذف</button>
+            </form>
+          </div>
+        </article>
+        {% empty %}
+        <article class="col-span-full rounded-2xl border border-dashed border-violet-200 bg-white/80 p-6 text-center text-slate-600">
+          <p class="text-sm font-semibold">لا يوجد أفراد على هذا الخط بعد</p>
+          <p class="mt-1 text-xs">ابدأ بإضافة أول فرد من الزر بالأعلى.</p>
+        </article>
+        {% endfor %}
+      </section>
+
+      <footer class="mt-8 rounded-2xl border border-white/70 bg-white/90 px-4 py-3 text-center text-[11px] text-slate-600 shadow-lg shadow-violet-200/40 backdrop-blur">
+        جميع الحقوق محفوظة © <a href="https://elekhwa.store/portfolio.html" target="_blank" rel="noopener noreferrer" class="font-black text-[#6A1B9A] transition hover:underline">A,Ala3m</a>
+      </footer>
+    </main>
+
+    <script>
+      (function () {
+        const chart = document.getElementById('usageChart');
+        const dataRing = document.getElementById('dataRing');
+        const minutesRing = document.getElementById('minutesRing');
+        const chartPercent = document.getElementById('chartPercent');
+        const chartMetricLabel = document.getElementById('chartMetricLabel');
+        const toggles = document.querySelectorAll('.summary-toggle');
+
+        if (!chart || !dataRing || !minutesRing || !chartPercent || !chartMetricLabel || !toggles.length) {
+          return;
+        }
+
+        const outerCircumference = 2 * Math.PI * 54;
+        const innerCircumference = 2 * Math.PI * 40;
+        dataRing.style.strokeDasharray = String(outerCircumference);
+        minutesRing.style.strokeDasharray = String(innerCircumference);
+
+        const animateRing = (ring, circumference, targetPercent, duration = 1100) => {
+          const safeTarget = Math.max(0, Math.min(100, Number(targetPercent) || 0));
+          const start = performance.now();
+
+          ring.style.strokeDashoffset = String(circumference);
+
+          const frame = (now) => {
+            const progress = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const currentPercent = safeTarget * eased;
+            ring.style.strokeDashoffset = String(circumference * (1 - currentPercent / 100));
+
+            if (progress < 1) {
+              requestAnimationFrame(frame);
+            }
+          };
+
+          requestAnimationFrame(frame);
+        };
+
+        const setRingValue = (ring, circumference, percent) => {
+          const safePercent = Math.max(0, Math.min(100, Number(percent) || 0));
+          ring.style.strokeDashoffset = String(circumference * (1 - safePercent / 100));
+        };
+
+        const setMode = (metric, label, percent) => {
+          const safePercent = Math.max(0, Math.min(100, Number(percent) || 0));
+          const mode = metric === 'minutes' ? 'minutes' : 'data';
+          chart.dataset.mode = mode;
+          chartPercent.textContent = String(Math.round(safePercent));
+          chartMetricLabel.textContent = label;
+
+          if (mode === 'data') {
+            setRingValue(dataRing, outerCircumference, safePercent);
+          } else {
+            setRingValue(minutesRing, innerCircumference, safePercent);
+          }
+
+          toggles.forEach((toggle) => {
+            const isActive =
+              toggle.dataset.metric === metric &&
+              toggle.dataset.label === label &&
+              String(toggle.dataset.percent) === String(percent);
+            toggle.classList.toggle('is-active', isActive);
+          });
+        };
+
+        toggles.forEach((toggle) => {
+          toggle.addEventListener('click', () => {
+            const metric = toggle.dataset.metric;
+            const label = toggle.dataset.label;
+            const percent = toggle.dataset.percent;
+
+            if ((metric === 'data' || metric === 'minutes') && label && percent) {
+              setMode(metric, label, percent);
+            }
+          });
+        });
+
+        animateRing(dataRing, outerCircumference, '{{ data_remaining_percentage }}');
+        animateRing(minutesRing, innerCircumference, '{{ minutes_remaining_percentage }}');
+        setMode('data', 'المتبقي من الجيجات', '{{ data_remaining_percentage }}');
+
+        const deleteForms = Array.from(document.querySelectorAll('.js-delete-member-form'));
+        deleteForms.forEach((form) => {
+          form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const memberName = form.dataset.memberName || 'هذا الفرد';
+            const runDelete = () => form.submit();
+
+            if (typeof Swal === 'undefined') {
+              const ok = window.confirm('هل أنت متأكد من حذف الفرد؟');
+              if (ok) runDelete();
+              return;
+            }
+
+            Swal.fire({
+              title: 'تأكيد حذف الفرد',
+              html: `سيتم حذف <b>${memberName}</b> نهائيًا من هذا الخط.`,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'نعم، احذف',
+              cancelButtonText: 'إلغاء',
+              reverseButtons: true,
+              focusCancel: true,
+              background: '#F8F5FA',
+              color: '#312E81',
+              confirmButtonColor: '#6A1B9A',
+              cancelButtonColor: '#A3A3A3',
+              customClass: {
+                popup: 'swal-rtl-popup',
+                confirmButton: 'swal-main-btn',
+                cancelButton: 'swal-cancel-btn',
+              },
+            }).then((result) => {
+              if (result.isConfirmed) {
+                runDelete();
+              }
+            });
+          });
+        });
+
+        const normalizePhone = (value) => (value || '').replace(/\D/g, '');
+        const params = new URLSearchParams(window.location.search);
+        const targetPhone = normalizePhone(params.get('member_phone'));
+
+        if (targetPhone) {
+          const cards = Array.from(document.querySelectorAll('.member-card[data-member-phone]'));
+          const matched = cards.find((card) => normalizePhone(card.dataset.memberPhone) === targetPhone);
+          if (matched) {
+            matched.classList.add('member-focus');
+            matched.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+
+      })();
+    </script>
+
+    <style>
+      @media (min-width: 768px) and (max-width: 1023px) {
+        #membersContainer {
+          gap: 1.05rem;
+        }
+
+        #membersContainer .member-card {
+          padding: 1rem;
+          border-radius: 1rem;
+          border-color: rgba(106, 27, 154, 0.22);
+          box-shadow: 0 10px 24px rgba(106, 27, 154, 0.14);
+        }
+
+        #membersContainer .member-card h3 {
+          font-size: 1rem;
+        }
+
+        #membersContainer .member-card p,
+        #membersContainer .member-card span {
+          line-height: 1.5;
+        }
+
+        #membersContainer .member-card .rounded-full {
+          font-size: 0.82rem;
+        }
+
+        #membersContainer .member-card .grid {
+          gap: 0.75rem;
+        }
+
+        #membersContainer .member-card .rounded-md {
+          padding: 0.75rem;
+        }
+
+        #membersContainer .member-card .text-[10px],
+        #membersContainer .member-card .text-[9px] {
+          font-size: 0.78rem;
+        }
+
+        #membersContainer .member-card .font-black {
+          font-size: 0.92rem;
+        }
+
+        #membersContainer .member-card a,
+        #membersContainer .member-card button {
+          padding: 0.4rem 0.75rem;
+          font-size: 0.82rem;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        #membersContainer {
+          gap: 1.25rem;
+        }
+
+        #membersContainer .member-card {
+          padding: 1.15rem;
+          border-radius: 1.15rem;
+          border-color: rgba(106, 27, 154, 0.18);
+          box-shadow: 0 12px 28px rgba(106, 27, 154, 0.12);
+        }
+
+        #membersContainer .member-card > div:first-child {
+          gap: 0.85rem;
+        }
+
+        #membersContainer .member-card h3 {
+          font-size: 1.1rem;
+        }
+
+        #membersContainer .member-card > div:first-child p {
+          font-size: 0.82rem;
+        }
+
+        #membersContainer .member-card .rounded-full:not(button):not(a) {
+          font-size: 0.88rem;
+        }
+
+        #membersContainer .member-card .grid {
+          gap: 0.9rem;
+        }
+
+        #membersContainer .member-card .rounded-md {
+          padding: 0.9rem;
+        }
+
+        #membersContainer .member-card .text-[10px],
+        #membersContainer .member-card .text-[9px] {
+          font-size: 0.85rem;
+        }
+
+        #membersContainer .member-card .font-black {
+          font-size: 1rem;
+        }
+
+        #membersContainer .member-card a,
+        #membersContainer .member-card button {
+          padding: 0.45rem 0.9rem;
+          font-size: 0.88rem;
+        }
+      }
+
+      .swal-rtl-popup {
+        direction: rtl;
+        border: 1px solid rgba(106, 27, 154, 0.2);
+        border-radius: 1rem;
+      }
+
+      .swal-main-btn,
+      .swal-cancel-btn {
+        border-radius: 999px !important;
+        font-weight: 700 !important;
+      }
+
+      .member-focus {
+        border-color: rgba(106, 27, 154, 0.55) !important;
+        box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.2), 0 10px 24px rgba(106, 27, 154, 0.22) !important;
+      }
+    </style>
+  </body>
+</html>

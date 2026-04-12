@@ -1,0 +1,33 @@
+from django.urls import path
+
+from .views import (
+    accounting,
+    accounting_delete,
+    accounting_expense_create,
+    accounting_income_create,
+    home,
+    line_create,
+    line_delete,
+    line_update,
+    line_renew,
+    member_create,
+    member_delete,
+    member_update,
+    members,
+)
+
+urlpatterns = [
+    path('', home, name='home'),
+    path('accounting/', accounting, name='accounting'),
+    path('accounting/income/new/', accounting_income_create, name='accounting_income_create'),
+    path('accounting/expense/new/', accounting_expense_create, name='accounting_expense_create'),
+    path('accounting/<int:entry_id>/delete/', accounting_delete, name='accounting_delete'),
+    path('lines/new/', line_create, name='line_create'),
+    path('lines/<int:line_id>/edit/', line_update, name='line_update'),
+    path('lines/<int:line_id>/renew/', line_renew, name='line_renew'),
+    path('lines/<int:line_id>/delete/', line_delete, name='line_delete'),
+    path('members/<int:line_id>/', members, name='members'),
+    path('members/<int:line_id>/new/', member_create, name='member_create'),
+    path('members/<int:line_id>/<int:member_id>/edit/', member_update, name='member_update'),
+    path('members/<int:line_id>/<int:member_id>/delete/', member_delete, name='member_delete'),
+]

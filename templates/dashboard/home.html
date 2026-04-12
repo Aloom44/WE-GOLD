@@ -1,0 +1,468 @@
+{% load static %}
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>باقات WE Gold</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{% static 'dashboard/style.css' %}" />
+  </head>
+  <body class="min-h-screen bg-[#F8F5FA] text-slate-900 antialiased flex flex-col">
+    <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+      <section class="mb-6 rounded-[1.75rem] border border-[#9C27B0]/20 bg-gradient-to-r from-[#5B1687] via-[#6A1B9A] to-[#7B1FA2] px-4 py-2 text-white shadow-lg shadow-purple-300/25 sm:px-5 xl:px-6 xl:py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3 text-right">
+          <img src="{% static 'dashboard/LOGO.png' %}" alt="WE Gold" class="h-16 w-16 sm:h-20 sm:w-20" />
+          <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/18 text-white ring-1 ring-white/30 shadow-sm shadow-black/10" aria-label="أيقونة المستخدم">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0ZM4.5 20.118a7.5 7.5 0 0115 0A17.933 17.933 0 0112 21.75a17.933 17.933 0 01-7.5-1.632Z" />
+            </svg>
+          </span>
+        </div>
+      </section>
+
+      <header class="mb-5 overflow-hidden rounded-[1.25rem] border border-white/70 bg-gradient-to-r from-[#6A1B9A] via-[#7B1FA2] to-[#9C27B0] text-white shadow-lg shadow-purple-300/25 xl:rounded-[1.5rem] xl:shadow-xl xl:shadow-purple-300/30">
+        <div class="relative px-3 py-3 text-right sm:px-4 sm:py-4 xl:px-6 xl:py-6">
+          <div class="pointer-events-none absolute inset-0 opacity-30">
+            <div class="absolute -left-16 top-0 h-44 w-44 rounded-full bg-white/20 blur-3xl"></div>
+            <div class="absolute right-0 top-10 h-56 w-56 rounded-full bg-fuchsia-200/20 blur-3xl"></div>
+          </div>
+
+          <div class="relative flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+            <div class="flex-1 space-y-2 xl:space-y-3">
+              <h1 class="text-2xl font-black tracking-tight sm:text-3xl xl:text-4xl">باقات WE Gold</h1>
+              <p class="max-w-xl text-[11px] leading-5 text-white/85 sm:text-xs xl:max-w-2xl xl:text-[14px] xl:leading-7">
+                لوحة إدارة عربية واضحة لعرض الخطوط الأساسية، استهلاك الجيجات، والدقائق بشكل
+                متناسق وسريع القراءة.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 xl:w-[540px] xl:gap-3">
+              <article class="rounded-xl border border-white/15 bg-white/10 p-2.5 text-right backdrop-blur-sm sm:p-3 xl:rounded-2xl xl:p-4">
+                <p class="text-[10px] font-semibold text-white/75 xl:text-xs">الخطوط الأساسية</p>
+                <p class="mt-1 text-lg font-black sm:text-xl xl:text-2xl"><span class="num">{{ total_primary_lines }}</span></p>
+                <p class="mt-0.5 text-[9px] text-white/75 xl:text-[11px]">عدد الخطوط</p>
+              </article>
+              <article class="rounded-xl border border-white/15 bg-white/10 p-2.5 text-right backdrop-blur-sm sm:p-3 xl:rounded-2xl xl:p-4">
+                <p class="text-[10px] font-semibold text-white/75 xl:text-xs">إجمالي الإنترنت</p>
+                <p class="mt-1 text-lg font-black sm:text-xl xl:text-2xl">GB <span class="num">{{ total_data }}</span></p>
+                <p class="mt-0.5 text-[9px] text-white/75 xl:text-[11px]">السعة الكلية</p>
+              </article>
+              <article class="rounded-xl border border-white/15 bg-white/10 p-2.5 text-right backdrop-blur-sm sm:p-3 xl:rounded-2xl xl:p-4">
+                <p class="text-[10px] font-semibold text-white/75 xl:text-xs">إجمالي الدقائق</p>
+                <p class="mt-1 text-lg font-black sm:text-xl xl:text-2xl"><span class="text-xs font-bold xl:text-sm">MIN</span> <span class="num">{{ total_minutes }}</span></p>
+                <p class="mt-0.5 text-[9px] text-white/75 xl:text-[11px]">إجمالي الاستهلاك</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="mb-8">
+        <div class="mb-4 flex items-center justify-between text-right xl:mb-5">
+          <h2 class="text-lg font-black sm:text-2xl xl:text-3xl">
+            <span class="sm:hidden">الخطوط الأساسية</span>
+            <span class="hidden sm:inline">بطاقات الخطوط الأساسية</span>
+          </h2>
+          <div class="flex items-center gap-2">
+            <a
+              href="{% url 'accounting' %}"
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-slate-900 px-2.5 py-1.5 text-[10px] font-bold text-white shadow-sm shadow-slate-200/50 transition hover:bg-slate-800 sm:px-3 sm:py-1.5 sm:text-[11px] xl:px-4 xl:py-2 xl:text-[13px]"
+              aria-label="المحاسبة"
+              title="المحاسبة"
+            >
+              <span class="text-[11px] font-bold leading-none text-violet-100 sm:hidden">المحاسبة</span>
+              <span class="hidden sm:inline">المحاسبة</span>
+            </a>
+            <a
+              href="{% url 'line_create' %}"
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#6A1B9A] px-2.5 py-1.5 text-[10px] font-bold text-white shadow-sm shadow-purple-200/50 transition hover:bg-[#7B1FA2] sm:px-3 sm:py-1.5 sm:text-[11px] xl:px-4 xl:py-2 xl:text-[13px]"
+              aria-label="إضافة خط أساسي"
+              title="إضافة خط أساسي"
+            >
+              <span class="text-[11px] font-bold leading-none sm:hidden">إضافة خط</span>
+              <span class="hidden sm:inline">+ إضافة خط أساسي</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="mb-4 relative xl:mb-5">
+          <input
+            type="text"
+            id="lineSearch"
+            placeholder="ابحث برقم الخط أو اسم/رقم فرد..."
+            class="w-full rounded-xl border border-violet-200 bg-white/85 px-3 py-2.5 pr-10 text-right text-[12px] placeholder-slate-400 shadow-sm shadow-violet-100/30 ring-1 ring-violet-100/50 transition focus:border-violet-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-300/50 xl:rounded-2xl xl:px-4 xl:py-3 xl:pr-12 xl:text-[15px]"
+          />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 xl:right-4 xl:h-5 xl:w-5" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </div>
+
+        {% if lines %}
+        <div class="mb-3 flex items-center justify-between xl:mb-4" dir="rtl">
+          <p class="text-[11px] font-semibold text-slate-600 xl:text-[14px]">عرض البطاقات</p>
+          <div class="inline-flex items-center gap-1 rounded-full border border-violet-200 bg-white p-1 shadow-sm xl:gap-1.5 xl:p-1.5">
+            <button
+              type="button"
+              id="view-two-cards"
+              class="mobile-view-toggle rounded-full px-2.5 py-1 text-[12px] font-bold xl:px-4 xl:py-1.5 xl:text-[13px]"
+              data-cols="2"
+              aria-pressed="false"
+              title="عرض بطاقتين"
+            >
+              <span aria-hidden="true">▦</span>
+              <span class="mr-1 hidden sm:inline">بطاقتين</span>
+            </button>
+            <button
+              type="button"
+              id="view-one-card"
+              class="mobile-view-toggle is-active rounded-full px-2.5 py-1 text-[12px] font-bold xl:px-4 xl:py-1.5 xl:text-[13px]"
+              data-cols="1"
+              aria-pressed="true"
+              title="عرض بطاقة واحدة"
+            >
+              <span aria-hidden="true">▤</span>
+              <span class="mr-1 hidden sm:inline">بطاقة واحدة</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="cards-grid" class="grid grid-cols-2 gap-3 sm:gap-3 lg:gap-4 xl:gap-5 auto-rows-fr" dir="rtl">
+          {% for line in lines %}
+          <article class="line-card card-enter flex h-full cursor-pointer flex-col rounded-xl border border-violet-100 bg-white p-2 text-right shadow-sm shadow-purple-200/20 transition hover:-translate-y-0.5 hover:shadow lg:rounded-2xl lg:p-3 xl:p-4" data-href="{% url 'members' line.id %}" data-line-phone="{{ line.phone }}" data-member-phones="{% for member in line.members.all %}{{ member.phone }}{% if not forloop.last %}|{% endif %}{% endfor %}" data-search="{{ line.phone }} {{ line.plan }} {{ line.display_renewal_day }} {% for member in line.members.all %}{{ member.name }} {{ member.phone }} {% endfor %}" role="link" tabindex="0" aria-label="فتح تفاصيل الخط {{ line.phone }}">
+            <div class="mb-1.5 flex items-start justify-between gap-1 lg:mb-2 lg:gap-2">
+              <div class="text-right">
+                <h3 class="line-phone text-[12px] font-black leading-tight whitespace-nowrap lg:text-[15px] xl:text-[17px]"><span class="num">{{ line.phone }}</span></h3>
+                <p class="line-plan mt-0.5 text-[9px] text-slate-500 lg:text-[11px] xl:text-[12px]">{{ line.plan }}</p>
+              </div>
+              <div class="rounded-md bg-violet-50 px-1.5 py-1 text-right ring-1 ring-violet-100 lg:rounded-lg lg:px-2.5 lg:py-1.5">
+                <p class="renewal-label text-[9px] font-semibold text-violet-600 lg:text-[10px]">Renewal</p>
+                <p class="renewal-value text-[10px] font-black leading-tight lg:text-[12px] xl:text-[13px]"><span class="num">{{ line.display_renewal_day }}</span></p>
+              </div>
+            </div>
+
+            <div class="mb-1.5 flex flex-nowrap items-center justify-between gap-2 rounded-md bg-violet-50 px-2 py-1.5 ring-1 ring-violet-100 lg:mb-2 lg:rounded-lg lg:px-3 lg:py-2">
+              <div class="min-w-0 flex-1 text-right">
+                <p class="text-[9px] font-semibold text-violet-600 lg:text-[10px]">تجديد الشهر</p>
+                <p class="truncate text-[9px] text-violet-700/80 lg:text-[11px]">التجديد حسب يوم <span class="num font-black">{{ line.display_renewal_day }}</span></p>
+              </div>
+              <a href="{% url 'line_renew' line.id %}" class="inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-violet-600 px-2 py-1 text-[9px] font-bold text-white shadow-sm shadow-violet-200 transition hover:bg-violet-700 lg:px-3 lg:py-1.5 lg:text-[11px]">تجديد الآن</a>
+            </div>
+
+            <div class="mb-1.5 rounded-md bg-slate-50 p-1.5 ring-1 ring-slate-200 text-xs lg:mb-2 lg:rounded-lg lg:p-2.5">
+              <div class="grid grid-cols-2 gap-2 lg:gap-3">
+                <div>
+                  <p class="line-metric-label text-[9px] font-semibold text-slate-500 lg:text-[10px]">📶 الجيجات</p>
+                  <p class="line-metric-total mt-0.5 text-[10px] font-black lg:text-[12px]">GB <span class="num">{{ line.total_data }}</span></p>
+                  <p class="line-metric-used mt-0.5 text-[10px] font-semibold text-black lg:text-[12px]"><span class="ml-1 text-[#7B1FA2]" title="النقص">⏳</span>GB <span class="num text-rose-700">{{ line.used_data }}</span></p>
+                </div>
+                <div>
+                  <p class="line-metric-label text-[9px] font-semibold text-slate-500 lg:text-[10px]">📞 الدقائق</p>
+                  <p class="line-metric-total mt-0.5 text-[10px] font-black lg:text-[12px]">MIN <span class="num">{{ line.total_minutes }}</span></p>
+                  <p class="line-metric-used mt-0.5 text-[10px] font-semibold text-black lg:text-[12px]"><span class="ml-1 text-[#7B1FA2]" title="النقص">⏳</span>MIN <span class="num text-rose-700">{{ line.used_minutes }}</span></p>
+                </div>
+              </div>
+              {% if line.carryover_data or line.carryover_minutes %}
+              <div class="mt-1 flex items-center justify-between gap-2 rounded-md bg-violet-50 px-1.5 py-1 text-[9px] font-semibold text-violet-700 ring-1 ring-violet-100 lg:mt-1.5 lg:rounded-lg lg:px-2.5 lg:py-1.5 lg:text-[10px]">
+                <span class="whitespace-nowrap text-violet-600 lg:text-[11px]">ترحيل الشهر</span>
+                <span class="flex items-center gap-1 whitespace-nowrap text-violet-700">
+                  <span class="inline-flex items-center gap-1 rounded-full bg-white/90 px-1.5 py-0.5 ring-1 ring-violet-200 lg:px-2 lg:py-0.5">
+                    <span class="text-[8px] font-bold uppercase text-violet-500 lg:text-[9px]">GB</span>
+                    <span class="num font-black text-slate-800">{{ line.carryover_data }}</span>
+                  </span>
+                  <span class="inline-flex items-center gap-1 rounded-full bg-white/90 px-1.5 py-0.5 ring-1 ring-violet-200 lg:px-2 lg:py-0.5">
+                    <span class="text-[8px] font-bold uppercase text-violet-500 lg:text-[9px]">MIN</span>
+                    <span class="num font-black text-slate-800">{{ line.carryover_minutes }}</span>
+                  </span>
+                </span>
+              </div>
+              {% endif %}
+            </div>
+            <div class="mt-1 flex items-center justify-between gap-1 lg:mt-2 lg:gap-2">
+              <span class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-[9px] font-semibold text-violet-700 ring-1 ring-violet-200 lg:px-2.5 lg:py-1 lg:text-[11px]">👥 <span class="num rounded-full bg-violet-700 px-1.5 py-0.5 text-[9px] font-black text-white lg:text-[10px]">{{ line.members_count }}</span> عضو</span>
+              <div class="inline-flex items-center gap-1">
+                <a href="{% url 'line_update' line.id %}" class="line-action rounded-full bg-rose-100 px-1.5 py-0.5 text-[9px] font-bold text-rose-700 ring-1 ring-rose-200 lg:px-2.5 lg:py-1 lg:text-[11px]">تعديل</a>
+                <form method="post" action="{% url 'line_delete' line.id %}" class="js-delete-line-form" data-line-phone="{{ line.phone }}">
+                  {% csrf_token %}
+                  <button type="submit" class="line-action rounded-full bg-rose-100 px-1.5 py-0.5 text-[9px] font-bold text-rose-700 ring-1 ring-rose-200 lg:px-2.5 lg:py-1 lg:text-[11px]">حذف</button>
+                </form>
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+        <article id="noResults" class="mt-3 hidden rounded-2xl border border-dashed border-rose-200 bg-rose-50/80 p-6 text-center text-rose-600">
+          <p class="text-sm font-semibold">لا توجد نتائج</p>
+          <p class="mt-1 text-xs">حاول البحث برقم الخط أو باسم/رقم الفرد المرتبط به.</p>
+        </article>
+        {% else %}
+        <article class="rounded-2xl border border-dashed border-violet-200 bg-white/80 p-6 text-center text-slate-600">
+          <p class="text-sm font-semibold">لا يوجد خطوط أساسية بعد</p>
+          <p class="mt-1 text-xs">ابدأ بإضافة أول خط أساسي من الزر بالأعلى.</p>
+        </article>
+        {% endif %}
+      </section>
+
+      <footer class="mt-8 rounded-2xl border border-white/70 bg-white/90 px-4 py-3 text-center text-[11px] text-slate-600 shadow-lg shadow-violet-200/40 backdrop-blur">
+        جميع الحقوق محفوظة © <a href="https://elekhwa.store/portfolio.html" target="_blank" rel="noopener noreferrer" class="font-black text-[#6A1B9A] transition hover:underline">A,Ala3m</a>
+      </footer>
+    </main>
+
+    <script>
+      (() => {
+        const searchInput = document.getElementById('lineSearch');
+        const grid = document.getElementById('cards-grid');
+        const noResults = document.getElementById('noResults');
+        const cards = Array.from(document.querySelectorAll('.line-card[data-href]'));
+        if (!grid) return;
+
+        if (searchInput && cards.length && noResults) {
+          searchInput.addEventListener('input', (event) => {
+            const query = event.target.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            cards.forEach((card) => {
+              const searchText = (card.dataset.search || '').toLowerCase();
+              const matches = searchText.includes(query);
+              card.style.display = matches ? '' : 'none';
+              if (matches) visibleCount += 1;
+            });
+
+            noResults.classList.toggle('hidden', visibleCount > 0);
+          });
+
+          const normalizePhone = (value) => (value || '').replace(/\D/g, '');
+
+          searchInput.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter') return;
+            const rawQuery = (searchInput.value || '').trim();
+            if (!rawQuery) return;
+
+            const queryPhone = normalizePhone(rawQuery);
+
+            // 1) Exact member phone match -> open related line and focus this member.
+            if (queryPhone) {
+              for (const card of cards) {
+                const memberPhones = (card.dataset.memberPhones || '')
+                  .split('|')
+                  .map(normalizePhone)
+                  .filter(Boolean);
+                if (memberPhones.includes(queryPhone)) {
+                  event.preventDefault();
+                  const href = card.dataset.href;
+                  if (href) {
+                    window.location.href = `${href}?member_phone=${encodeURIComponent(queryPhone)}`;
+                  }
+                  return;
+                }
+              }
+            }
+
+            // 2) Exact line phone match -> open this line.
+            for (const card of cards) {
+              const linePhone = normalizePhone(card.dataset.linePhone || '');
+              if (queryPhone && linePhone && linePhone === queryPhone) {
+                event.preventDefault();
+                const href = card.dataset.href;
+                if (href) {
+                  window.location.href = href;
+                }
+                return;
+              }
+            }
+
+            // 3) If there is any visible card after filtering, open first one.
+            const firstVisible = cards.find((card) => card.style.display !== 'none');
+            if (firstVisible) {
+              event.preventDefault();
+              const href = firstVisible.dataset.href;
+              if (href) {
+                window.location.href = href;
+              }
+            }
+          });
+        }
+
+        const buttons = Array.from(document.querySelectorAll('.mobile-view-toggle'));
+        if (!buttons.length) return;
+
+        const storageKey = 'we-gold-mobile-cards-view';
+
+        const applyView = (cols) => {
+          const isOne = cols === '1';
+          grid.classList.toggle('grid-cols-1', isOne);
+          grid.classList.toggle('grid-cols-2', !isOne);
+          grid.classList.toggle('mobile-single-view', isOne);
+
+          buttons.forEach((btn) => {
+            const active = btn.dataset.cols === cols;
+            btn.classList.toggle('is-active', active);
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+          });
+
+          localStorage.setItem(storageKey, cols);
+        };
+
+        const saved = localStorage.getItem(storageKey);
+        const hasSavedView = saved === '1' || saved === '2';
+        const desktopDefault = window.matchMedia('(min-width: 640px)').matches ? '2' : '1';
+        applyView(hasSavedView ? saved : desktopDefault);
+
+        buttons.forEach((btn) => {
+          btn.addEventListener('click', () => applyView(btn.dataset.cols || '2'));
+        });
+
+        cards.forEach((card) => {
+          const openCardLink = () => {
+            const href = card.dataset.href;
+            if (href) {
+              window.location.href = href;
+            }
+          };
+
+          card.addEventListener('click', (event) => {
+            const interactive = event.target.closest('a, button, form, input, select, textarea, label');
+            if (interactive) return;
+            openCardLink();
+          });
+
+          card.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            openCardLink();
+          });
+        });
+
+        const deleteForms = Array.from(document.querySelectorAll('.js-delete-line-form'));
+        deleteForms.forEach((form) => {
+          form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const linePhone = form.dataset.linePhone || '';
+            const runDelete = () => form.submit();
+
+            if (typeof Swal === 'undefined') {
+              const ok = window.confirm('هل أنت متأكد من حذف الخط الأساسي؟');
+              if (ok) runDelete();
+              return;
+            }
+
+            Swal.fire({
+              title: 'تأكيد الحذف',
+              html: `سيتم حذف الخط <b>${linePhone}</b> نهائيًا مع بياناته.`,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'نعم، احذف',
+              cancelButtonText: 'إلغاء',
+              reverseButtons: true,
+              focusCancel: true,
+              background: '#F8F5FA',
+              color: '#312E81',
+              confirmButtonColor: '#6A1B9A',
+              cancelButtonColor: '#A3A3A3',
+              customClass: {
+                popup: 'swal-rtl-popup',
+                confirmButton: 'swal-main-btn',
+                cancelButton: 'swal-cancel-btn',
+              },
+            }).then((result) => {
+              if (result.isConfirmed) {
+                runDelete();
+              }
+            });
+          });
+        });
+      })();
+    </script>
+    <style>
+      .mobile-view-toggle {
+        color: #6a1b9a;
+        background: transparent;
+      }
+
+      .mobile-view-toggle.is-active {
+        color: #fff;
+        background: linear-gradient(135deg, #6a1b9a, #8e24aa);
+        box-shadow: 0 4px 10px rgba(106, 27, 154, 0.28);
+      }
+
+      .swal-rtl-popup {
+        direction: rtl;
+        border: 1px solid rgba(106, 27, 154, 0.2);
+        border-radius: 1rem;
+      }
+
+      .swal-main-btn,
+      .swal-cancel-btn {
+        border-radius: 999px !important;
+        font-weight: 700 !important;
+      }
+
+      @media (min-width: 768px) and (max-width: 1023px) {
+        #cards-grid {
+          gap: 1.05rem;
+        }
+
+        #cards-grid .line-card {
+          padding: 1rem;
+          border-radius: 1rem;
+          border-color: rgba(106, 27, 154, 0.22);
+          box-shadow: 0 10px 24px rgba(106, 27, 154, 0.16);
+        }
+
+        #cards-grid .line-phone {
+          font-size: 1.05rem;
+        }
+
+        #cards-grid .line-plan,
+        #cards-grid .renewal-label,
+        #cards-grid .line-metric-label {
+          font-size: 0.78rem;
+        }
+
+        #cards-grid .renewal-value,
+        #cards-grid .line-metric-total,
+        #cards-grid .line-metric-used,
+        #cards-grid .line-action {
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 639px) {
+        #cards-grid:not(.mobile-single-view) .line-card {
+          border-color: rgba(106, 27, 154, 0.16);
+          box-shadow: 0 6px 16px rgba(106, 27, 154, 0.12);
+        }
+
+        #cards-grid.mobile-single-view {
+          gap: 0.85rem;
+        }
+
+        #cards-grid.mobile-single-view .line-card {
+          padding: 0.75rem;
+          border-color: rgba(106, 27, 154, 0.22);
+          box-shadow: 0 8px 20px rgba(106, 27, 154, 0.18);
+        }
+
+        #cards-grid.mobile-single-view .line-phone {
+          font-size: 0.95rem;
+        }
+
+        #cards-grid.mobile-single-view .line-plan,
+        #cards-grid.mobile-single-view .renewal-label,
+        #cards-grid.mobile-single-view .line-metric-label {
+          font-size: 0.7rem;
+        }
+
+        #cards-grid.mobile-single-view .renewal-value,
+        #cards-grid.mobile-single-view .line-metric-total,
+        #cards-grid.mobile-single-view .line-metric-used,
+        #cards-grid.mobile-single-view .line-action {
+          font-size: 0.78rem;
+        }
+      }
+    </style>
+  </body>
+</html>
