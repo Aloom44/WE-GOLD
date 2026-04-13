@@ -121,6 +121,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = os.getenv('DJANGO_STATICFILES_STORAGE', 'whitenoise.storage.CompressedStaticFilesStorage')
+WHITENOISE_USE_FINDERS = _env_bool('DJANGO_WHITENOISE_USE_FINDERS', default=DEBUG)
 
 
 SECURE_SSL_REDIRECT = _env_bool('DJANGO_SECURE_SSL_REDIRECT', default=False)

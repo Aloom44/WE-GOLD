@@ -96,6 +96,19 @@ This project is already prepared with `vercel.json`.
 - `DATABASE_URL` (recommended: managed PostgreSQL)
 - `DJANGO_DB_SSL_REQUIRE=True`
 
+Suggested values to paste quickly:
+
+```env
+DJANGO_SECRET_KEY=replace-with-strong-secret
+DJANGO_DEBUG=False
+DJANGO_ALLOWED_HOSTS=.vercel.app
+DJANGO_CSRF_TRUSTED_ORIGINS=https://*.vercel.app
+DATABASE_URL=postgres://USER:PASSWORD@HOST:5432/DBNAME
+DJANGO_DB_SSL_REQUIRE=True
+DJANGO_STATICFILES_STORAGE=whitenoise.storage.CompressedStaticFilesStorage
+DJANGO_WHITENOISE_USE_FINDERS=True
+```
+
 4. Deploy.
 
 After first deploy, if you use a fresh DB, run migrations:
