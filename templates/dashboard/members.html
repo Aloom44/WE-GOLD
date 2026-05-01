@@ -201,7 +201,7 @@
               </button>
               
               <!-- Quick Action Menu for Payment -->
-              <div id="payment-menu-{{ member.id }}" class="js-payment-menu absolute top-full left-0 z-50 mt-2 hidden min-w-[150px] origin-top-left rounded-2xl border border-[rgba(0,0,0,0.05)] bg-white/80 p-1.5 shadow-2xl backdrop-blur-xl ring-1 ring-black/5 transition-all animate-in fade-in zoom-in-95 duration-200">
+              <div id="payment-menu-{{ member.id }}" class="js-payment-menu absolute left-1/2 top-1/2 z-50 hidden min-w-[160px] -translate-x-1/2 -translate-y-1/2 origin-center rounded-2xl border border-[rgba(255,255,255,0.1)] bg-white/95 p-1.5 shadow-2xl backdrop-blur-2xl ring-1 ring-black/5 transition-all animate-in fade-in zoom-in-95 duration-200">
                 <div class="px-3 py-2 border-b border-[rgba(0,0,0,0.05)] mb-1">
                   <p class="text-[10px] font-black text-[#86868B] uppercase tracking-wider">حالة الدفع</p>
                 </div>
@@ -351,47 +351,20 @@
             if (m !== menu) m.classList.add('hidden');
           });
 
-          // Toggle visibility
+          // If this button is NOT the one inside the relative container (the top badge),
+          // we need to move the menu to the top badge container or handle it differently.
+          // For now, the menu is only inside the top badge container. 
+          // If we click the bottom button, we should show the top menu.
+          
           const isHidden = menu.classList.contains('hidden');
           menu.classList.toggle('hidden');
 
-          if (!isHidden) return; // If we just hid it, stop here
+          if (!isHidden) return;
 
-          // Intelligent Positioning
-          const rect = btn.getBoundingClientRect();
-          const menuRect = menu.getBoundingClientRect();
-          const screenWidth = window.innerWidth;
-          const screenHeight = window.innerHeight;
-
-          // Horizontal flip if off-screen
-          if (rect.left + menuRect.width > screenWidth) {
-            menu.classList.remove('left-0');
-            menu.classList.add('right-0');
-            menu.style.transformOrigin = 'top right';
-          } else {
-            menu.classList.remove('right-0');
-            menu.classList.add('left-0');
-            menu.style.transformOrigin = 'top left';
-          }
-
-          // Vertical flip if near bottom
-          if (rect.bottom + menuRect.height > screenHeight) {
-            menu.classList.remove('top-full', 'mt-2');
-            menu.classList.add('bottom-full', 'mb-2');
-            menu.style.transformOrigin = menu.style.transformOrigin.replace('top', 'bottom');
-          } else {
-            menu.classList.remove('bottom-full', 'mb-2');
-            menu.classList.add('top-full', 'mt-2');
-            menu.style.transformOrigin = menu.style.transformOrigin.replace('bottom', 'top');
-          }
-
-          // If the button is the bottom card button, we might want to move the menu there
-          const parent = btn.parentElement;
-          if (parent.classList.contains('flex') && !parent.classList.contains('relative')) {
-              // This is the bottom button, move menu here temporarily or reposition
-              // For simplicity, let's just make sure the top menu is visible and maybe scroll to it
-              // Or better: ensure the top menu is always the one used but positioned relative to viewport if needed.
-              // Current implementation moves the menu within the top badge container.
+          // If triggered from the bottom button, we might want to scroll to the top of the card
+          const card = btn.closest('article');
+          if (btn.title === "تغيير حالة الدفع" && card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
         };
 
