@@ -154,13 +154,11 @@ class AccountingEntry(models.Model):
 
 class Member(models.Model):
 	STATUS_PAID = 'paid'
-	STATUS_PARTIAL = 'partial'
 	STATUS_UNPAID = 'unpaid'
 
 	STATUS_CHOICES = [
-		(STATUS_PAID, 'Paid'),
-		(STATUS_PARTIAL, 'Partial'),
-		(STATUS_UNPAID, 'Unpaid'),
+		(STATUS_PAID, 'مدفوع'),
+		(STATUS_UNPAID, 'غير مدفوع'),
 	]
 
 	line = models.ForeignKey(PrimaryLine, on_delete=models.CASCADE, related_name='members')
@@ -168,9 +166,9 @@ class Member(models.Model):
 	phone = models.CharField(max_length=20)
 	data_allocation = models.PositiveIntegerField(default=0)
 	minute_allocation = models.PositiveIntegerField(default=0)
-	amount_due = models.PositiveIntegerField(default=0)
-	amount_paid = models.PositiveIntegerField(default=0)
+	monthly_cost = models.PositiveIntegerField(default=0)
 	status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_UNPAID)
+	notes = models.TextField(blank=True)
 
 	class Meta:
 		ordering = ['id']
@@ -202,19 +200,16 @@ class Member(models.Model):
 
 	def save(self, *args, **kwargs):
 		self.full_clean()
-		if self.amount_paid >= self.amount_due and self.amount_due > 0:
-			self.status = self.STATUS_PAID
-		elif self.amount_paid > 0:
-			self.status = self.STATUS_PARTIAL
-		else:
-			self.status = self.STATUS_UNPAID
 		super().save(*args, **kwargs)
 		self.line.update_usage_from_members()
+		
+		# Sync accounting based on status
+		income_amount = self.monthly_cost if self.status == self.STATUS_PAID else 0
 		AccountingEntry.sync_system_entry(
 			system_key=f'member-{self.pk}',
 			kind=AccountingEntry.ENTRY_INCOME,
 			title=f'مدفوعات الأفراد - {self.name}',
-			amount=self.amount_paid,
+			amount=income_amount,
 			notes=f'الفرد {self.phone} على الخط {self.line.phone}',
 		)
 

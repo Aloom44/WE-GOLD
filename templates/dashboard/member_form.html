@@ -27,7 +27,7 @@
           {% csrf_token %}
 
           {% for field in form %}
-          <label class="block {% if field.name == 'name' or field.name == 'phone' %}sm:col-span-2{% endif %}">
+          <label class="block {% if field.name == 'name' or field.name == 'phone' or field.name == 'notes' %}sm:col-span-2{% endif %}">
             <span class="mb-1.5 block text-sm font-bold text-slate-700">{{ field.label }}</span>
             {{ field }}
             {% if field.errors %}
@@ -67,7 +67,7 @@
         'focus:ring-[rgba(0,113,227,0.15)]',
       ];
 
-      document.querySelectorAll('input, select').forEach((field) => {
+      document.querySelectorAll('input, select, textarea').forEach((field) => {
         field.classList.add(...baseClasses);
       });
     </script>

@@ -184,11 +184,11 @@
       <section class="mb-10 space-y-6">
         <div class="flex flex-wrap items-center justify-between gap-4">
           <h2 class="text-2xl font-black tracking-tight text-gradientText sm:text-3xl font-display">الخطوط الأساسية</h2>
-          <div class="flex w-full items-center gap-3 sm:w-auto">
-            <a href="{% url 'line_create' %}" class="app-control flex h-14 flex-1 items-center justify-center bg-gradient-to-r from-[#990FFA] to-[#E60076] px-8 text-[15px] font-black text-white shadow-lg shadow-purple-500/20 hover:scale-[1.03] active:scale-[0.97] sm:flex-none">
+          <div class="flex w-full items-center gap-2 sm:w-auto">
+            <a href="{% url 'line_create' %}" class="app-control flex h-11 flex-1 items-center justify-center bg-gradient-to-r from-[#990FFA] to-[#E60076] px-6 text-[13px] font-black text-white shadow-lg shadow-purple-500/10 hover:scale-[1.03] active:scale-[0.97] sm:flex-none">
               + إضافة خط
             </a>
-            <a href="{% url 'accounting' %}" class="app-control flex h-14 flex-1 items-center justify-center bg-white px-8 text-[15px] font-black text-gradientText hover:bg-[#FDFCFE] sm:flex-none">
+            <a href="{% url 'accounting' %}" class="app-control flex h-11 flex-1 items-center justify-center bg-white px-6 text-[13px] font-black text-gradientText hover:bg-[#FDFCFE] sm:flex-none">
               المحاسبة
             </a>
           </div>
@@ -228,12 +228,14 @@
             
             <div class="flex items-start justify-between gap-2">
               <div class="flex min-w-0 flex-col">
-                <button type="button" class="js-copy-phone truncate text-[17px] font-black tracking-tight text-gradientText sm:text-[19px] font-display" data-line-phone="{{ line.phone }}">
+                <button type="button" class="js-copy-phone truncate text-[15px] font-black tracking-tight text-gradientText sm:text-[17px] font-display" data-line-phone="{{ line.phone }}">
                   <span class="num">{{ line.phone }}</span>
                 </button>
                 <p class="truncate text-[11px] font-bold text-[#86868B] opacity-70">{{ line.plan }}</p>
               </div>
-              <span class="shrink-0 rounded-full bg-[#990FFA]/10 px-3 py-1 text-[10px] font-black text-gradientPrimary font-display">D{{ line.renewal_day }}</span>
+              <span class="shrink-0 rounded-lg bg-gradient-to-br from-[#990FFA] to-[#E60076] px-2.5 py-1 text-[12px] font-black text-white shadow-md font-display ring-1 ring-white/20">
+                <span class="num">{{ line.renewal_day }}</span>
+              </span>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mt-6">

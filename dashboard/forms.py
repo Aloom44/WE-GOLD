@@ -81,12 +81,14 @@ class MemberForm(forms.ModelForm):
             'phone',
             'data_allocation',
             'minute_allocation',
-            'amount_due',
-            'amount_paid',
+            'monthly_cost',
+            'status',
+            'notes',
         ]
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'اسم الفرد'}),
             'phone': forms.TextInput(attrs={'placeholder': '01xxxxxxxxx'}),
+            'notes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'ملاحظات اختيارية'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -96,8 +98,14 @@ class MemberForm(forms.ModelForm):
         self.fields['phone'].label = 'رقم الهاتف'
         self.fields['data_allocation'].label = 'تخصيص الجيجات (GB)'
         self.fields['minute_allocation'].label = 'تخصيص الدقائق'
-        self.fields['amount_due'].label = 'المبلغ المطلوب'
-        self.fields['amount_paid'].label = 'المبلغ المدفوع'
+        self.fields['monthly_cost'].label = 'المبلغ المستحق (EGP)'
+        self.fields['status'].label = 'حالة الدفع'
+        self.fields['notes'].label = 'ملاحظات'
+
+        # Payment status is operational; hide it during profile editing.
+        if self.instance and self.instance.pk:
+            if 'status' in self.fields:
+                del self.fields['status']
 
     def clean(self):
         cleaned_data = super().clean()

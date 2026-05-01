@@ -10,7 +10,7 @@ class PrimaryLineAdmin(admin.ModelAdmin):
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
-	list_display = ('name', 'phone', 'line', 'amount_due', 'amount_paid', 'status')
+	list_display = ('name', 'phone', 'line', 'monthly_cost', 'status')
 	list_filter = ('status', 'line')
 	search_fields = ('name', 'phone')
 

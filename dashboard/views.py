@@ -23,7 +23,7 @@ def accounting(request):
 
     current_income = (
         sum(line.plan_cost for line in PrimaryLine.objects.all())
-        + sum(member.amount_paid for member in Member.objects.all())
+        + sum(member.monthly_cost for member in Member.objects.filter(status=Member.STATUS_PAID))
         + _financial_summary(current_month_entries, AccountingEntry.ENTRY_INCOME)
     )
     current_expense = (
@@ -34,7 +34,7 @@ def accounting(request):
 
     overall_income = (
         sum(line.plan_cost for line in PrimaryLine.objects.all())
-        + sum(member.amount_paid for member in Member.objects.all())
+        + sum(member.monthly_cost for member in Member.objects.filter(status=Member.STATUS_PAID))
         + _financial_summary(all_entries, AccountingEntry.ENTRY_INCOME)
     )
     overall_expense = (
@@ -179,16 +179,11 @@ def line_renew(request, line_id):
     if request.method == 'POST':
         form = PrimaryLineRenewForm(request.POST, line=line)
         if form.is_valid():
-            member_ids = list(line.members.values_list('id', flat=True))
             line.members.update(
-                data_allocation=0,
-                minute_allocation=0,
-                amount_due=0,
-                amount_paid=0,
                 status=Member.STATUS_UNPAID,
             )
-            for member_id in member_ids:
-                AccountingEntry.remove_system_entry(f'member-{member_id}')
+            for member in line.members.all():
+                AccountingEntry.remove_system_entry(f'member-{member.pk}')
 
             line.carryover_data = form.cleaned_data['carryover_data']
             line.carryover_minutes = form.cleaned_data['carryover_minutes']
@@ -252,4 +247,18 @@ def member_delete(request, line_id, member_id):
     member = get_object_or_404(Member, id=member_id, line=line)
     if request.method == 'POST':
         member.delete()
+    return redirect('members', line_id=line.id)
+
+
+def member_payment_status_toggle(request, line_id, member_id):
+    line = get_object_or_404(PrimaryLine, id=line_id)
+    member = get_object_or_404(Member, id=member_id, line=line)
+    
+    if request.method == 'POST':
+        if member.status == Member.STATUS_PAID:
+            member.status = Member.STATUS_UNPAID
+        else:
+            member.status = Member.STATUS_PAID
+        member.save()
+        
     return redirect('members', line_id=line.id)
