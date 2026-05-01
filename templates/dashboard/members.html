@@ -241,7 +241,7 @@
           </div>
 
           <!-- SECTION 2: ALLOCATION SNAPSHOT (Side-by-side) -->
-          <div class="mb-4 grid grid-cols-2 gap-3">
+          <div class="mb-3 grid grid-cols-2 gap-3">
             <div class="rounded-2xl bg-[#FBFBFD] p-3 text-center ring-1 ring-[rgba(0,0,0,0.03)] transition group-hover:bg-white group-hover:ring-gradientPrimary/20">
               <p class="text-[9px] font-black uppercase tracking-widest text-[#86868B]">الجيجات</p>
               <p class="mt-1 text-[16px] font-black text-gradientText font-display">
@@ -254,6 +254,20 @@
                 <span class="num">{{ member.minute_allocation }}</span> <span class="text-[9px] opacity-40 uppercase">MIN</span>
               </p>
             </div>
+          </div>
+
+          <!-- SECTION 2.5: SMART NOTE -->
+          <div class="mb-4">
+            <button onclick="openNoteModal('{{ member.id }}', '{{ member.note_type }}', '{{ member.notes_text|escapejs }}')" class="flex w-full items-center gap-2 rounded-xl bg-[rgba(153,15,250,0.03)] px-3 py-2 text-[11px] font-bold text-[#6E6E73] transition hover:bg-[rgba(153,15,250,0.06)] hover:text-gradientPrimary">
+              <span class="text-[14px]">📝</span>
+              <span class="truncate">
+                {% if member.notes_text or member.note_type != 'custom' %}
+                  <span class="text-gradientPrimary">{{ member.get_note_type_display }}</span>{% if member.notes_text %}: {{ member.notes_text }}{% endif %}
+                {% else %}
+                  إضافة ملاحظة سريعة
+                {% endif %}
+              </span>
+            </button>
           </div>
 
           <!-- SECTION 3: FINANCIAL STRIP -->
@@ -380,6 +394,30 @@
           document.querySelectorAll('.js-payment-menu').forEach(m => m.classList.add('hidden'));
         });
 
+        // --- Utility: Smart Note Modal ---
+        window.openNoteModal = function(memberId, currentType, currentText) {
+          const modal = document.getElementById('noteModal');
+          const form = document.getElementById('noteForm');
+          const textarea = form.querySelector('textarea');
+          
+          // Set action URL
+          form.action = `/members/{{ active_line.id }}/${memberId}/update-note/`;
+          
+          // Set current values
+          textarea.value = currentText;
+          const radio = form.querySelector(`input[value="${currentType}"]`);
+          if (radio) radio.checked = true;
+          
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+        };
+
+        window.closeNoteModal = function() {
+          const modal = document.getElementById('noteModal');
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        };
+
         // --- Circular Balance Rings Logic ---
         const rings = [
           { el: document.querySelector('.js-ring-data'), color: '#990FFA' },
@@ -462,5 +500,44 @@
         transform: scale(1.02);
       }
     </style>
+    <!-- SMART NOTE MODAL -->
+    <div id="noteModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/40 backdrop-blur-sm transition-all duration-300">
+      <div class="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 mx-4">
+        <div class="mb-5 flex items-center justify-between">
+          <h3 class="text-lg font-black text-gradientText font-display">ملاحظة ذكية</h3>
+          <button onclick="closeNoteModal()" class="text-[#86868B] hover:text-[#1D1D1F]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <form id="noteForm" method="post" action="">
+          {% csrf_token %}
+          <div class="mb-5">
+            <p class="mb-3 text-[11px] font-black text-[#86868B] uppercase tracking-wider text-right">اختر نوع الملاحظة</p>
+            <div class="flex flex-wrap flex-row-reverse gap-2">
+              {% for type_val, type_label in member_note_types %}
+              <label class="cursor-pointer">
+                <input type="radio" name="note_type" value="{{ type_val }}" class="peer hidden">
+                <span class="inline-flex h-9 items-center rounded-xl border border-[rgba(0,0,0,0.05)] bg-[#FBFBFD] px-4 text-[11px] font-bold text-[#6E6E73] transition peer-checked:border-gradientPrimary peer-checked:bg-gradientPrimary peer-checked:text-white">
+                  {{ type_label }}
+                </span>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+          
+          <div class="mb-6">
+            <p class="mb-3 text-[11px] font-black text-[#86868B] uppercase tracking-wider text-right">نص إضافي (اختياري)</p>
+            <textarea name="notes_text" rows="2" dir="rtl" class="w-full rounded-2xl border border-[rgba(0,0,0,0.05)] bg-[#FBFBFD] p-4 text-[13px] font-medium outline-none focus:border-gradientPrimary focus:ring-1 focus:ring-gradientPrimary/20" placeholder="اكتب ملاحظة سريعة هنا..."></textarea>
+          </div>
+          
+          <button type="submit" class="flex h-12 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-[#990FFA] to-[#E60076] text-[15px] font-black text-white shadow-lg shadow-purple-500/20 hover:scale-[1.02] active:scale-[0.98] transition-transform">
+            حفظ الملاحظة
+          </button>
+        </form>
+      </div>
+    </div>
   </body>
 </html>

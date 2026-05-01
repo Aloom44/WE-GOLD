@@ -135,6 +135,7 @@ def members(request, line_id):
         'minutes_remaining': minutes_remaining,
         'minutes_used_percentage': minutes_used_percentage,
         'minutes_remaining_percentage': minutes_remaining_percentage,
+        'member_note_types': Member.NOTE_TYPE_CHOICES,
     }
 
     return render(request, 'dashboard/members.html', context)
@@ -259,6 +260,18 @@ def member_payment_status_toggle(request, line_id, member_id):
             member.status = Member.STATUS_UNPAID
         else:
             member.status = Member.STATUS_PAID
+        member.save()
+        
+    return redirect('members', line_id=line.id)
+
+
+def member_note_update(request, line_id, member_id):
+    line = get_object_or_404(PrimaryLine, id=line_id)
+    member = get_object_or_404(Member, id=member_id, line=line)
+    
+    if request.method == 'POST':
+        member.note_type = request.POST.get('note_type', member.note_type)
+        member.notes_text = request.POST.get('notes_text', '')
         member.save()
         
     return redirect('members', line_id=line.id)

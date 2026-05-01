@@ -161,6 +161,20 @@ class Member(models.Model):
 		(STATUS_UNPAID, 'غير مدفوع'),
 	]
 
+	NOTE_DELAYED = 'delayed'
+	NOTE_CASH = 'cash'
+	NOTE_FREE = 'free'
+	NOTE_RELATIVE = 'relative'
+	NOTE_CUSTOM = 'custom'
+
+	NOTE_TYPE_CHOICES = [
+		(NOTE_DELAYED, 'مؤجل'),
+		(NOTE_CASH, 'دفع كاش'),
+		(NOTE_FREE, 'مجاني'),
+		(NOTE_RELATIVE, 'قريب'),
+		(NOTE_CUSTOM, 'مخصص'),
+	]
+
 	line = models.ForeignKey(PrimaryLine, on_delete=models.CASCADE, related_name='members')
 	name = models.CharField(max_length=80)
 	phone = models.CharField(max_length=20)
@@ -168,7 +182,8 @@ class Member(models.Model):
 	minute_allocation = models.PositiveIntegerField(default=0)
 	monthly_cost = models.PositiveIntegerField(default=0)
 	status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_UNPAID)
-	notes = models.TextField(blank=True)
+	notes_text = models.TextField(blank=True)
+	note_type = models.CharField(max_length=20, choices=NOTE_TYPE_CHOICES, default=NOTE_CUSTOM, blank=True)
 
 	class Meta:
 		ordering = ['id']
