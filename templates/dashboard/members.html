@@ -256,20 +256,6 @@
             </div>
           </div>
 
-          <!-- SECTION 2.5: SMART NOTE -->
-          <div class="mb-4">
-            <button onclick="openNoteModal('{{ member.id }}', '{{ member.note_type }}', '{{ member.notes_text|escapejs }}')" class="flex w-full items-center gap-2 rounded-xl bg-[rgba(153,15,250,0.03)] px-3 py-2 text-[11px] font-bold text-[#6E6E73] transition hover:bg-[rgba(153,15,250,0.06)] hover:text-gradientPrimary">
-              <span class="text-[14px]">📝</span>
-              <span class="truncate">
-                {% if member.notes_text or member.note_type != 'custom' %}
-                  <span class="text-gradientPrimary">{{ member.get_note_type_display }}</span>{% if member.notes_text %}: {{ member.notes_text }}{% endif %}
-                {% else %}
-                  إضافة ملاحظة سريعة
-                {% endif %}
-              </span>
-            </button>
-          </div>
-
           <!-- SECTION 3: FINANCIAL STRIP -->
           <div class="mb-5 flex items-center justify-between rounded-2xl bg-gradient-to-r from-[rgba(153,15,250,0.02)] to-[rgba(230,0,118,0.02)] px-4 py-3 ring-1 ring-[rgba(153,15,250,0.05)]">
             <span class="text-[11px] font-bold text-[#6E6E73]">المبلغ المستحق</span>
@@ -297,10 +283,13 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <button title="سجل الدفع" class="flex h-10 w-10 items-center justify-center rounded-full bg-[#FBFBFD] text-[#6E6E73] hover:bg-white hover:text-gradientPrimary hover:shadow-md ring-1 ring-[rgba(0,0,0,0.03)] transition-all">
+              <button onclick="event.stopPropagation(); openNoteModal('{{ member.id }}', '{{ member.note_type }}', '{{ member.notes_text|escapejs }}')" title="الملاحظات" class="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#FBFBFD] text-[#6E6E73] hover:bg-white hover:text-gradientPrimary hover:shadow-md ring-1 ring-[rgba(0,0,0,0.03)] transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
+                {% if member.notes_text or member.note_type != 'custom' %}
+                <span class="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-gradientPrimary shadow-[0_0_8px_rgba(153,15,250,0.4)]"></span>
+                {% endif %}
               </button>
               <div class="relative">
                 <button onclick="event.stopPropagation(); togglePaymentMenu(this)" title="تغيير حالة الدفع" class="flex h-10 w-10 items-center justify-center rounded-full bg-[#FBFBFD] text-[#6E6E73] hover:bg-white hover:text-gradientPrimary hover:shadow-md ring-1 ring-[rgba(0,0,0,0.03)] transition-all">
