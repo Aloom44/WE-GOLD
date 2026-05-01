@@ -1,324 +1,83 @@
-# APPLE_DESIGN_SKILLS.md
-
-## 🍎 Apple Design System Master Skill File
-
-You are building and maintaining this product under a strict Apple-inspired design philosophy.
-
-This file defines the permanent visual, UX, UI, motion, spacing, and product standards that MUST be applied across ALL pages, components, layouts, dashboards, forms, cards, navigation, animations, and future features.
-
+---
+name: gradient
+description: Smooth color transitions and gradient-rich surfaces for modern, playful interfaces with visual depth.
+license: MIT
+metadata:
+  author: typeui.sh
 ---
 
-# 🎯 CORE PHILOSOPHY
-
-Design everything as if Apple designed this product.
-
-This means:
-
-* Minimal, never cluttered
-* Premium, never flashy
-* Elegant, never noisy
-* Functional, never overloaded
-* Emotion through simplicity
-* Precision through spacing
-* Luxury through restraint
-
-Every screen must feel:
-
-* Apple Wallet
-* Apple Settings
-* Apple Fitness
-* Apple Card
-* iOS system UI
-
-NOT:
-
-* Telecom dashboard
-* Admin panel
-* Spreadsheet
-* Generic SaaS template
-
----
-
-# 🎨 OFFICIAL COLOR SYSTEM
-
-## Light Mode Primary Palette
-
-* App Background: #F5F5F7
-* Secondary Background: #FBFBFD
-* Card Background: #FFFFFF
-* Elevated Surface: rgba(255,255,255,0.72)
-
-## Typography
-
-* Primary Text: #1D1D1F
-* Secondary Text: #6E6E73
-* Tertiary Text: #86868B
-
-## Accent
-
-* Apple Blue: #0071E3
-
-## Semantic Colors
-
-* Success: #34C759
-* Warning: #FF9F0A
-* Danger: #FF3B30
-
-## Borders / Dividers
-
-* Border Light: rgba(0,0,0,0.06)
-* Divider: rgba(60,60,67,0.12)
-
----
-
-# 🔤 TYPOGRAPHY SYSTEM
-
-## Preferred Fonts
-
-1. SF Pro Display
-2. SF Pro Text
-   Fallback:
-
-* Inter
-* Manrope
-
-## Typography Rules
-
-* Large Titles: 32–40px / Bold
-* Section Headers: 24–28px / Semibold
-* Card Titles: 18–22px / Semibold
-* Body: 15–17px / Regular
-* Caption: 12–14px / Medium
-
-## Rules:
-
-* Strong hierarchy
-* Generous line height
-* Never overuse bold
-* Use weight intentionally
-
----
-
-# 📐 SPACING SYSTEM
-
-Use an 8pt grid system.
-
-## Standard Spacing:
-
-* 4px micro
-* 8px tight
-* 16px standard
-* 24px comfortable
-* 32px premium
-* 48px hero
-
-## Rules:
-
-* More whitespace = more premium
-* Never crowd components
-* Padding should feel breathable
-
----
-
-# 🧱 CARD DESIGN RULES
-
-## Every card must:
-
-* Background: white or frosted glass
-* Border radius: 24–32px
-* Soft shadow only:
-
-  * box-shadow: 0 4px 20px rgba(0,0,0,0.06)
-* Thin border
-* Clean internal spacing
-* No visual overload
-
-## Cards should feel:
-
-* Touchable
-* Calm
-* Structured
-* Premium
-
----
-
-# ✨ GLASSMORPHISM (USE SPARINGLY)
-
-Allowed only when subtle:
-
-* backdrop-blur
-* soft transparency
-* layered depth
-
-Avoid:
-
-* Heavy blur
-* Neon glow
-* Over-stylization
-
----
-
-# 📱 NAVIGATION
-
-## Top Navigation:
-
-* Clean
-* Sticky or floating
-* Thin separators
-* Minimal icons
-* Large title when appropriate
-
-## Bottom Navigation (mobile):
-
-* iOS-inspired
-* Rounded container
-* Soft shadow
-* Clear active state
-
----
-
-# 🔘 BUTTON SYSTEM
-
-## Primary Button:
-
-* Apple Blue
-* White text
-* Rounded-xl to rounded-2xl
-* Smooth hover
-* Soft shadow
-
-## Secondary Button:
-
-* Light gray background
-* Dark text
-
-## Danger:
-
-* Red only when necessary
-
-## Rules:
-
-* Buttons should feel tactile
-* No aggressive gradients
-* No oversized icons
-
----
-
-# 📝 INPUTS / FORMS
-
-## Inputs:
-
-* Rounded-xl
-* Light gray background
-* Subtle focus ring (Apple Blue)
-* Large tap area
-* Clean placeholder text
-
-## Labels:
-
-* Minimal
-* Clear
-* Not oversized
-
----
-
-# 📊 DATA VISUALIZATION
-
-## Progress Bars:
-
-* Thin
-* Rounded full
-* Elegant
-* Minimal labels
-
-## Charts:
-
-* Clean
-* Sparse
-* Focused
-* No clutter
-
----
-
-# 🎬 MOTION DESIGN
-
-## Animation Style:
-
-* Smooth
-* Calm
-* Intentional
-* Physics-inspired
-
-## Preferred:
-
-* Fade
-* Scale
-* Slide
-* Blur-to-focus
-
-## Duration:
-
-* 200ms–500ms typical
-* Never abrupt
-
-## Avoid:
-
-* Bounce overload
-* Flashy transitions
-* Excessive motion
-
----
-
-# 🧠 UX RULES
-
-## Every screen must answer:
-
-1. What is this?
-2. What matters most?
-3. What action should I take?
-
-## UX Principles:
-
-* Reduce friction
-* Reduce noise
-* Reduce taps
-* Prioritize clarity
-* Focus attention
-
----
-
-# 🚫 STRICTLY FORBIDDEN
-
-Never use:
-
-* Loud telecom colors
-* Purple branding
-* Heavy gradients
-* Overloaded dashboards
-* Spreadsheet layouts
-* Dense tables
-* Tiny touch targets
-* Cheap shadows
-* Generic admin styling
-
----
-
-# 💎 PRODUCT STANDARD
-
-This app must feel:
-
-* Investor-ready
-* App Store quality
-* Premium SaaS
-* Apple-crafted
-
----
-
-# 🔥 FINAL RULE
-
-When designing ANYTHING, ask:
-
-“Would Apple ship this?”
-
-If no:
-Refine until yes.
+<!-- TYPEUI_SH_MANAGED_START -->
+# Gradient Design System Skill (Universal)
+
+## Mission
+You are an expert design-system guideline author for Gradient.
+Create practical, implementation-ready guidance that can be directly used by engineers and designers.
+
+## Brand
+Gradient design style
+
+## Style Foundations
+- Visual style: modern, playful
+- Typography scale: 12/14/16/18/24/30/36 | Fonts: primary=Montserrat, display=Space Grotesk, mono=JetBrains Mono | weights=100, 200, 300, 400, 500, 600, 700, 800, 900
+- Color palette: primary, secondary, neutral, success, warning, danger | Tokens: primary=#990FFA, secondary=#E60076, success=#16A34A, warning=#D97706, danger=#DC2626, surface=#FFFFFF, text=#111827
+- Spacing scale: 8pt baseline grid
+
+
+## Accessibility
+WCAG 2.2 AA, keyboard-first interactions, visible focus states, semantic HTML before ARIA, screen-reader tested labels, 44px+ touch targets
+
+## Writing Tone
+concise, confident, helpful
+
+## Rules: Do
+- prefer semantic tokens over raw values
+- preserve visual hierarchy
+- keep interaction states explicit
+
+## Rules: Don't
+- avoid low contrast text
+- avoid inconsistent spacing rhythm
+- avoid ambiguous labels
+
+## Expected Behavior
+- Follow the foundations first, then component consistency.
+- When uncertain, prioritize accessibility and clarity over novelty.
+- Provide concrete defaults and explain trade-offs when alternatives are possible.
+- Keep guidance opinionated, concise, and implementation-focused.
+
+## Guideline Authoring Workflow
+1. Restate the design intent in one sentence before proposing rules.
+2. Define tokens and foundational constraints before component-level guidance.
+3. Specify component anatomy, states, variants, and interaction behavior.
+4. Include accessibility acceptance criteria and content-writing expectations.
+5. Add anti-patterns and migration notes for existing inconsistent UI.
+6. End with a QA checklist that can be executed in code review.
+
+## Required Output Structure
+When generating design-system guidance, use this structure:
+- Context and goals
+- Design tokens and foundations
+- Component-level rules (anatomy, variants, states, responsive behavior)
+- Accessibility requirements and testable acceptance criteria
+- Content and tone standards with examples
+- Anti-patterns and prohibited implementations
+- QA checklist
+
+## Component Rule Expectations
+- Define required states: default, hover, focus-visible, active, disabled, loading, error (as relevant).
+- Describe interaction behavior for keyboard, pointer, and touch.
+- State spacing, typography, and color-token usage explicitly.
+- Include responsive behavior and edge cases (long labels, empty states, overflow).
+
+## Quality Gates
+- No rule should depend on ambiguous adjectives alone; anchor each rule to a token, threshold, or example.
+- Every accessibility statement must be testable in implementation.
+- Prefer system consistency over one-off local optimizations.
+- Flag conflicts between aesthetics and accessibility, then prioritize accessibility.
+
+## Example Constraint Language
+- Use "must" for non-negotiable rules and "should" for recommendations.
+- Pair every do-rule with at least one concrete don't-example.
+- If introducing a new pattern, include migration guidance for existing components.
+
+<!-- TYPEUI_SH_MANAGED_END -->
