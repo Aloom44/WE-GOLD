@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from .forms import AccountingEntryForm, MemberForm, PrimaryLineForm, PrimaryLineRenewForm
-from .models import AccountingEntry, Member, PrimaryLine
+from .models import AccountingEntry, Member, MemberNote, PrimaryLine
 
 
 def _ratio(part, whole):
