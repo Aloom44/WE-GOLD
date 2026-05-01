@@ -292,45 +292,6 @@
                   {{ member.notes.count }}
                 </span>
                 {% endif %}
-                
-                <!-- Hidden Notes Data for JS -->
-                <div id="notes-data-{{ member.id }}" class="hidden">
-                  {% for note in member.notes.all %}
-                  <div class="group relative mb-3 overflow-hidden rounded-2xl bg-[#FBFBFD] p-4 ring-1 ring-[rgba(0,0,0,0.03)] transition-all hover:bg-white hover:shadow-md hover:ring-gradientPrimary/20">
-                    <div class="flex items-start justify-between gap-4">
-                      <!-- Delete Action -->
-                      <form method="post" action="{% url 'member_note_delete' active_line.id note.id %}" class="flex-shrink-0">
-                        {% csrf_token %}
-                        <button type="submit" title="حذف الملاحظة" class="flex h-9 w-9 items-center justify-center rounded-full bg-rose-50 text-rose-500 transition-all hover:bg-rose-500 hover:text-white active:scale-90">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </form>
-
-                      <!-- Content -->
-                      <div class="flex-1 text-right">
-                        <div class="mb-2 flex items-center justify-end gap-2">
-                          <span class="text-[10px] font-bold text-[#86868B]">{{ note.created_at|date:"Y/m/d" }}</span>
-                          <span class="rounded-lg bg-gradientPrimary/5 px-2 py-0.5 text-[9px] font-black text-gradientPrimary ring-1 ring-gradientPrimary/10">
-                            {{ note.get_note_type_display }}
-                          </span>
-                        </div>
-                        <p class="text-[13px] font-medium leading-relaxed text-[#1D1D1F]">{{ note.text }}</p>
-                      </div>
-                    </div>
-                  </div>
-                  {% empty %}
-                  <div class="py-12 text-center">
-                    <div class="mb-3 flex justify-center text-[#E5E5E5]">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
-                    <p class="text-[12px] font-bold text-[#86868B]">لا توجد ملاحظات لهذا العضو بعد</p>
-                  </div>
-                  {% endfor %}
-                </div>
               </button>
               <div class="relative">
                 <button onclick="event.stopPropagation(); togglePaymentMenu(this)" title="تغيير حالة الدفع" class="flex h-10 w-10 items-center justify-center rounded-full bg-[#FBFBFD] text-[#6E6E73] hover:bg-white hover:text-gradientPrimary hover:shadow-md ring-1 ring-[rgba(0,0,0,0.03)] transition-all">
@@ -364,6 +325,43 @@
                 </svg>
               </a>
             </div>
+          </div>
+
+          <!-- Hidden Notes Data for JS (Moved outside actions to prevent layout breakage) -->
+          <div id="notes-data-{{ member.id }}" class="hidden" aria-hidden="true">
+            {% for note in member.notes.all %}
+            <div class="group relative mb-3 overflow-hidden rounded-2xl bg-[#FBFBFD] p-4 ring-1 ring-[rgba(0,0,0,0.03)] transition-all hover:bg-white hover:shadow-md hover:ring-gradientPrimary/20">
+              <div class="flex items-start justify-between gap-4">
+                <form method="post" action="{% url 'member_note_delete' active_line.id note.id %}" class="flex-shrink-0">
+                  {% csrf_token %}
+                  <button type="submit" title="حذف الملاحظة" class="flex h-9 w-9 items-center justify-center rounded-full bg-rose-50 text-rose-500 transition-all hover:bg-rose-500 hover:text-white active:scale-90">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </form>
+
+                <div class="flex-1 text-right">
+                  <div class="mb-2 flex items-center justify-end gap-2">
+                    <span class="text-[10px] font-bold text-[#86868B]">{{ note.created_at|date:"Y/m/d" }}</span>
+                    <span class="rounded-lg bg-gradientPrimary/5 px-2 py-0.5 text-[9px] font-black text-gradientPrimary ring-1 ring-gradientPrimary/10">
+                      {{ note.get_note_type_display }}
+                    </span>
+                  </div>
+                  <p class="text-[13px] font-medium leading-relaxed text-[#1D1D1F]">{{ note.text }}</p>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="py-12 text-center">
+              <div class="mb-3 flex justify-center text-[#E5E5E5]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <p class="text-[12px] font-bold text-[#86868B]">لا توجد ملاحظات لهذا العضو بعد</p>
+            </div>
+            {% endfor %}
           </div>
         </article>
         {% empty %}
