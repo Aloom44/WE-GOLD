@@ -265,13 +265,27 @@ def member_payment_status_toggle(request, line_id, member_id):
     return redirect('members', line_id=line.id)
 
 
-def member_note_update(request, line_id, member_id):
+def member_note_add(request, line_id, member_id):
     line = get_object_or_404(PrimaryLine, id=line_id)
     member = get_object_or_404(Member, id=member_id, line=line)
     
     if request.method == 'POST':
-        member.note_type = request.POST.get('note_type', member.note_type)
-        member.notes_text = request.POST.get('notes_text', '')
-        member.save()
+        note_type = request.POST.get('note_type', Member.NOTE_CUSTOM)
+        notes_text = request.POST.get('notes_text', '').strip()
+        
+        if notes_text or note_type != Member.NOTE_CUSTOM:
+            MemberNote.objects.create(
+                member=member,
+                note_type=note_type,
+                text=notes_text
+            )
         
     return redirect('members', line_id=line.id)
+
+
+def member_note_delete(request, line_id, note_id):
+    note = get_object_or_404(MemberNote, id=note_id, member__line_id=line_id)
+    if request.method == 'POST':
+        note.delete()
+        
+    return redirect('members', line_id=line_id)
