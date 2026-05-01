@@ -196,12 +196,12 @@
           <div class="mb-5 flex items-start justify-between gap-4">
             <!-- Left: Payment Status (Clickable) -->
             <div class="flex-shrink-0 relative">
-              <button onclick="event.stopPropagation(); togglePaymentMenu('{{ member.id }}', this)" class="flex h-7 items-center rounded-full {% if member.status == 'paid' %}bg-emerald-50 text-emerald-600 ring-emerald-100{% else %}bg-rose-50 text-rose-600 ring-rose-100{% endif %} px-3 text-[11px] font-black ring-1 transition-all hover:shadow-md">
+              <button onclick="event.stopPropagation(); togglePaymentMenu(this)" class="flex h-7 items-center rounded-full {% if member.status == 'paid' %}bg-emerald-50 text-emerald-600 ring-emerald-100{% else %}bg-rose-50 text-rose-600 ring-rose-100{% endif %} px-3 text-[11px] font-black ring-1 transition-all hover:shadow-md">
                 {{ member.get_status_display }}
               </button>
               
               <!-- Quick Action Menu for Payment -->
-              <div id="payment-menu-{{ member.id }}" class="js-payment-menu absolute left-1/2 top-1/2 z-50 hidden min-w-[160px] -translate-x-1/2 -translate-y-1/2 origin-center rounded-2xl border border-[rgba(255,255,255,0.1)] bg-white/95 p-1.5 shadow-2xl backdrop-blur-2xl ring-1 ring-black/5 transition-all animate-in fade-in zoom-in-95 duration-200">
+              <div class="js-payment-menu absolute left-1/2 top-1/2 z-50 hidden min-w-[160px] -translate-x-1/2 -translate-y-1/2 origin-center rounded-2xl border border-[rgba(255,255,255,0.1)] bg-white/95 p-1.5 shadow-2xl backdrop-blur-2xl ring-1 ring-black/5 transition-all animate-in fade-in zoom-in-95 duration-200">
                 <div class="px-3 py-2 border-b border-[rgba(0,0,0,0.05)] mb-1">
                   <p class="text-[10px] font-black text-[#86868B] uppercase tracking-wider">حالة الدفع</p>
                 </div>
@@ -288,11 +288,32 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </button>
-              <button onclick="event.stopPropagation(); togglePaymentMenu('{{ member.id }}', this)" title="تغيير حالة الدفع" class="flex h-10 w-10 items-center justify-center rounded-full bg-[#FBFBFD] text-[#6E6E73] hover:bg-white hover:text-gradientPrimary hover:shadow-md ring-1 ring-[rgba(0,0,0,0.03)] transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                </svg>
-              </button>
+              <div class="relative">
+                <button onclick="event.stopPropagation(); togglePaymentMenu(this)" title="تغيير حالة الدفع" class="flex h-10 w-10 items-center justify-center rounded-full bg-[#FBFBFD] text-[#6E6E73] hover:bg-white hover:text-gradientPrimary hover:shadow-md ring-1 ring-[rgba(0,0,0,0.03)] transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                </button>
+                
+                <!-- Quick Action Menu for Payment (Bottom) -->
+                <div class="js-payment-menu absolute left-1/2 top-1/2 z-50 hidden min-w-[160px] -translate-x-1/2 -translate-y-1/2 origin-center rounded-2xl border border-[rgba(255,255,255,0.1)] bg-white/95 p-1.5 shadow-2xl backdrop-blur-2xl ring-1 ring-black/5 transition-all animate-in fade-in zoom-in-95 duration-200">
+                  <div class="px-3 py-2 border-b border-[rgba(0,0,0,0.05)] mb-1">
+                    <p class="text-[10px] font-black text-[#86868B] uppercase tracking-wider">حالة الدفع</p>
+                  </div>
+                  <form method="post" action="{% url 'member_payment_status_toggle' active_line.id member.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="flex w-full items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-right text-[11px] font-bold text-[#111827] hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
+                      <span class="flex h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span> تعيين كمدفوع
+                    </button>
+                  </form>
+                  <form method="post" action="{% url 'member_payment_status_toggle' active_line.id member.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="flex w-full items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-right text-[11px] font-bold text-[#111827] hover:bg-rose-50 hover:text-rose-600 transition-colors mt-1">
+                      <span class="flex h-2.5 w-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]"></span> تعيين كغير مدفوع
+                    </button>
+                  </form>
+                </div>
+              </div>
               <a href="{% url 'member_update' active_line.id member.id %}" title="تعديل" class="flex h-10 w-10 items-center justify-center rounded-full bg-[#FBFBFD] text-gradientPrimary hover:bg-gradient-to-br hover:from-[#990FFA] hover:to-[#E60076] hover:text-white hover:shadow-lg hover:shadow-purple-500/20 ring-1 ring-[rgba(153,15,250,0.1)] transition-all active:scale-95">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -342,30 +363,16 @@
         };
 
         // --- Utility: Toggle Payment Menu ---
-        window.togglePaymentMenu = function (memberId, btn) {
-          const menu = document.getElementById(`payment-menu-${memberId}`);
-          if (!menu) return;
+        window.togglePaymentMenu = function (btn) {
+          const menu = btn.nextElementSibling;
+          if (!menu || !menu.classList.contains('js-payment-menu')) return;
           
           // Close others
           document.querySelectorAll('.js-payment-menu').forEach(m => {
             if (m !== menu) m.classList.add('hidden');
           });
 
-          // If this button is NOT the one inside the relative container (the top badge),
-          // we need to move the menu to the top badge container or handle it differently.
-          // For now, the menu is only inside the top badge container. 
-          // If we click the bottom button, we should show the top menu.
-          
-          const isHidden = menu.classList.contains('hidden');
           menu.classList.toggle('hidden');
-
-          if (!isHidden) return;
-
-          // If triggered from the bottom button, we might want to scroll to the top of the card
-          const card = btn.closest('article');
-          if (btn.title === "تغيير حالة الدفع" && card) {
-            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
         };
 
         // Close menus when clicking outside
