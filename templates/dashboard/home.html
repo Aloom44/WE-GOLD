@@ -43,6 +43,7 @@
       }
       .gradient-text {
         background: linear-gradient(135deg, #990FFA 0%, #E60076 100%);
+        background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
@@ -243,14 +244,14 @@
                 <p class="text-2xl font-black tracking-tighter text-gradientText font-display"><span class="num">{{ line.remaining_data }}</span></p>
                 <p class="mt-1 text-[10px] font-black uppercase tracking-widest text-[#86868B]">GB</p>
                 <div class="mt-3 w-full h-1.5 overflow-hidden rounded-full bg-[#F5F5F7]">
-                  <div class="h-full bg-gradient-to-r from-[#990FFA] to-[#E60076] transition-all duration-700" style="width: {{ data_remaining_pct }}%"></div>
+                  <div class="js-progress-fill h-full bg-gradient-to-r from-[#990FFA] to-[#E60076] transition-all duration-700" data-progress="{{ data_remaining_pct }}"></div>
                 </div>
               </div>
               <div class="flex flex-col items-center">
                 <p class="text-2xl font-black tracking-tighter text-gradientText font-display"><span class="num">{{ line.remaining_minutes }}</span></p>
                 <p class="mt-1 text-[10px] font-black uppercase tracking-widest text-[#86868B]">MIN</p>
                 <div class="mt-3 w-full h-1.5 overflow-hidden rounded-full bg-[#F5F5F7]">
-                  <div class="h-full bg-gradient-to-r from-[#990FFA] to-[#E60076] transition-all duration-700" style="width: {{ minutes_remaining_pct }}%"></div>
+                  <div class="js-progress-fill h-full bg-gradient-to-r from-[#990FFA] to-[#E60076] transition-all duration-700" data-progress="{{ minutes_remaining_pct }}"></div>
                 </div>
               </div>
             </div>
@@ -363,6 +364,11 @@
               copyToast.classList.remove('opacity-100', 'translate-y-0');
             }, 2000);
           });
+        });
+
+        document.querySelectorAll('.js-progress-fill').forEach((fill) => {
+          const value = Math.max(0, Math.min(100, Number(fill.dataset.progress || 0)));
+          fill.style.width = `${value}%`;
         });
 
         // Menus and Clicks
