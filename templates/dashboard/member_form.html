@@ -32,15 +32,40 @@
         opacity: 0.95;
         transform: translateY(-1px);
       }
-      .input-premium {
+      .input-group-premium {
         background: #FBFBFD;
         border: 1px solid rgba(0, 0, 0, 0.05);
         transition: all 0.15s ease;
+        overflow: hidden;
       }
-      .input-premium:focus {
+      .input-group-premium:focus-within {
         background: white;
         border-color: #990FFA;
         box-shadow: 0 0 0 3px rgba(153, 15, 250, 0.06);
+      }
+      .input-field-premium {
+        background: transparent;
+        border: none;
+        outline: none;
+        width: 100%;
+        height: 44px;
+        padding: 0 16px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #1D1D1F;
+        text-align: right;
+      }
+      .unit-label {
+        background: rgba(0, 0, 0, 0.03);
+        border-right: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        font-size: 10px;
+        font-weight: 900;
+        color: #86868B;
+        font-family: 'Outfit', sans-serif;
       }
       .num { font-family: 'Outfit', sans-serif; }
     </style>
@@ -80,26 +105,30 @@
 
           <!-- ALLOCATION ROW -->
           <div class="grid grid-cols-2 gap-4">
-            <div class="space-y-1.5 relative">
+            <div class="space-y-1.5">
               <label class="block text-[10px] font-black text-[#86868B] uppercase tracking-wider pr-1">الجيجات</label>
-              {{ form.data_allocation }}
-              <span class="absolute left-3 top-[34px] text-[9px] font-black text-[#86868B] opacity-40">GB</span>
+              <div class="flex flex-row-reverse rounded-xl input-group-premium">
+                <div class="unit-label">GB</div>
+                {{ form.data_allocation }}
+              </div>
               {% if form.data_allocation.errors %}<p class="text-[10px] font-bold text-rose-500">{{ form.data_allocation.errors|striptags }}</p>{% endif %}
             </div>
-            <div class="space-y-1.5 relative">
+            <div class="space-y-1.5">
               <label class="block text-[10px] font-black text-[#86868B] uppercase tracking-wider pr-1">الدقائق</label>
-              {{ form.minute_allocation }}
-              <span class="absolute left-3 top-[34px] text-[9px] font-black text-[#86868B] opacity-40">MIN</span>
+              <div class="flex flex-row-reverse rounded-xl input-group-premium">
+                <div class="unit-label">MIN</div>
+                {{ form.minute_allocation }}
+              </div>
               {% if form.minute_allocation.errors %}<p class="text-[10px] font-bold text-rose-500">{{ form.minute_allocation.errors|striptags }}</p>{% endif %}
             </div>
           </div>
 
           <!-- FINANCIAL -->
-          <div class="space-y-1.5 relative pt-1">
+          <div class="space-y-1.5 pt-1">
             <label class="block text-[10px] font-black text-[#86868B] uppercase tracking-wider pr-1">المبلغ المستحق</label>
-            <div class="relative">
+            <div class="flex flex-row-reverse rounded-xl input-group-premium max-w-sm">
+              <div class="unit-label">EGP</div>
               {{ form.monthly_cost }}
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-[#86868B] opacity-40">EGP</span>
             </div>
             {% if form.monthly_cost.errors %}<p class="text-[10px] font-bold text-rose-500">{{ form.monthly_cost.errors|striptags }}</p>{% endif %}
           </div>
@@ -125,9 +154,12 @@
 
     <script>
       const inputs = document.querySelectorAll('input, select');
-      const baseClasses = 'w-full h-11 px-4 rounded-xl input-premium text-[13px] font-bold text-[#1D1D1F] outline-none num';
       inputs.forEach(input => {
-        input.className = baseClasses;
+        if (input.name === 'name' || input.name === 'phone') {
+          input.className = 'w-full h-11 px-4 rounded-xl input-group-premium text-[13px] font-bold text-[#1D1D1F] outline-none num';
+        } else {
+          input.className = 'input-field-premium num';
+        }
       });
     </script>
   </body>
