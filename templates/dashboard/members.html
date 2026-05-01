@@ -9,12 +9,12 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="{% static 'dashboard/style.css' %}" />
   </head>
-  <body class="min-h-screen bg-[#F8F5FA] text-slate-900 antialiased flex flex-col">
+  <body class="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] antialiased flex flex-col">
     <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
-      <section class="mb-5 rounded-[1.75rem] border border-[#9C27B0]/20 bg-gradient-to-r from-[#5B1687] via-[#6A1B9A] to-[#7B1FA2] px-4 py-2 text-white shadow-lg shadow-purple-300/25 sm:px-5">
+      <section class="mb-5 rounded-[1.5rem] border border-[rgba(0,0,0,0.06)] bg-[#FBFBFD] px-4 py-3 text-[#1D1D1F] shadow-[0_4px_20px_rgba(0,0,0,0.06)] sm:px-5">
         <div class="flex flex-wrap items-center justify-between gap-3 text-right">
           <img src="{% static 'dashboard/logo.png' %}" alt="WE Gold" class="h-16 w-16 sm:h-20 sm:w-20" />
-          <a href="{% url 'home' %}" class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/18 text-white ring-1 ring-white/30 shadow-sm shadow-black/10 transition hover:bg-white/25" aria-label="الرجوع للرئيسية" title="الرجوع للرئيسية">
+          <a href="{% url 'home' %}" class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#1D1D1F] ring-1 ring-[rgba(0,0,0,0.06)] shadow-sm transition hover:bg-[#FBFBFD]" aria-label="الرجوع للرئيسية" title="الرجوع للرئيسية">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0ZM4.5 20.118a7.5 7.5 0 0115 0A17.933 17.933 0 0112 21.75a17.933 17.933 0 01-7.5-1.632Z" />
             </svg>
@@ -23,7 +23,7 @@
       </section>
 
       <nav class="mb-4 flex items-center gap-2 text-right text-sm" dir="rtl">
-        <a href="{% url 'home' %}" class="flex items-center gap-1 font-semibold text-[#6A1B9A] transition hover:underline">
+        <a href="{% url 'home' %}" class="flex items-center gap-1 font-semibold text-[#0071E3] transition hover:underline">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M12 12.75h.008v.008H12v-.008Z" />
           </svg>
@@ -33,57 +33,52 @@
         <span class="font-semibold text-slate-700">الأفراد</span>
       </nav>
 
-      <header class="mb-5 overflow-hidden rounded-[1.25rem] border border-white/70 bg-gradient-to-r from-[#6A1B9A] via-[#7B1FA2] to-[#9C27B0] text-white shadow-lg shadow-purple-300/25">
-        <div class="relative px-3 py-3 text-right sm:px-4 sm:py-4">
-          <div class="pointer-events-none absolute inset-0 opacity-30">
-            <div class="absolute -left-16 top-0 h-44 w-44 rounded-full bg-white/20 blur-3xl"></div>
-            <div class="absolute right-0 top-10 h-56 w-56 rounded-full bg-fuchsia-200/20 blur-3xl"></div>
-          </div>
-
+      <header class="mb-5 overflow-hidden rounded-[1.5rem] border border-[rgba(0,0,0,0.06)] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+        <div class="relative px-3 py-4 text-right sm:px-4 sm:py-5">
           <div class="relative grid gap-4 xl:grid-cols-[1.2fr_0.9fr] xl:items-center">
             <div class="space-y-2">
-              <h1 class="text-2xl font-black tracking-tight sm:text-3xl">الأفراد</h1>
-              <p class="max-w-xl text-[11px] leading-5 text-white/85 sm:text-xs">
+              <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">الأفراد</h1>
+              <p class="max-w-xl text-[12px] leading-6 text-[#6E6E73] sm:text-sm">
                 تفاصيل الأعضاء المرتبطين بالخط الأساسي المحدد مع عرض الاستهلاك والاشتراك بشكل منظم.
               </p>
-              <div class="inline-flex flex-wrap items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-[11px] font-medium text-white/85 ring-1 ring-white/10">
-                <span class="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-white/75">الخط المختار</span>
-                <span class="num text-sm font-black text-white"><span class="num">{{ active_line.phone }}</span></span>
-                <span class="text-white/55">•</span>
+              <div class="inline-flex flex-wrap items-center gap-2 rounded-xl bg-[#FBFBFD] px-3 py-2 text-[11px] font-medium text-[#6E6E73] ring-1 ring-[rgba(0,0,0,0.06)]">
+                <span class="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-[#1D1D1F] ring-1 ring-[rgba(0,0,0,0.06)]">الخط المختار</span>
+                <span class="num text-sm font-semibold text-[#1D1D1F]"><span class="num">{{ active_line.phone }}</span></span>
+                <span class="text-[#86868B]">•</span>
                 <span>{{ active_line.plan }}</span>
-                <span class="text-white/55">•</span>
+                <span class="text-[#86868B]">•</span>
                 <span><span class="num">{{ active_line.display_renewal_day }}</span></span>
               </div>
             </div>
 
-            <article class="overflow-hidden rounded-2xl border border-white/15 bg-white/10 p-3 text-right backdrop-blur-sm">
+            <article class="overflow-hidden rounded-2xl border border-[rgba(0,0,0,0.06)] bg-[#FBFBFD] p-4 text-right shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
               <div class="flex items-start justify-between gap-3">
                 <div>
-                  <p class="text-[10px] font-semibold text-white/70">Chart الاستهلاك</p>
-                  <p class="mt-1 text-xs leading-5 text-white/80">تحليل بصري مزدوج للجيجات والدقائق</p>
+                  <p class="text-[10px] font-semibold text-[#6E6E73]">Chart الاستهلاك</p>
+                  <p class="mt-1 text-xs leading-5 text-[#86868B]">تحليل بصري مزدوج للجيجات والدقائق</p>
                 </div>
-                <span class="rounded-full bg-white/10 px-2 py-1 text-[10px] font-bold text-white/80 ring-1 ring-white/10">Live</span>
+                <span class="rounded-full bg-white px-2 py-1 text-[10px] font-semibold text-[#6E6E73] ring-1 ring-[rgba(0,0,0,0.06)]">Live</span>
               </div>
 
               <div class="mt-3 flex items-center gap-2.5">
                 <div class="grid min-w-0 flex-1 gap-2">
                   <p class="text-[10px] font-semibold text-white/70">إجمالي الباقة</p>
                   <div class="grid grid-cols-2 gap-2 text-[10px]">
-                    <button type="button" class="summary-toggle rounded-xl bg-violet-500/25 px-2 py-2 text-right ring-1 ring-violet-400/50" data-metric="data" data-label="المتبقي من الجيجات" data-percent="{{ data_remaining_percentage }}">
-                      <p class="text-white/70">إجمالي الجيجات</p>
-                      <p class="mt-0.5 text-sm font-black">GB <span class="num">{{ active_line.total_data }}</span></p>
+                    <button type="button" class="summary-toggle rounded-xl bg-white px-2 py-2 text-right ring-1 ring-[rgba(0,0,0,0.06)]" data-metric="data" data-label="المتبقي من الجيجات" data-percent="{{ data_remaining_percentage }}">
+                      <p class="text-[#6E6E73]">إجمالي الجيجات</p>
+                      <p class="mt-0.5 text-sm font-semibold text-[#1D1D1F]">GB <span class="num">{{ active_line.total_data }}</span></p>
                     </button>
-                    <button type="button" class="summary-toggle rounded-xl bg-violet-500/25 px-2 py-2 text-right ring-1 ring-violet-400/50" data-metric="minutes" data-label="المتبقي من الدقائق" data-percent="{{ minutes_remaining_percentage }}">
-                      <p class="text-white/70">إجمالي الدقائق</p>
-                      <p class="mt-0.5 text-sm font-black"><span class="text-xs font-bold">MIN</span> <span class="num">{{ active_line.total_minutes }}</span></p>
+                    <button type="button" class="summary-toggle rounded-xl bg-white px-2 py-2 text-right ring-1 ring-[rgba(0,0,0,0.06)]" data-metric="minutes" data-label="المتبقي من الدقائق" data-percent="{{ minutes_remaining_percentage }}">
+                      <p class="text-[#6E6E73]">إجمالي الدقائق</p>
+                      <p class="mt-0.5 text-sm font-semibold text-[#1D1D1F]"><span class="text-xs font-semibold">MIN</span> <span class="num">{{ active_line.total_minutes }}</span></p>
                     </button>
-                    <button type="button" class="summary-toggle is-active rounded-xl bg-violet-500/25 px-2 py-2 text-right ring-1 ring-violet-400/50" data-metric="data" data-label="المتبقي من الجيجات" data-percent="{{ data_remaining_percentage }}">
-                      <p class="text-white/70">المتبقي من الجيجات</p>
-                      <p class="mt-0.5 text-sm font-black">GB <span class="num">{{ active_line.remaining_data }}</span></p>
+                    <button type="button" class="summary-toggle is-active rounded-xl bg-white px-2 py-2 text-right ring-1 ring-[rgba(0,0,0,0.06)]" data-metric="data" data-label="المتبقي من الجيجات" data-percent="{{ data_remaining_percentage }}">
+                      <p class="text-[#6E6E73]">المتبقي من الجيجات</p>
+                      <p class="mt-0.5 text-sm font-semibold text-[#1D1D1F]">GB <span class="num">{{ active_line.remaining_data }}</span></p>
                     </button>
-                    <button type="button" class="summary-toggle is-active rounded-xl bg-violet-500/25 px-2 py-2 text-right ring-1 ring-violet-400/50" data-metric="minutes" data-label="المتبقي من الدقائق" data-percent="{{ minutes_remaining_percentage }}">
-                      <p class="text-white/70">المتبقي من الدقائق</p>
-                      <p class="mt-0.5 text-sm font-black"><span class="text-xs font-bold">MIN</span> <span class="num">{{ active_line.remaining_minutes }}</span></p>
+                    <button type="button" class="summary-toggle is-active rounded-xl bg-white px-2 py-2 text-right ring-1 ring-[rgba(0,0,0,0.06)]" data-metric="minutes" data-label="المتبقي من الدقائق" data-percent="{{ minutes_remaining_percentage }}">
+                      <p class="text-[#6E6E73]">المتبقي من الدقائق</p>
+                      <p class="mt-0.5 text-sm font-semibold text-[#1D1D1F]"><span class="text-xs font-semibold">MIN</span> <span class="num">{{ active_line.remaining_minutes }}</span></p>
                     </button>
                   </div>
                 </div>
@@ -98,9 +93,9 @@
                     <circle class="chart-progress chart-progress--minutes" id="minutesRing" cx="60" cy="60" r="40"/>
                   </svg>
                   <div class="chart-center">
-                    <span class="text-[9px] font-medium text-white/75">النسبة</span>
-                    <span class="text-base font-black leading-none sm:text-lg"><span class="num" id="chartPercent">{{ data_remaining_percentage }}</span>%</span>
-                    <span class="text-[9px] text-white/70" id="chartMetricLabel">المتبقي من الجيجات</span>
+                    <span class="text-[9px] font-medium text-[#6E6E73]">النسبة</span>
+                    <span class="text-base font-semibold leading-none sm:text-lg"><span class="num" id="chartPercent">{{ data_remaining_percentage }}</span>%</span>
+                    <span class="text-[9px] text-[#86868B]" id="chartMetricLabel">المتبقي من الجيجات</span>
                   </div>
                 </div>
               </div>
@@ -111,18 +106,18 @@
 
       <section class="mb-4 flex items-center justify-between text-right">
         <h2 class="text-xl font-black sm:text-2xl">بطاقات الأفراد</h2>
-        <a href="{% url 'member_create' active_line.id %}" class="rounded-full bg-[#6A1B9A] px-3 py-1.5 text-[11px] font-bold text-white shadow-sm shadow-purple-200/50 transition hover:bg-[#7B1FA2]">
+        <a href="{% url 'member_create' active_line.id %}" class="rounded-full bg-[#0071E3] px-3 py-1.5 text-[11px] font-semibold text-white shadow-[0_6px_16px_rgba(0,113,227,0.2)] transition hover:bg-[#005bb5]">
           + إضافة فرد
         </a>
       </section>
 
       <section class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3" id="membersContainer">
         {% for member in active_members %}
-        <article class="member-card card-enter flex h-full flex-col rounded-xl border border-white/70 bg-white p-3 text-right shadow-sm shadow-purple-200/20 transition hover:-translate-y-0.5 hover:shadow" data-member-phone="{{ member.phone }}">
+        <article class="member-card card-enter flex h-full flex-col rounded-2xl border border-[rgba(0,0,0,0.06)] bg-white p-4 text-right shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]" data-member-phone="{{ member.phone }}">
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0">
-              <h3 class="text-[13px] font-black leading-tight whitespace-nowrap"><span class="num">{{ member.name }}</span></h3>
-              <p class="mt-0.5 text-[10px] text-slate-500 whitespace-nowrap"><span class="num">{{ member.phone }}</span></p>
+              <h3 class="text-[14px] font-semibold leading-tight whitespace-nowrap"><span class="num">{{ member.name }}</span></h3>
+              <p class="mt-0.5 text-[11px] text-[#6E6E73] whitespace-nowrap"><span class="num">{{ member.phone }}</span></p>
             </div>
 
             {% if member.status == 'paid' %}
@@ -135,39 +130,39 @@
           </div>
 
           <div class="mt-2 grid grid-cols-2 gap-1 text-[10px]">
-            <div class="rounded-md bg-violet-50 p-1.5 ring-1 ring-violet-100">
-              <p class="text-[9px] font-semibold text-violet-600">📶 جيجات</p>
-              <p class="mt-0.5 font-black">GB <span class="num">{{ member.data_allocation }}</span></p>
+            <div class="rounded-xl bg-[#FBFBFD] p-2 ring-1 ring-[rgba(0,0,0,0.06)]">
+              <p class="text-[10px] font-semibold text-[#6E6E73]">📶 جيجات</p>
+              <p class="mt-0.5 font-semibold">GB <span class="num">{{ member.data_allocation }}</span></p>
             </div>
-            <div class="rounded-md bg-sky-50 p-1.5 ring-1 ring-sky-100">
-              <p class="text-[9px] font-semibold text-sky-600">📞 دقائق</p>
-              <p class="mt-0.5 font-black">MIN <span class="num">{{ member.minute_allocation }}</span></p>
+            <div class="rounded-xl bg-[#FBFBFD] p-2 ring-1 ring-[rgba(0,0,0,0.06)]">
+              <p class="text-[10px] font-semibold text-[#6E6E73]">📞 دقائق</p>
+              <p class="mt-0.5 font-semibold">MIN <span class="num">{{ member.minute_allocation }}</span></p>
             </div>
           </div>
 
-          <div class="mt-2 rounded-md bg-slate-50 p-1.5 ring-1 ring-slate-200">
-            <p class="text-[9px] text-slate-500">المبلغ</p>
-            <p class="text-[10px] font-black"><span class="num">{{ member.amount_paid }}</span> / <span class="num">{{ member.amount_due }}</span> EGP</p>
+          <div class="mt-2 rounded-xl bg-[#FBFBFD] p-2 ring-1 ring-[rgba(0,0,0,0.06)]">
+            <p class="text-[10px] text-[#6E6E73]">المبلغ</p>
+            <p class="text-[11px] font-semibold"><span class="num">{{ member.amount_paid }}</span> / <span class="num">{{ member.amount_due }}</span> EGP</p>
           </div>
 
           <div class="mt-2 flex items-center justify-end gap-1">
-            <a href="{% url 'member_update' active_line.id member.id %}" class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 ring-1 ring-amber-200">تعديل</a>
+            <a href="{% url 'member_update' active_line.id member.id %}" class="rounded-full border border-[rgba(0,0,0,0.06)] bg-white px-3 py-1 text-[10px] font-semibold text-[#1D1D1F] shadow-[0_4px_14px_rgba(0,0,0,0.05)]">تعديل</a>
             <form method="post" action="{% url 'member_delete' active_line.id member.id %}" class="js-delete-member-form" data-member-name="{{ member.name }}">
               {% csrf_token %}
-              <button type="submit" class="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700 ring-1 ring-rose-200">حذف</button>
+              <button type="submit" class="rounded-full border border-[rgba(255,59,48,0.2)] bg-[#FF3B30]/10 px-3 py-1 text-[10px] font-semibold text-[#FF3B30]">حذف</button>
             </form>
           </div>
         </article>
         {% empty %}
-        <article class="col-span-full rounded-2xl border border-dashed border-violet-200 bg-white/80 p-6 text-center text-slate-600">
+        <article class="col-span-full rounded-2xl border border-dashed border-[rgba(0,0,0,0.12)] bg-white p-6 text-center text-[#6E6E73]">
           <p class="text-sm font-semibold">لا يوجد أفراد على هذا الخط بعد</p>
           <p class="mt-1 text-xs">ابدأ بإضافة أول فرد من الزر بالأعلى.</p>
         </article>
         {% endfor %}
       </section>
 
-      <footer class="mt-8 rounded-2xl border border-white/70 bg-white/90 px-4 py-3 text-center text-[11px] text-slate-600 shadow-lg shadow-violet-200/40 backdrop-blur">
-        جميع الحقوق محفوظة © <a href="https://elekhwa.store/portfolio.html" target="_blank" rel="noopener noreferrer" class="font-black text-[#6A1B9A] transition hover:underline">A,Ala3m</a>
+      <footer class="mt-8 rounded-2xl border border-[rgba(0,0,0,0.06)] bg-white px-4 py-3 text-center text-[11px] text-[#6E6E73] shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+        جميع الحقوق محفوظة © <a href="https://elekhwa.store/portfolio.html" target="_blank" rel="noopener noreferrer" class="font-semibold text-[#0071E3] transition hover:underline">A,Ala3m</a>
       </footer>
     </main>
 
@@ -275,9 +270,9 @@
               cancelButtonText: 'إلغاء',
               reverseButtons: true,
               focusCancel: true,
-              background: '#F8F5FA',
-              color: '#312E81',
-              confirmButtonColor: '#6A1B9A',
+              background: '#FFFFFF',
+              color: '#1D1D1F',
+              confirmButtonColor: '#0071E3',
               cancelButtonColor: '#A3A3A3',
               customClass: {
                 popup: 'swal-rtl-popup',
@@ -317,8 +312,8 @@
         #membersContainer .member-card {
           padding: 1rem;
           border-radius: 1rem;
-          border-color: rgba(106, 27, 154, 0.22);
-          box-shadow: 0 10px 24px rgba(106, 27, 154, 0.14);
+          border-color: rgba(0, 0, 0, 0.08);
+          box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
         }
 
         #membersContainer .member-card h3 {
@@ -366,8 +361,8 @@
         #membersContainer .member-card {
           padding: 1.15rem;
           border-radius: 1.15rem;
-          border-color: rgba(106, 27, 154, 0.18);
-          box-shadow: 0 12px 28px rgba(106, 27, 154, 0.12);
+          border-color: rgba(0, 0, 0, 0.08);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
         }
 
         #membersContainer .member-card > div:first-child {
@@ -412,7 +407,7 @@
 
       .swal-rtl-popup {
         direction: rtl;
-        border: 1px solid rgba(106, 27, 154, 0.2);
+        border: 1px solid rgba(0, 0, 0, 0.08);
         border-radius: 1rem;
       }
 
@@ -423,8 +418,8 @@
       }
 
       .member-focus {
-        border-color: rgba(106, 27, 154, 0.55) !important;
-        box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.2), 0 10px 24px rgba(106, 27, 154, 0.22) !important;
+        border-color: rgba(0, 113, 227, 0.55) !important;
+        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2), 0 10px 24px rgba(0, 0, 0, 0.2) !important;
       }
     </style>
   </body>

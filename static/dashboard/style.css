@@ -1,18 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  --primary: #6a1b9a;
-  --secondary: #9c27b0;
+  --apple-blue: #0071e3;
+  --apple-text: #1d1d1f;
+  --apple-muted: #6e6e73;
+  --apple-bg: #f5f5f7;
+  --apple-surface: #fbfbfd;
+  --apple-border: rgba(0, 0, 0, 0.06);
+  --apple-divider: rgba(60, 60, 67, 0.12);
 }
 
 * {
-  font-family: 'Alexandria', sans-serif;
+  font-family: 'SF Pro Text', 'SF Pro Display', Inter, Manrope, sans-serif;
 }
 
 body {
-  background:
-    radial-gradient(circle at top, rgba(156, 39, 176, 0.12), transparent 28%),
-    linear-gradient(180deg, #f8f5fa 0%, #f3edf7 100%);
+  background: var(--apple-bg);
+  color: var(--apple-text);
 }
 
 .card-enter {
@@ -28,7 +32,7 @@ body {
     radial-gradient(circle at center, rgba(255, 255, 255, 0.08) 0 55%, transparent 56%),
     conic-gradient(from 0deg, var(--ring-color) calc(var(--value) * 1%), rgba(255, 255, 255, 0.12) 0);
   padding: 8px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 12px 24px rgba(76, 29, 149, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 10px 20px rgba(0, 0, 0, 0.06);
   animation: ring-pop 0.9s ease both;
 }
 
@@ -67,13 +71,13 @@ body {
 
 .chart-track {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.16);
+  stroke: var(--apple-divider);
   stroke-width: 12;
 }
 
 .chart-track--soft {
   stroke-width: 10;
-  stroke: rgba(255, 255, 255, 0.12);
+  stroke: rgba(60, 60, 67, 0.16);
 }
 
 .chart-progress {
@@ -87,14 +91,14 @@ body {
 }
 
 .chart-progress--data {
-  stroke: #ffffff;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.22));
+  stroke: var(--apple-blue);
+  filter: drop-shadow(0 0 8px rgba(0, 113, 227, 0.2));
 }
 
 .chart-progress--minutes {
-  stroke: #9be7ff;
+  stroke: #34c759;
   stroke-width: 10;
-  filter: drop-shadow(0 0 8px rgba(155, 231, 255, 0.22));
+  filter: drop-shadow(0 0 6px rgba(52, 199, 89, 0.18));
 }
 
 .chart-stack[data-mode='data'] .chart-progress--data {
@@ -124,9 +128,9 @@ body {
   height: 96px;
   transform: translate(-50%, -50%);
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 10px 22px rgba(15, 23, 42, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06), 0 10px 22px rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
@@ -140,13 +144,13 @@ body {
 }
 
 .summary-toggle.is-active {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  background: #ffffff;
+  border-color: var(--apple-divider);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
 }
 
 .summary-toggle:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.92);
 }
 
 @media (min-width: 640px) {
@@ -174,9 +178,7 @@ body {
   }
 
   body {
-    background:
-      radial-gradient(circle at top, rgba(156, 39, 176, 0.1), transparent 24%),
-      linear-gradient(180deg, #f8f5fa 0%, #f4eef8 100%);
+    background: var(--apple-bg);
   }
 
   main {
