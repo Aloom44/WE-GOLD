@@ -166,8 +166,8 @@
       const dataField = document.getElementById('id_carryover_data');
       const minutesField = document.getElementById('id_carryover_minutes');
       const preview = document.getElementById('renewPreviewData');
-      const baseData = {{ line.total_data|default:0 }};
-      const baseMinutes = {{ line.total_minutes|default:0 }};
+      const baseData = Number("{{ line.total_data|default:'0' }}");
+      const baseMinutes = Number("{{ line.total_minutes|default:'0' }}");
 
       const updatePreview = () => {
         if (!dataField || !minutesField || !preview) return;

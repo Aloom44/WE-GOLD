@@ -4,315 +4,318 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ page_title }} - باقات WE Gold</title>
+    <title>المحاسبة المالية - WE Gold</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'dashboard/style.css' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
       :root {
-        --app-radius: 1.5rem;
-        --app-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
-        --app-shadow-deep: 0 12px 34px rgba(0, 0, 0, 0.08);
-        --app-border: 1px solid rgba(0, 0, 0, 0.05);
-        --color-profit: #34C759;
-        --color-loss: #FF3B30;
-        --color-neutral: #86868B;
+        --gradient-primary: linear-gradient(135deg, #990FFA 0%, #E60076 100%);
+        --success: #16A34A;
+        --danger: #DC2626;
+        --glass-bg: #FFFFFF;
+        --glass-border: rgba(0, 0, 0, 0.06);
       }
-
-      .app-control {
-        border-radius: var(--app-radius);
-        border: var(--app-border);
-        box-shadow: var(--app-shadow);
-        transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+      body {
+        font-family: 'Inter', sans-serif;
+        background: #F8F9FB;
+        color: #111827;
       }
-
-      .num { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-
-      .hero-centerpiece {
-        padding: 3.5rem 2rem;
-        background: #ffffff;
+      .font-display { font-family: 'Outfit', sans-serif; }
+      .app-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
       }
-
-      .status-pill {
-        padding: 0.5rem 1.5rem;
-        border-radius: 999px;
-        font-size: 14px;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
+      .btn-gradient {
+        background: var(--gradient-primary);
+        transition: all 0.2s ease;
       }
-
-      .metric-card {
-        padding: 1.5rem;
-        border-radius: var(--app-radius);
-        border: var(--app-border);
-        box-shadow: var(--app-shadow);
-        background: #ffffff;
+      .btn-gradient:hover { opacity: 0.95; transform: translateY(-1px); }
+      .num { font-family: 'Outfit', sans-serif; }
+      
+      .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
       }
-
-      .action-btn-rail {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
+      
+      /* Context Menu */
+      .action-menu {
+        position: absolute;
+        bottom: 110%;
+        left: 0;
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 0.35rem;
+        display: none;
+        z-index: 50;
+        min-width: 140px;
+        transform-origin: bottom left;
+        backdrop-filter: blur(15px);
       }
-
-      .action-btn {
-        height: 3.75rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.75rem;
-        font-size: 15px;
-        font-weight: 700;
-        border-radius: var(--app-radius);
-        transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      .action-menu.is-visible { display: block; animation: menu-pop 0.2s ease-out; }
+      @keyframes menu-pop {
+        from { opacity: 0; transform: scale(0.95) translateY(5px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
       }
-
-      .action-btn--primary {
-        background: #0071E3;
-        color: #ffffff;
-        box-shadow: 0 8px 20px rgba(0, 113, 227, 0.15);
-      }
-
-      .action-btn--secondary {
-        background: #ffffff;
-        color: #1d1d1f;
-        border: var(--app-border);
-        box-shadow: var(--app-shadow);
-      }
-
-      .action-btn:active {
-        transform: scale(0.97);
-      }
-
-      /* Entry Card */
-      .entry-card {
-        background: #ffffff;
-        padding: 1.25rem;
-        border-radius: var(--app-radius);
-        border: var(--app-border);
-        box-shadow: var(--app-shadow);
-        transition: transform 0.2s ease;
-      }
-
-      /* Glass Modal */
+      
       .modal-backdrop {
-        background: rgba(29, 29, 31, 0.4);
+        background: rgba(17, 24, 39, 0.4);
         backdrop-filter: blur(8px);
       }
     </style>
   </head>
-  <body class="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] antialiased flex flex-col">
-    <main class="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
-      
-      <!-- PREMIUM HEADER -->
-      <nav class="mb-10 flex items-center justify-between" dir="rtl">
-        <a href="{% url 'home' %}" class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#1D1D1F] shadow-sm ring-1 ring-[rgba(0,0,0,0.05)] transition hover:scale-105 active:scale-95">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+  <body class="min-h-screen py-6 px-4 flex flex-col items-center">
+    
+    <div class="w-full max-w-xl">
+      <!-- HEADER -->
+      <nav class="flex items-center justify-between mb-6 px-2">
+        <div>
+          <h1 class="text-xl font-black text-[#1D1D1F] font-display">المحاسبة المالية</h1>
+          <p class="text-[11px] font-bold text-[#86868B] mt-0.5">لوحة التحكم في الإيرادات والمصروفات</p>
+        </div>
+        <a href="{% url 'home' %}" class="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-black/5 text-[#6E6E73] hover:text-gradientPrimary hover:shadow-sm transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
           </svg>
         </a>
-        <h1 class="text-xl font-black tracking-tight text-[#1D1D1F]">المحاسبة المالية</h1>
       </nav>
 
-      <!-- COMMAND CENTER: HERO -->
-      <section class="app-control hero-centerpiece mb-8 flex flex-col items-center text-center">
-        <p class="text-[12px] font-bold uppercase tracking-[0.15em] text-[#86868B]">صافي هذا الشهر</p>
-        <div class="mt-4 flex items-baseline justify-center gap-2">
-          <span class="text-[22px] font-bold text-[#86868B]">EGP</span>
-          <h2 class="text-6xl font-black tracking-tighter text-[#1D1D1F] sm:text-7xl">
-            <span class="num">{{ current_net }}</span>
-          </h2>
-        </div>
-        <div class="mt-8">
+      <!-- HERO SUMMARY -->
+      <header class="app-card p-6 mb-4 overflow-hidden relative">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#990FFA] to-[#E60076]"></div>
+        <div class="flex flex-col items-center text-center">
+          <p class="text-[10px] font-black text-[#86868B] uppercase tracking-[0.2em] mb-2">صافي هذا الشهر</p>
+          <div class="flex items-baseline gap-2 mb-3">
+            <span class="text-4xl font-black tracking-tighter num {% if current_net > 0 %}text-emerald-600{% elif current_net < 0 %}text-rose-600{% endif %}">{{ current_net }}</span>
+            <span class="text-[13px] font-black text-[#86868B]">EGP</span>
+          </div>
+          
           {% if current_net > 0 %}
-            <div class="status-pill bg-[#34C759]/10 text-[#34C759]">
-              <span class="h-2 w-2 rounded-full bg-[#34C759] animate-pulse"></span>
-              ربح
-            </div>
+            <span class="status-badge bg-emerald-50 text-emerald-600 border border-emerald-100/50">ربح محقق</span>
           {% elif current_net < 0 %}
-            <div class="status-pill bg-[#FF3B30]/10 text-[#FF3B30]">
-              <span class="h-2 w-2 rounded-full bg-[#FF3B30]"></span>
-              خسارة
-            </div>
+            <span class="status-badge bg-rose-50 text-rose-600 border border-rose-100/50">خسارة تشغيلية</span>
           {% else %}
-            <div class="status-pill bg-[#86868B]/10 text-[#86868B]">
-              <span class="h-2 w-2 rounded-full bg-[#86868B]"></span>
-              متعادل
-            </div>
+            <span class="status-badge bg-gray-50 text-gray-500 border border-gray-100/50">متعادل</span>
           {% endif %}
+          
+          <div class="w-full h-px bg-black/5 my-5"></div>
+          
+          <div class="grid grid-cols-2 w-full gap-4">
+            <div class="text-center">
+              <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">الإيرادات</p>
+              <p class="text-[15px] font-black text-emerald-600 num">{{ current_income }}</p>
+            </div>
+            <div class="text-center border-r border-black/5">
+              <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">المصروفات</p>
+              <p class="text-[15px] font-black text-rose-600 num">{{ current_expense }}</p>
+            </div>
+          </div>
         </div>
-      </section>
+      </header>
 
-      <!-- SUPPORT RAIL: SYMMETRICAL METRICS -->
-      <div class="mb-10 grid grid-cols-2 gap-4">
-        <div class="metric-card flex flex-col items-center justify-center">
-          <p class="text-[11px] font-bold uppercase tracking-wider text-[#34C759] opacity-80">الإيرادات</p>
-          <p class="mt-2 text-3xl font-black text-[#1D1D1F]"><span class="num">{{ current_income }}</span></p>
+      <!-- QUICK ACTIONS -->
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <button data-open-modal="incomeModal" class="btn-gradient h-11 rounded-xl text-[13px] font-black text-white shadow-md flex items-center justify-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+          </svg>
+          إضافة إيراد
+        </button>
+        <button data-open-modal="expenseModal" class="bg-white border border-black/5 h-11 rounded-xl text-[13px] font-black text-[#1D1D1F] shadow-sm flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+          </svg>
+          إضافة مصروف
+        </button>
+      </div>
+
+      <!-- TRANSACTION SNAPSHOT (Overall) -->
+      <div class="flex items-center justify-between px-4 py-3 bg-white border border-black/5 rounded-2xl mb-8">
+        <div class="flex items-center gap-6">
+          <div class="flex flex-col">
+            <span class="text-[8px] font-black text-[#86868B] uppercase">إجمالي الدخل</span>
+            <span class="text-[13px] font-black num">{{ overall_income }}</span>
+          </div>
+          <span class="w-px h-5 bg-black/5"></span>
+          <div class="flex flex-col">
+            <span class="text-[8px] font-black text-[#86868B] uppercase">إجمالي الصرف</span>
+            <span class="text-[13px] font-black num text-rose-500">{{ overall_expense }}</span>
+          </div>
         </div>
-        <div class="metric-card flex flex-col items-center justify-center">
-          <p class="text-[11px] font-bold uppercase tracking-wider text-[#FF3B30] opacity-80">المصروفات</p>
-          <p class="mt-2 text-3xl font-black text-[#1D1D1F]"><span class="num">{{ current_expense }}</span></p>
+        <div class="text-left">
+          <span class="text-[8px] font-black text-[#86868B] uppercase block">الصافي الكلي</span>
+          <span class="text-[14px] font-black num text-gradientPrimary">{{ overall_net }}</span>
         </div>
       </div>
 
-      <!-- ANALYTICAL RAIL: GENERAL TOTALS -->
-      <section class="mb-12">
-        <div class="mb-4 flex items-center px-2">
-          <h3 class="text-[13px] font-bold uppercase tracking-widest text-[#86868B]">الإجمالي العام</h3>
-        </div>
-        <div class="grid grid-cols-3 gap-3">
-          <div class="app-control bg-white/60 p-4 text-center backdrop-blur-sm">
-            <p class="text-[10px] font-bold text-[#86868B]">إجمالي الدخل</p>
-            <p class="mt-1 text-[16px] font-black text-[#1D1D1F]"><span class="num">{{ overall_income }}</span></p>
-          </div>
-          <div class="app-control bg-white/60 p-4 text-center backdrop-blur-sm">
-            <p class="text-[10px] font-bold text-[#86868B]">إجمالي الصرف</p>
-            <p class="mt-1 text-[16px] font-black text-[#1D1D1F]"><span class="num">{{ overall_expense }}</span></p>
-          </div>
-          <div class="app-control bg-white/60 p-4 text-center backdrop-blur-sm">
-            <p class="text-[10px] font-bold text-[#86868B]">الصافي الكلي</p>
-            <p class="mt-1 text-[16px] font-black text-[#1D1D1F]"><span class="num">{{ overall_net }}</span></p>
-          </div>
-        </div>
-      </section>
-
-      <!-- UNIFIED ACTION SYSTEM -->
-      <section class="mb-12">
-        <div class="action-btn-rail">
-          <button type="button" data-open-modal="incomeModal" class="action-btn action-btn--primary">
-            <span>+</span> إضافة إيراد
-          </button>
-          <button type="button" data-open-modal="expenseModal" class="action-btn action-btn--secondary">
-            <span>+</span> إضافة مصروف
-          </button>
-        </div>
-      </section>
-
-      <!-- FEED: RECENT ENTRIES -->
-      <section class="mb-16">
-        <div class="mb-6 flex items-center justify-between px-2">
-          <h2 class="text-xl font-black text-[#1D1D1F]">آخر الحركات</h2>
-          <div class="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 shadow-sm ring-1 ring-[rgba(0,0,0,0.05)]">
-            <span class="text-[12px] font-bold text-[#1D1D1F]">{{ recent_entries|length }}</span>
-            <span class="text-[10px] font-bold text-[#86868B]">حركة</span>
-          </div>
+      <!-- LEDGER: RECENT ENTRIES -->
+      <section>
+        <div class="flex items-center justify-between mb-4 px-2">
+          <h2 class="text-[15px] font-black text-[#1D1D1F] font-display">آخر الحركات</h2>
+          <span class="text-[10px] font-black text-[#86868B] uppercase bg-black/5 px-2 py-1 rounded-md">{{ recent_entries|length }} حركة</span>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="space-y-2.5">
           {% for entry in recent_entries %}
-          <article class="entry-card flex flex-col">
+          <article class="app-card p-4 transition-all hover:shadow-md relative group">
             <div class="flex items-start justify-between">
-              <div>
-                <p class="text-[10px] font-bold uppercase tracking-[0.1em] {% if entry.kind == 'income' %}text-[#34C759]{% else %}text-[#FF3B30]{% endif %}">
-                  {% if entry.kind == 'income' %}إيراد{% else %}مصروف{% endif %}
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 {% if entry.kind == 'income' %}bg-emerald-50 text-emerald-600{% else %}bg-rose-50 text-rose-600{% endif %}">
+                  {% if entry.kind == 'income' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                    </svg>
+                  {% endif %}
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <p class="text-[14px] font-black text-[#1D1D1F] leading-tight">{{ entry.title }}</p>
+                    <span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded {% if entry.kind == 'income' %}bg-emerald-100/50 text-emerald-600{% else %}bg-rose-100/50 text-rose-600{% endif %}">
+                      {% if entry.kind == 'income' %}إيراد{% else %}مصروف{% endif %}
+                    </span>
+                  </div>
+                  <p class="text-[11px] font-bold text-[#86868B] mt-1">{{ entry.notes|default:"لا يوجد وصف"|truncatechars:40 }}</p>
+                </div>
+              </div>
+              <div class="text-left flex flex-col items-end">
+                <p class="text-[16px] font-black num leading-tight {% if entry.kind == 'income' %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                  {% if entry.kind == 'income' %}+{% else %}-{% endif %}{{ entry.amount }}
                 </p>
-                <h3 class="mt-1.5 text-[17px] font-bold tracking-tight text-[#1D1D1F]">{{ entry.title }}</h3>
+                <div class="flex items-center gap-2 mt-2">
+                  <span class="text-[10px] font-bold text-[#C1C1C1] num">{{ entry.entry_date|date:"d/m/Y" }}</span>
+                  
+                  <div class="relative">
+                    <button type="button" onclick="toggleMenu(this)" class="js-more-btn h-6 w-6 flex items-center justify-center rounded-lg hover:bg-black/5 text-[#86868B] transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                      </svg>
+                    </button>
+                    <div class="action-menu">
+                      <form method="post" action="{% url 'accounting_delete' entry.id %}" class="js-delete-entry-form">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full text-right px-3 py-2 text-[12px] font-bold text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">حذف الحركة</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="text-right">
-                <p class="text-[18px] font-black text-[#1D1D1F]"><span class="num">{{ entry.amount }}</span></p>
-                <p class="text-[10px] font-bold text-[#86868B]">EGP</p>
-              </div>
-            </div>
-            
-            <p class="mt-4 text-[12px] font-medium text-[#86868B]">{{ entry.entry_date }}</p>
-            
-            {% if entry.notes %}
-            <div class="mt-4 rounded-2xl bg-[#F5F5F7] p-4 text-[13px] leading-relaxed text-[#6E6E73]">
-              {{ entry.notes }}
-            </div>
-            {% endif %}
-            
-            <div class="mt-5 flex items-center justify-end border-t border-[rgba(0,0,0,0.03)] pt-4">
-              <form method="post" action="{% url 'accounting_delete' entry.id %}" class="js-delete-entry-form">
-                {% csrf_token %}
-                <button type="submit" class="text-[12px] font-bold text-[#FF3B30] opacity-60 transition hover:opacity-100">حذف الحركة</button>
-              </form>
             </div>
           </article>
           {% empty %}
-          <div class="col-span-full flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-[rgba(0,0,0,0.1)] bg-white/50 py-20 text-center">
-            <p class="text-[15px] font-bold text-[#86868B]">لا توجد حركات مسجلة حالياً</p>
+          <div class="py-12 text-center bg-white border border-dashed border-black/10 rounded-[24px]">
+            <p class="text-[13px] font-bold text-[#86868B]">لا توجد حركات مسجلة حالياً</p>
+            <p class="text-[11px] font-medium text-[#C1C1C1] mt-1">ابدأ بإضافة أول إيراد أو مصروف.</p>
           </div>
           {% endfor %}
         </div>
       </section>
 
-      <!-- FOOTER -->
-      <footer class="mt-auto py-8 text-center border-t border-[rgba(0,0,0,0.03)]">
-        <p class="text-[11px] font-bold tracking-wider text-[#86868B]">جميع الحقوق محفوظة © A.Ala3m</p>
+      <footer class="mt-12 text-center">
+        <p class="text-[9px] font-bold text-[#C1C1C1] uppercase tracking-widest">
+          WE Gold Financial System
+        </p>
       </footer>
-    </main>
+    </div>
 
     <!-- MODALS -->
     <div id="incomeModal" class="modal fixed inset-0 z-50 hidden items-center justify-center modal-backdrop px-4">
-      <div class="app-control w-full max-w-lg bg-white p-10 shadow-2xl">
-        <div class="mb-8 flex items-center justify-between">
-          <h3 class="text-2xl font-black">إضافة إيراد</h3>
-          <button type="button" data-close-modal class="h-10 w-10 flex items-center justify-center rounded-full bg-[#F5F5F7] text-[#1D1D1F] transition hover:bg-[#EBEBEE]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+      <div class="app-card w-full max-w-sm bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+        <div class="mb-5 flex items-center justify-between">
+          <h3 class="text-lg font-black font-display">إضافة إيراد</h3>
+          <button type="button" data-close-modal class="h-8 w-8 flex items-center justify-center rounded-full bg-gray-50 text-[#6E6E73] hover:bg-gray-100">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-        <form method="post" action="{% url 'accounting_income_create' %}" class="space-y-6">
+        <form method="post" action="{% url 'accounting_income_create' %}" class="space-y-4">
           {% csrf_token %}
           {% for field in income_form %}
           <div>
-            <label class="mb-2 block text-[13px] font-bold text-[#1D1D1F]">{{ field.label }}</label>
+            <label class="block text-[11px] font-black text-[#86868B] uppercase mb-1.5 pr-1">{{ field.label }}</label>
             {{ field }}
           </div>
           {% endfor %}
-          <div class="pt-4">
-            <button type="submit" class="app-control flex h-14 w-full items-center justify-center bg-[#0071E3] font-bold text-white shadow-lg">حفظ الإيراد</button>
-          </div>
+          <button type="submit" class="btn-gradient w-full h-11 rounded-xl text-[14px] font-black text-white shadow-md mt-4">حفظ الإيراد</button>
         </form>
       </div>
     </div>
 
     <div id="expenseModal" class="modal fixed inset-0 z-50 hidden items-center justify-center modal-backdrop px-4">
-      <div class="app-control w-full max-w-lg bg-white p-10 shadow-2xl">
-        <div class="mb-8 flex items-center justify-between">
-          <h3 class="text-2xl font-black">إضافة مصروف</h3>
-          <button type="button" data-close-modal class="h-10 w-10 flex items-center justify-center rounded-full bg-[#F5F5F7] text-[#1D1D1F] transition hover:bg-[#EBEBEE]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+      <div class="app-card w-full max-w-sm bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+        <div class="mb-5 flex items-center justify-between">
+          <h3 class="text-lg font-black font-display text-rose-600">إضافة مصروف</h3>
+          <button type="button" data-close-modal class="h-8 w-8 flex items-center justify-center rounded-full bg-gray-50 text-[#6E6E73] hover:bg-gray-100">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-        <form method="post" action="{% url 'accounting_expense_create' %}" class="space-y-6">
+        <form method="post" action="{% url 'accounting_expense_create' %}" class="space-y-4">
           {% csrf_token %}
           {% for field in expense_form %}
           <div>
-            <label class="mb-2 block text-[13px] font-bold text-[#1D1D1F]">{{ field.label }}</label>
+            <label class="block text-[11px] font-black text-[#86868B] uppercase mb-1.5 pr-1">{{ field.label }}</label>
             {{ field }}
           </div>
           {% endfor %}
-          <div class="pt-4">
-            <button type="submit" class="app-control flex h-14 w-full items-center justify-center bg-[#1D1D1F] font-bold text-white shadow-lg">حفظ المصروف</button>
-          </div>
+          <button type="submit" class="bg-[#1D1D1F] w-full h-11 rounded-xl text-[14px] font-black text-white shadow-md mt-4">حفظ المصروف</button>
         </form>
       </div>
     </div>
 
     <script>
-      const baseClasses = 'app-control w-full bg-[#F5F5F7] px-5 py-4 text-[15px] font-medium outline-none transition-all focus:bg-white focus:ring-4 focus:ring-[rgba(0,113,227,0.08)]';
-      document.querySelectorAll('input, select, textarea').forEach(f => f.className = baseClasses);
+      // Global menu toggle
+      window.toggleMenu = (btn) => {
+        event.stopPropagation();
+        const menu = btn.nextElementSibling;
+        const allMenus = document.querySelectorAll('.action-menu');
+        allMenus.forEach(m => { if(m !== menu) m.classList.remove('is-visible'); });
+        menu.classList.toggle('is-visible');
+      };
 
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('is-visible'));
+      });
+
+      // Form styling
+      const inputClasses = 'w-full h-11 px-4 rounded-xl bg-[#FBFBFD] border border-black/5 text-[13px] font-bold text-[#1D1D1F] outline-none focus:bg-white focus:border-[#990FFA] focus:ring-4 focus:ring-[#990FFA]/5 transition-all num';
+      document.querySelectorAll('input, select, textarea').forEach(el => {
+        el.className = inputClasses;
+        if(el.tagName === 'TEXTAREA') el.classList.remove('h-11');
+      });
+
+      // Modal logic
       const modals = document.querySelectorAll('.modal');
-      const closeAll = () => modals.forEach(m => { m.classList.add('hidden'); m.classList.remove('flex'); });
+      const closeAll = () => modals.forEach(m => m.classList.add('hidden'));
 
-      document.querySelectorAll('[data-open-modal]').forEach(b => {
-        b.addEventListener('click', () => {
-          const m = document.getElementById(b.dataset.openModal);
-          if (m) { closeAll(); m.classList.remove('hidden'); m.classList.add('flex'); }
+      document.querySelectorAll('[data-open-modal]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const m = document.getElementById(btn.dataset.openModal);
+          if(m) { m.classList.remove('hidden'); m.classList.add('flex'); }
         });
       });
 
-      document.querySelectorAll('[data-close-modal]').forEach(b => b.addEventListener('click', closeAll));
+      document.querySelectorAll('[data-close-modal]').forEach(btn => btn.addEventListener('click', closeAll));
       modals.forEach(m => m.addEventListener('click', e => { if(e.target === m) closeAll(); }));
-      
-      document.addEventListener('keydown', e => { if(e.key === 'Escape') closeAll(); });
+
+      // Delete confirmation
+      document.querySelectorAll('.js-delete-entry-form').forEach(form => {
+        form.addEventListener('submit', (e) => {
+          if(!confirm('هل أنت متأكد من حذف هذه الحركة؟')) e.preventDefault();
+        });
+      });
     </script>
   </body>
 </html>
