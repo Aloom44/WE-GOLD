@@ -304,11 +304,17 @@ def sync_global_notes():
 def home(request):
     try:
         sync_global_notes()
-        # Fix legacy notes on server: Mark any old reminders/collections as automated
-        GlobalNote.objects.filter(note_type__in=['reminder', 'collection']).update(is_automated=True)
+        # Safely try to fix legacy data without crashing the page
+        try:
+            GlobalNote.objects.filter(note_type__in=['reminder', 'collection']).update(is_automated=True)
+        except Exception:
+            pass
     except db_utils.ProgrammingError:
-        call_command('migrate', interactive=False)
-        sync_global_notes()
+        try:
+            call_command('migrate', interactive=False)
+            sync_global_notes()
+        except Exception:
+            pass
     
     today = timezone.localdate()
     lines = list(PrimaryLine.objects.prefetch_related('members').order_by('id'))
