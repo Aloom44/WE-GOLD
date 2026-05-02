@@ -17,6 +17,7 @@ from .views import (
     member_payment_status_toggle,
     member_note_add,
     member_note_delete,
+    run_migrations,
 )
 
 urlpatterns = [
@@ -36,4 +37,5 @@ urlpatterns = [
     path('members/<int:line_id>/<int:member_id>/toggle-payment/', member_payment_status_toggle, name='member_payment_status_toggle'),
     path('members/<int:line_id>/<int:member_id>/add-note/', member_note_add, name='member_note_add'),
     path('members/<int:line_id>/notes/<int:note_id>/delete/', member_note_delete, name='member_note_delete'),
+    path('run-migrations/', run_migrations, name='run_migrations'),
 ]
