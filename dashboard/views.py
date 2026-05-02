@@ -84,38 +84,67 @@ def accounting(request):
 
 
 def link_ledger_to_lines(request):
-    """Smartly link unlinked transactions to lines by parsing descriptions."""
+    """Force rebuild/sync the ledger for the current month and link legacy data."""
     import re
-    unlinked = FinancialTransaction.objects.filter(line__isnull=True)
+    today = timezone.localdate()
     linked_count = 0
+    synced_count = 0
     
-    # Phone regex for Egyptian numbers
+    # 1. LINK LEGACY DATA
+    unlinked = FinancialTransaction.objects.filter(line__isnull=True)
     phone_pattern = re.compile(r'01[0-2,5]\d{8}')
     
     for tx in unlinked:
-        # 1. Try to find phone number in description
+        # Match Phone
         match = phone_pattern.search(tx.description)
         if match:
-            phone = match.group()
-            line = PrimaryLine.objects.filter(phone=phone).first()
+            line = PrimaryLine.objects.filter(phone=match.group()).first()
             if line:
                 tx.line = line
                 tx.save()
                 linked_count += 1
                 continue
         
-        # 2. Try to find line via member name if it's a member payment
-        # Assuming description contains member name from legacy AccountingEntry
-        if "مدفوعات الأفراد -" in tx.description:
-            name = tx.description.replace("مدفوعات الأفراد -", "").strip()
-            member = Member.objects.filter(name__icontains=name).first()
+        # Match Member Name (More flexible)
+        if "مدفوعات" in tx.description:
+            # Try to extract any name after common prefixes
+            clean_desc = tx.description.replace("مدفوعات الأفراد -", "").replace("مدفوعات -", "").strip()
+            member = Member.objects.filter(name__icontains=clean_desc[:5]).first() # Match first few chars
             if member:
                 tx.line = member.line
                 tx.member = member
                 tx.save()
                 linked_count += 1
+
+    # 2. SYNC CURRENT MONTH (Ensure every line/paid member has a record)
+    for line in PrimaryLine.objects.all():
+        # Record line cost for this month if missing
+        FinancialTransaction.record(
+            event_key=f"line-cost-{line.pk}-{today.month}-{today.year}",
+            kind=FinancialTransaction.KIND_EXPENSE,
+            amount=line.plan_cost,
+            line=line,
+            description=f"تكلفة باقة الخط {line.phone}",
+            month=today.month,
+            year=today.year
+        )
+        synced_count += 1
+        
+        # Record member payments for this month if they are PAID
+        for member in line.members.filter(status=Member.STATUS_PAID):
+            FinancialTransaction.record(
+                event_key=f"member-pay-{member.pk}-{today.month}-{today.year}",
+                kind=FinancialTransaction.KIND_INCOME,
+                amount=member.monthly_cost,
+                line=line,
+                member=member,
+                description=f"تحصيل من {member.name} - خط {line.phone}",
+                month=today.month,
+                year=today.year
+            )
+            synced_count += 1
                 
-    return HttpResponse(f"✅ Successfully linked {linked_count} transactions to their lines!")
+    return HttpResponse(f"✅ Process Complete: Linked {linked_count} legacy records and Synced {synced_count} current month records!")
 
 
 def accounting_income_create(request):
