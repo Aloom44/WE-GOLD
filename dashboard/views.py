@@ -7,7 +7,6 @@ from .models import AccountingEntry, Member, MemberNote, PrimaryLine, FinancialT
 from django.contrib.auth.decorators import login_required
 
 
-@login_required
 def notes_list(request):
     """Main notes dashboard with filtering."""
     notes = GlobalNote.objects.all()
@@ -34,7 +33,6 @@ def notes_list(request):
     return render(request, 'dashboard/notes.html', context)
 
 
-@login_required
 def note_create(request):
     if request.method == 'POST':
         form = GlobalNoteForm(request.POST)
@@ -44,7 +42,6 @@ def note_create(request):
     return redirect('notes_list')
 
 
-@login_required
 def note_toggle_pin(request, note_id):
     note = get_object_or_404(GlobalNote, id=note_id)
     note.is_pinned = not note.is_pinned
@@ -52,7 +49,6 @@ def note_toggle_pin(request, note_id):
     return redirect(request.META.get('HTTP_REFERER', 'notes_list'))
 
 
-@login_required
 def note_toggle_status(request, note_id, status):
     note = get_object_or_404(GlobalNote, id=note_id)
     if status in dict(GlobalNote.STATUS_CHOICES):
@@ -61,7 +57,6 @@ def note_toggle_status(request, note_id, status):
     return redirect(request.META.get('HTTP_REFERER', 'notes_list'))
 
 
-@login_required
 def note_delete(request, note_id):
     note = get_object_or_404(GlobalNote, id=note_id)
     if request.method == 'POST':
