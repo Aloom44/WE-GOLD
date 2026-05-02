@@ -79,46 +79,57 @@
         box-shadow: 0 4px 12px rgba(153, 15, 250, 0.2);
       }
 
-      /* Action Menu */
+      /* Action Menu Refinement */
       .action-menu {
         position: absolute;
         bottom: 110%;
         left: 0;
-        background: white;
-        border: var(--app-border);
-        border-radius: 1.25rem;
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
-        padding: 0.65rem;
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 1rem;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+        padding: 0.35rem;
         display: none;
         z-index: 50;
-        min-width: 175px;
+        min-width: 155px;
         transform-origin: bottom left;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
       }
       .action-menu.is-visible {
         display: block;
-        animation: menu-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        animation: menu-pop 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       }
       @keyframes menu-pop {
-        from { opacity: 0; transform: scale(0.8) translateY(10px); }
+        from { opacity: 0; transform: scale(0.95) translateY(5px); }
         to { opacity: 1; transform: scale(1) translateY(0); }
       }
+      .menu-header {
+        padding: 0.5rem 0.85rem 0.35rem;
+      }
+      .menu-header p {
+        font-size: 11px;
+        font-weight: 900;
+        color: #86868B;
+        letter-spacing: 0.02em;
+      }
       .action-item {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        flex-direction: row-reverse;
-        gap: 0.75rem;
-        padding: 0.75rem 1rem;
-        border-radius: 0.85rem;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #111827;
-        transition: all 0.2s ease;
+        display: block;
+        width: 100%;
+        text-align: right;
+        padding: 0.65rem 0.85rem;
+        border-radius: 0.7rem;
+        font-size: 13px;
+        font-weight: 600;
+        color: #1D1D1F;
+        transition: all 0.15s ease;
       }
       .action-item:hover {
-        background: #FDFCFE;
+        background: #F5F5F7;
         color: #990FFA;
-        transform: translateX(-4px);
+      }
+      .action-item--danger {
+        color: #E60076;
       }
       .action-item--danger:hover {
         background: #FEF2F2;
@@ -271,21 +282,15 @@
                 
                 <div class="action-menu js-action-menu">
                   <div class="menu-header">
-                    <p class="num font-black text-gradientPrimary font-display">{{ line.phone }}</p>
+                    <p class="num font-display">{{ line.phone }}</p>
                   </div>
-                  <div class="my-1 border-t border-[rgba(0,0,0,0.03)]"></div>
-                  <a href="{% url 'line_renew' line.id %}" class="action-item">
-                    <span class="action-icon">🔄</span> تجديد الخط
-                  </a>
-                  <a href="{% url 'line_update' line.id %}" class="action-item">
-                    <span class="action-icon">✏️</span> تعديل البيانات
-                  </a>
-                  <div class="my-1 border-t border-[rgba(0,0,0,0.03)]"></div>
+                  <div class="h-px bg-black/5 my-1 mx-1"></div>
+                  <a href="{% url 'line_renew' line.id %}" class="action-item">تجديد الخط</a>
+                  <a href="{% url 'line_update' line.id %}" class="action-item">تعديل البيانات</a>
+                  <div class="h-px bg-black/5 my-1 mx-1"></div>
                   <form method="post" action="{% url 'line_delete' line.id %}" class="js-delete-line-form" data-line-phone="{{ line.phone }}">
                     {% csrf_token %}
-                    <button type="submit" class="action-item action-item--danger w-full text-right">
-                      <span class="action-icon">🗑</span> حذف الخط
-                    </button>
+                    <button type="submit" class="action-item action-item--danger">حذف الخط</button>
                   </form>
                 </div>
               </div>
