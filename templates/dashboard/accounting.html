@@ -11,8 +11,6 @@
     <style>
       :root {
         --gradient-primary: linear-gradient(135deg, #990FFA 0%, #E60076 100%);
-        --success: #16A34A;
-        --danger: #DC2626;
         --glass-bg: #FFFFFF;
         --glass-border: rgba(0, 0, 0, 0.06);
       }
@@ -20,29 +18,58 @@
         font-family: 'Inter', sans-serif;
         background: #F8F9FB;
         color: #111827;
+        -webkit-tap-highlight-color: transparent;
       }
       .font-display { font-family: 'Outfit', sans-serif; }
+      .num { font-family: 'Outfit', sans-serif; }
+      
       .app-card {
         background: var(--glass-bg);
         border: 1px solid var(--glass-border);
-        border-radius: 16px;
+        border-radius: 20px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
       }
-      .btn-gradient {
-        background: var(--gradient-primary);
+      
+      /* Header Scaling */
+      .page-title { font-size: 24px; font-weight: 900; line-height: 1.2; }
+      .page-subtitle { font-size: 12px; font-weight: 600; color: #86868B; max-width: 80%; }
+      
+      /* Buttons */
+      .btn-base {
+        height: 48px;
+        border-radius: 14px;
+        font-size: 13px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         transition: all 0.2s ease;
       }
-      .btn-gradient:hover { opacity: 0.95; transform: translateY(-1px); }
-      .num { font-family: 'Outfit', sans-serif; }
-      
+      .btn-primary {
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow: 0 4px 12px rgba(153, 15, 250, 0.2);
+      }
+      .btn-outline {
+        background: white;
+        color: #111827;
+        border: 2px solid transparent;
+        background-image: linear-gradient(white, white), var(--gradient-primary);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+      }
+      .btn-base:active { transform: scale(0.96); opacity: 0.9; }
+
+      /* Hero Stats */
+      .hero-net { font-size: 42px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
       .status-badge {
-        padding: 4px 12px;
-        border-radius: 20px;
+        padding: 6px 14px;
+        border-radius: 9999px;
         font-size: 11px;
         font-weight: 800;
-        text-transform: uppercase;
       }
-      
+
       /* Context Menu */
       .action-menu {
         position: absolute;
@@ -50,13 +77,12 @@
         left: 0;
         background: rgba(255, 255, 255, 0.98);
         border: 1px solid rgba(0, 0, 0, 0.08);
-        border-radius: 1rem;
+        border-radius: 12px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        padding: 0.35rem;
+        padding: 4px;
         display: none;
         z-index: 50;
         min-width: 140px;
-        transform-origin: bottom left;
         backdrop-filter: blur(15px);
       }
       .action-menu.is-visible { display: block; animation: menu-pop 0.2s ease-out; }
@@ -66,175 +92,162 @@
       }
       
       .modal-backdrop {
-        background: rgba(17, 24, 39, 0.4);
-        backdrop-filter: blur(8px);
+        background: rgba(17, 24, 39, 0.6);
+        backdrop-filter: blur(10px);
       }
     </style>
   </head>
-  <body class="min-h-screen py-6 px-4 flex flex-col items-center">
+  <body class="min-h-screen py-4 px-4 flex flex-col items-center">
     
     <div class="w-full max-w-xl">
       <!-- HEADER -->
-      <nav class="flex items-center justify-between mb-6 px-2">
-        <div>
-          <h1 class="text-xl font-black text-[#1D1D1F] font-display">المحاسبة المالية</h1>
-          <p class="text-[11px] font-bold text-[#86868B] mt-0.5">لوحة التحكم في الإيرادات والمصروفات</p>
+      <nav class="flex items-center justify-between mb-5 px-1">
+        <div class="flex-1">
+          <h1 class="page-title text-[#1D1D1F] font-display">المحاسبة المالية</h1>
+          <p class="page-subtitle mt-0.5">إدارة الإيرادات والمصروفات</p>
         </div>
-        <a href="{% url 'home' %}" class="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-black/5 text-[#6E6E73] hover:text-gradientPrimary hover:shadow-sm transition-all">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <a href="{% url 'home' %}" class="flex h-11 w-11 items-center justify-center rounded-full bg-white border border-black/5 text-[#6E6E73] hover:shadow-sm active:scale-95 transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
           </svg>
         </a>
       </nav>
 
       <!-- HERO SUMMARY -->
-      <header class="app-card p-6 mb-4 overflow-hidden relative">
+      <header class="app-card p-6 mb-4 overflow-hidden relative border-none ring-1 ring-black/5">
         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#990FFA] to-[#E60076]"></div>
         <div class="flex flex-col items-center text-center">
-          <p class="text-[10px] font-black text-[#86868B] uppercase tracking-[0.2em] mb-2">صافي هذا الشهر</p>
-          <div class="flex items-baseline gap-2 mb-3">
-            <span class="text-4xl font-black tracking-tighter num {% if current_net > 0 %}text-emerald-600{% elif current_net < 0 %}text-rose-600{% endif %}">{{ current_net }}</span>
-            <span class="text-[13px] font-black text-[#86868B]">EGP</span>
+          <p class="text-[10px] font-black text-[#86868B] uppercase tracking-[0.2em] mb-3">صافي هذا الشهر</p>
+          
+          <div class="flex flex-col items-center gap-1 mb-4">
+            <span class="hero-net num {% if current_net > 0 %}text-emerald-600{% elif current_net < 0 %}text-rose-600{% endif %}">
+              {{ current_net }}
+            </span>
+            <span class="text-[14px] font-black text-[#86868B] num">EGP</span>
           </div>
           
           {% if current_net > 0 %}
-            <span class="status-badge bg-emerald-50 text-emerald-600 border border-emerald-100/50">ربح محقق</span>
+            <span class="status-badge bg-emerald-50 text-emerald-600">ربح محقق</span>
           {% elif current_net < 0 %}
-            <span class="status-badge bg-rose-50 text-rose-600 border border-rose-100/50">خسارة تشغيلية</span>
+            <span class="status-badge bg-rose-50 text-rose-600">خسارة تشغيلية</span>
           {% else %}
-            <span class="status-badge bg-gray-50 text-gray-500 border border-gray-100/50">متعادل</span>
+            <span class="status-badge bg-gray-50 text-gray-500">متعادل</span>
           {% endif %}
           
-          <div class="w-full h-px bg-black/5 my-5"></div>
+          <div class="w-full h-px bg-black/5 my-6"></div>
           
-          <div class="grid grid-cols-2 w-full gap-4">
-            <div class="text-center">
-              <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">الإيرادات</p>
-              <p class="text-[15px] font-black text-emerald-600 num">{{ current_income }}</p>
+          <div class="grid grid-cols-2 w-full">
+            <div class="text-center px-2">
+              <p class="text-[10px] font-black text-[#86868B] uppercase mb-1">الإيرادات</p>
+              <p class="text-[18px] font-black text-emerald-600 num">{{ current_income }}</p>
             </div>
-            <div class="text-center border-r border-black/5">
-              <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">المصروفات</p>
-              <p class="text-[15px] font-black text-rose-600 num">{{ current_expense }}</p>
+            <div class="text-center px-2 border-r border-black/5">
+              <p class="text-[10px] font-black text-[#86868B] uppercase mb-1">المصروفات</p>
+              <p class="text-[18px] font-black text-rose-600 num">{{ current_expense }}</p>
             </div>
           </div>
         </div>
       </header>
 
       <!-- QUICK ACTIONS -->
-      <div class="grid grid-cols-2 gap-3 mb-6">
-        <button data-open-modal="incomeModal" class="btn-gradient h-11 rounded-xl text-[13px] font-black text-white shadow-md flex items-center justify-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-          </svg>
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <button data-open-modal="incomeModal" class="btn-base btn-primary w-full">
           إضافة إيراد
         </button>
-        <button data-open-modal="expenseModal" class="bg-white border border-black/5 h-11 rounded-xl text-[13px] font-black text-[#1D1D1F] shadow-sm flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-          </svg>
+        <button data-open-modal="expenseModal" class="btn-base btn-outline w-full">
           إضافة مصروف
         </button>
       </div>
 
-      <!-- TRANSACTION SNAPSHOT (Overall) -->
-      <div class="flex items-center justify-between px-4 py-3 bg-white border border-black/5 rounded-2xl mb-8">
-        <div class="flex items-center gap-6">
-          <div class="flex flex-col">
-            <span class="text-[8px] font-black text-[#86868B] uppercase">إجمالي الدخل</span>
-            <span class="text-[13px] font-black num">{{ overall_income }}</span>
-          </div>
-          <span class="w-px h-5 bg-black/5"></span>
-          <div class="flex flex-col">
-            <span class="text-[8px] font-black text-[#86868B] uppercase">إجمالي الصرف</span>
-            <span class="text-[13px] font-black num text-rose-500">{{ overall_expense }}</span>
-          </div>
+      <!-- SNAPSHOT BAR -->
+      <div class="flex items-center justify-between px-4 py-3 bg-white border border-black/5 rounded-[20px] mb-8">
+        <div class="flex-1 text-center">
+          <span class="text-[10px] font-black text-[#86868B] uppercase block mb-0.5">الدخل</span>
+          <span class="text-[18px] font-black num leading-none">{{ overall_income }}</span>
         </div>
-        <div class="text-left">
-          <span class="text-[8px] font-black text-[#86868B] uppercase block">الصافي الكلي</span>
-          <span class="text-[14px] font-black num text-gradientPrimary">{{ overall_net }}</span>
+        <span class="w-px h-6 bg-black/5"></span>
+        <div class="flex-1 text-center">
+          <span class="text-[10px] font-black text-[#86868B] uppercase block mb-0.5">الصرف</span>
+          <span class="text-[18px] font-black num text-rose-500 leading-none">{{ overall_expense }}</span>
+        </div>
+        <span class="w-px h-6 bg-black/5"></span>
+        <div class="flex-1 text-center">
+          <span class="text-[10px] font-black text-[#86868B] uppercase block mb-0.5">الصافي</span>
+          <span class="text-[18px] font-black num text-gradientPrimary leading-none">{{ overall_net }}</span>
         </div>
       </div>
 
-      <!-- LEDGER: RECENT ENTRIES -->
-      <section>
-        <div class="flex items-center justify-between mb-4 px-2">
-          <h2 class="text-[15px] font-black text-[#1D1D1F] font-display">آخر الحركات</h2>
-          <span class="text-[10px] font-black text-[#86868B] uppercase bg-black/5 px-2 py-1 rounded-md">{{ recent_entries|length }} حركة</span>
+      <!-- LEDGER -->
+      <section class="pb-10">
+        <div class="flex items-center justify-between mb-4 px-1">
+          <h2 class="text-[20px] font-black text-[#1D1D1F] font-display">آخر الحركات</h2>
+          <span class="text-[11px] font-black text-[#86868B] uppercase">{{ recent_entries|length }} حركة</span>
         </div>
 
-        <div class="space-y-2.5">
+        <div class="space-y-3">
           {% for entry in recent_entries %}
-          <article class="app-card p-4 transition-all hover:shadow-md relative group">
-            <div class="flex items-start justify-between">
-              <div class="flex items-center gap-3">
-                <div class="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 {% if entry.kind == 'income' %}bg-emerald-50 text-emerald-600{% else %}bg-rose-50 text-rose-600{% endif %}">
-                  {% if entry.kind == 'income' %}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  {% else %}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
-                    </svg>
-                  {% endif %}
-                </div>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <p class="text-[14px] font-black text-[#1D1D1F] leading-tight">{{ entry.title }}</p>
-                    <span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded {% if entry.kind == 'income' %}bg-emerald-100/50 text-emerald-600{% else %}bg-rose-100/50 text-rose-600{% endif %}">
-                      {% if entry.kind == 'income' %}إيراد{% else %}مصروف{% endif %}
-                    </span>
-                  </div>
-                  <p class="text-[11px] font-bold text-[#86868B] mt-1">{{ entry.notes|default:"لا يوجد وصف"|truncatechars:40 }}</p>
-                </div>
-              </div>
-              <div class="text-left flex flex-col items-end">
-                <p class="text-[16px] font-black num leading-tight {% if entry.kind == 'income' %}text-emerald-600{% else %}text-rose-600{% endif %}">
+          <article class="app-card p-4 relative overflow-hidden">
+            <!-- TOP ROW -->
+            <div class="flex items-start justify-between mb-2">
+              <div class="flex items-baseline gap-1">
+                <span class="text-[26px] font-black num leading-none {% if entry.kind == 'income' %}text-emerald-600{% else %}text-rose-600{% endif %}">
                   {% if entry.kind == 'income' %}+{% else %}-{% endif %}{{ entry.amount }}
-                </p>
-                <div class="flex items-center gap-2 mt-2">
-                  <span class="text-[10px] font-bold text-[#C1C1C1] num">{{ entry.entry_date|date:"d/m/Y" }}</span>
-                  
-                  <div class="relative">
-                    <button type="button" onclick="toggleMenu(this)" class="js-more-btn h-6 w-6 flex items-center justify-center rounded-lg hover:bg-black/5 text-[#86868B] transition-colors">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
-                      </svg>
-                    </button>
-                    <div class="action-menu">
-                      <form method="post" action="{% url 'accounting_delete' entry.id %}" class="js-delete-entry-form">
-                        {% csrf_token %}
-                        <button type="submit" class="w-full text-right px-3 py-2 text-[12px] font-bold text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">حذف الحركة</button>
-                      </form>
-                    </div>
-                  </div>
+                </span>
+                <span class="text-[10px] font-black text-[#86868B] num">EGP</span>
+              </div>
+              <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full {% if entry.kind == 'income' %}bg-emerald-50 text-emerald-600{% else %}bg-rose-50 text-rose-600{% endif %}">
+                {% if entry.kind == 'income' %}إيراد{% else %}مصروف{% endif %}
+              </span>
+            </div>
+
+            <!-- MIDDLE ROW -->
+            <div class="mb-4">
+              <p class="text-[14px] font-bold text-[#1D1D1F] leading-tight mb-1">{{ entry.title }}</p>
+              <p class="text-[12px] font-medium text-[#86868B] line-clamp-2 leading-relaxed">
+                {{ entry.notes|default:"لا يوجد وصف إضافي لهذه الحركة" }}
+              </p>
+            </div>
+
+            <!-- BOTTOM ROW -->
+            <div class="flex items-center justify-between pt-3 border-t border-black/5">
+              <span class="text-[11px] font-bold text-[#C1C1C1] num">{{ entry.entry_date|date:"d M Y" }}</span>
+              <div class="relative">
+                <button type="button" onclick="toggleMenu(this)" class="h-8 w-8 flex items-center justify-center rounded-full bg-[#FBFBFD] border border-black/5 text-[#86868B]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                  </svg>
+                </button>
+                <div class="action-menu">
+                  <form method="post" action="{% url 'accounting_delete' entry.id %}" class="js-delete-entry-form">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full text-right px-3 py-2.5 text-[13px] font-bold text-rose-600 hover:bg-rose-50 rounded-lg">حذف الحركة</button>
+                  </form>
                 </div>
               </div>
             </div>
           </article>
           {% empty %}
-          <div class="py-12 text-center bg-white border border-dashed border-black/10 rounded-[24px]">
-            <p class="text-[13px] font-bold text-[#86868B]">لا توجد حركات مسجلة حالياً</p>
-            <p class="text-[11px] font-medium text-[#C1C1C1] mt-1">ابدأ بإضافة أول إيراد أو مصروف.</p>
+          <div class="py-16 text-center app-card border-dashed bg-white/50">
+            <p class="text-[14px] font-bold text-[#86868B]">لا توجد حركات مسجلة</p>
           </div>
           {% endfor %}
         </div>
       </section>
 
-      <footer class="mt-12 text-center">
-        <p class="text-[9px] font-bold text-[#C1C1C1] uppercase tracking-widest">
-          WE Gold Financial System
+      <footer class="mt-4 text-center">
+        <p class="text-[10px] font-black text-[#C1C1C1] uppercase tracking-[0.3em]">
+          WE Gold Management
         </p>
       </footer>
     </div>
 
     <!-- MODALS -->
-    <div id="incomeModal" class="modal fixed inset-0 z-50 hidden items-center justify-center modal-backdrop px-4">
+    <div id="incomeModal" class="modal fixed inset-0 z-50 hidden items-center justify-center modal-backdrop px-5">
       <div class="app-card w-full max-w-sm bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         <div class="mb-5 flex items-center justify-between">
-          <h3 class="text-lg font-black font-display">إضافة إيراد</h3>
-          <button type="button" data-close-modal class="h-8 w-8 flex items-center justify-center rounded-full bg-gray-50 text-[#6E6E73] hover:bg-gray-100">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <h3 class="text-[18px] font-black font-display">إضافة إيراد</h3>
+          <button type="button" data-close-modal class="h-9 w-9 flex items-center justify-center rounded-full bg-gray-50 text-[#6E6E73] active:scale-90">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -247,17 +260,17 @@
             {{ field }}
           </div>
           {% endfor %}
-          <button type="submit" class="btn-gradient w-full h-11 rounded-xl text-[14px] font-black text-white shadow-md mt-4">حفظ الإيراد</button>
+          <button type="submit" class="btn-base btn-primary w-full mt-4">حفظ الإيراد</button>
         </form>
       </div>
     </div>
 
-    <div id="expenseModal" class="modal fixed inset-0 z-50 hidden items-center justify-center modal-backdrop px-4">
+    <div id="expenseModal" class="modal fixed inset-0 z-50 hidden items-center justify-center modal-backdrop px-5">
       <div class="app-card w-full max-w-sm bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         <div class="mb-5 flex items-center justify-between">
-          <h3 class="text-lg font-black font-display text-rose-600">إضافة مصروف</h3>
-          <button type="button" data-close-modal class="h-8 w-8 flex items-center justify-center rounded-full bg-gray-50 text-[#6E6E73] hover:bg-gray-100">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <h3 class="text-[18px] font-black font-display text-rose-600">إضافة مصروف</h3>
+          <button type="button" data-close-modal class="h-9 w-9 flex items-center justify-center rounded-full bg-gray-50 text-[#6E6E73] active:scale-90">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -270,50 +283,40 @@
             {{ field }}
           </div>
           {% endfor %}
-          <button type="submit" class="bg-[#1D1D1F] w-full h-11 rounded-xl text-[14px] font-black text-white shadow-md mt-4">حفظ المصروف</button>
+          <button type="submit" class="btn-base bg-[#1D1D1F] text-white w-full mt-4">حفظ المصروف</button>
         </form>
       </div>
     </div>
 
     <script>
-      // Global menu toggle
       window.toggleMenu = (btn) => {
         event.stopPropagation();
         const menu = btn.nextElementSibling;
-        const allMenus = document.querySelectorAll('.action-menu');
-        allMenus.forEach(m => { if(m !== menu) m.classList.remove('is-visible'); });
+        document.querySelectorAll('.action-menu').forEach(m => { if(m !== menu) m.classList.remove('is-visible'); });
         menu.classList.toggle('is-visible');
       };
+      document.addEventListener('click', () => document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('is-visible')));
 
-      document.addEventListener('click', () => {
-        document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('is-visible'));
-      });
-
-      // Form styling
-      const inputClasses = 'w-full h-11 px-4 rounded-xl bg-[#FBFBFD] border border-black/5 text-[13px] font-bold text-[#1D1D1F] outline-none focus:bg-white focus:border-[#990FFA] focus:ring-4 focus:ring-[#990FFA]/5 transition-all num';
+      const inputClasses = 'w-full h-12 px-4 rounded-xl bg-[#FBFBFD] border border-black/5 text-[14px] font-bold text-[#1D1D1F] outline-none focus:bg-white focus:border-[#990FFA] focus:ring-4 focus:ring-[#990FFA]/5 transition-all num';
       document.querySelectorAll('input, select, textarea').forEach(el => {
         el.className = inputClasses;
-        if(el.tagName === 'TEXTAREA') el.classList.remove('h-11');
+        if(el.tagName === 'TEXTAREA') el.classList.remove('h-12');
       });
 
-      // Modal logic
       const modals = document.querySelectorAll('.modal');
       const closeAll = () => modals.forEach(m => m.classList.add('hidden'));
-
       document.querySelectorAll('[data-open-modal]').forEach(btn => {
         btn.addEventListener('click', () => {
           const m = document.getElementById(btn.dataset.openModal);
           if(m) { m.classList.remove('hidden'); m.classList.add('flex'); }
         });
       });
-
       document.querySelectorAll('[data-close-modal]').forEach(btn => btn.addEventListener('click', closeAll));
       modals.forEach(m => m.addEventListener('click', e => { if(e.target === m) closeAll(); }));
 
-      // Delete confirmation
       document.querySelectorAll('.js-delete-entry-form').forEach(form => {
         form.addEventListener('submit', (e) => {
-          if(!confirm('هل أنت متأكد من حذف هذه الحركة؟')) e.preventDefault();
+          if(!confirm('حذف هذه الحركة؟')) e.preventDefault();
         });
       });
     </script>
