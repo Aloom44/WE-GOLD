@@ -244,66 +244,12 @@ def accounting_delete(request, entry_id):
     return redirect('accounting')
 
 
-from django.db import utils as db_utils
-from django.core.management import call_command
-
-def sync_global_notes():
-    """Automated logic to create system reminders."""
-    today = timezone.localdate()
-    
-    # 1. Approaching Renewals (within 3 days)
-    for line in PrimaryLine.objects.all():
-        renew_day_int = 1 if line.renewal_day == PrimaryLine.RENEWAL_DAY_1 else 16
-        
-        # Calculate next renewal date
-        if today.day <= renew_day_int:
-            renew_date = today.replace(day=renew_day_int)
-        else:
-            if today.month == 12:
-                renew_date = today.replace(year=today.year+1, month=1, day=renew_day_int)
-            else:
-                renew_date = today.replace(month=today.month+1, day=renew_day_int)
-        
-        days_left = (renew_date - today).days
-        if 0 <= days_left <= 3:
-            GlobalNote.objects.get_or_create(
-                title=f"تجديد خط {line.phone}",
-                related_line=line,
-                status='active',
-                defaults={
-                    'content': f"موعد تجديد الباقة للخط {line.phone} خلال {days_left} أيام (بتاريخ {renew_date.strftime('%d/%m')})",
-                    'note_type': 'reminder',
-                    'priority': 'high' if days_left > 1 else 'urgent',
-                    'due_date': renew_date
-                }
-            )
-
-    # 2. Unpaid Members (Collection warnings)
-    for member in Member.objects.filter(status=Member.STATUS_UNPAID):
-        line = member.line
-        renew_day_int = 1 if line.renewal_day == PrimaryLine.RENEWAL_DAY_1 else 16
-        
-        # If it's past the renewal day of the current month
-        if today.day > renew_day_int:
-            GlobalNote.objects.get_or_create(
-                title=f"تحصيل من {member.name}",
-                related_member=member,
-                status='active',
-                defaults={
-                    'content': f"العضو {member.name} لم يقم بالسداد لخط {line.phone} رغم مرور موعد التجديد (يوم {renew_day_int}).",
-                    'note_type': 'collection',
-                    'priority': 'medium'
-                }
-            )
-
-
 def home(request):
     try:
-        sync_global_notes()
+        # Check if table exists, if not migrate
+        GlobalNote.objects.exists()
     except db_utils.ProgrammingError:
-        # Table might be missing on server (Vercel), try auto-migrating
         call_command('migrate', interactive=False)
-        sync_global_notes()
     
     today = timezone.localdate()
     lines = list(PrimaryLine.objects.prefetch_related('members').order_by('id'))
