@@ -1,8 +1,6 @@
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.core.management import call_command
-from django.http import HttpResponse
 
 from .forms import AccountingEntryForm, MemberForm, PrimaryLineForm, PrimaryLineRenewForm
 from .models import AccountingEntry, Member, MemberNote, PrimaryLine, FinancialTransaction
@@ -295,12 +293,3 @@ def member_note_delete(request, line_id, note_id):
         note.delete()
         
     return redirect('members', line_id=line_id)
-
-
-def run_migrations(request):
-    """Temporary view to run migrations on Vercel."""
-    try:
-        call_command('migrate', interactive=False)
-        return HttpResponse("✅ Migrations completed successfully!")
-    except Exception as e:
-        return HttpResponse(f"❌ Migration failed: {str(e)}", status=500)
