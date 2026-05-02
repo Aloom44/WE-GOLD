@@ -268,18 +268,18 @@ def sync_global_notes():
         
         days_left = (renew_date - today).days
         if 0 <= days_left <= 3:
-            GlobalNote.objects.get_or_create(
-                title=f"تجديد خط {line.phone}",
-                related_line=line,
-                status='active',
-                is_automated=True,
-                defaults={
-                    'content': f"موعد تجديد الباقة للخط {line.phone} خلال {days_left} أيام (بتاريخ {renew_date.strftime('%d/%m')})",
-                    'note_type': 'reminder',
-                    'priority': 'high' if days_left > 1 else 'urgent',
-                    'due_date': renew_date
-                }
-            )
+            title = f"تجديد خط {line.phone}"
+            if not GlobalNote.objects.filter(title=title, related_line=line, is_automated=True, status='active').exists():
+                GlobalNote.objects.create(
+                    title=title,
+                    related_line=line,
+                    status='active',
+                    is_automated=True,
+                    content=f"موعد تجديد الباقة للخط {line.phone} خلال {days_left} أيام (بتاريخ {renew_date.strftime('%d/%m')})",
+                    note_type='reminder',
+                    priority='high' if days_left > 1 else 'urgent',
+                    due_date=renew_date
+                )
 
     # 2. Unpaid Members (Collection warnings)
     for member in Member.objects.filter(status=Member.STATUS_UNPAID):
@@ -288,17 +288,17 @@ def sync_global_notes():
         
         # If it's past the renewal day of the current month
         if today.day > renew_day_int:
-            GlobalNote.objects.get_or_create(
-                title=f"تحصيل من {member.name}",
-                related_member=member,
-                status='active',
-                is_automated=True,
-                defaults={
-                    'content': f"العضو {member.name} لم يقم بالسداد لخط {line.phone} رغم مرور موعد التجديد (يوم {renew_day_int}).",
-                    'note_type': 'collection',
-                    'priority': 'medium'
-                }
-            )
+            title = f"تحصيل من {member.name}"
+            if not GlobalNote.objects.filter(title=title, related_member=member, is_automated=True, status='active').exists():
+                GlobalNote.objects.create(
+                    title=title,
+                    related_member=member,
+                    status='active',
+                    is_automated=True,
+                    content=f"العضو {member.name} لم يقم بالسداد لخط {line.phone} رغم مرور موعد التجديد (يوم {renew_day_int}).",
+                    note_type='collection',
+                    priority='medium'
+                )
 
 
 def home(request):
