@@ -304,6 +304,8 @@ def sync_global_notes():
 def home(request):
     try:
         sync_global_notes()
+        # Fix legacy notes on server: Mark any old reminders/collections as automated
+        GlobalNote.objects.filter(note_type__in=['reminder', 'collection']).update(is_automated=True)
     except db_utils.ProgrammingError:
         call_command('migrate', interactive=False)
         sync_global_notes()
