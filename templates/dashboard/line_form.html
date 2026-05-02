@@ -4,72 +4,199 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ page_title }} - باقات WE Gold</title>
+    <title>{{ page_title }} - WE Gold</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'dashboard/style.css' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --gradient-primary: linear-gradient(135deg, #990FFA 0%, #E60076 100%);
+        --glass-bg: #FFFFFF;
+        --glass-border: rgba(0, 0, 0, 0.06);
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background: #F8F9FB;
+      }
+      .font-display { font-family: 'Outfit', sans-serif; }
+      .form-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+      }
+      .btn-gradient {
+        background: var(--gradient-primary);
+        transition: all 0.2s ease;
+      }
+      .btn-gradient:hover { opacity: 0.95; transform: translateY(-1px); }
+      .input-group-premium {
+        background: #FBFBFD;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.15s ease;
+        overflow: hidden;
+      }
+      .input-group-premium:focus-within {
+        background: white;
+        border-color: #990FFA;
+        box-shadow: 0 0 0 3px rgba(153, 15, 250, 0.06);
+      }
+      .input-field-premium {
+        background: transparent;
+        border: none;
+        outline: none;
+        width: 100%;
+        height: 44px;
+        padding: 0 16px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #1D1D1F;
+        text-align: right;
+      }
+      .unit-label {
+        background: rgba(0, 0, 0, 0.03);
+        border-right: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        font-size: 10px;
+        font-weight: 900;
+        color: #86868B;
+        font-family: 'Outfit', sans-serif;
+      }
+      .num { font-family: 'Outfit', sans-serif; }
+      select.input-field-premium {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236E6E73'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: left 12px center;
+        background-size: 16px;
+        padding-left: 36px;
+      }
+    </style>
   </head>
-  <body class="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] antialiased flex flex-col">
-    <main class="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
-      <header class="mb-6 rounded-2xl border border-[rgba(0,0,0,0.06)] bg-white p-4 text-[#1D1D1F] shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
-        <div class="flex items-center justify-between gap-3">
-          <div>
-            <h1 class="text-2xl font-semibold">{{ page_title }}</h1>
-            <p class="mt-1 text-sm text-[#6E6E73]">إدارة بيانات الخط الأساسي وحفظها في قاعدة البيانات.</p>
-          </div>
-          <img src="{% static 'dashboard/logo.png' %}" alt="WE Gold" class="h-16 w-16 flex-shrink-0" />
+  <body class="min-h-screen py-8 px-4 flex flex-col items-center">
+    
+    <div class="w-full max-w-xl">
+      <!-- HEADER -->
+      <header class="flex items-center justify-between mb-6 px-2">
+        <div>
+          <h1 class="text-xl font-black text-[#1D1D1F] font-display">{{ page_title }}</h1>
+          <p class="text-[11px] font-bold text-[#86868B] mt-0.5">تحديث بيانات الباقة والخط الأساسي</p>
         </div>
+        <a href="{% url 'home' %}" class="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-black/5 text-[#6E6E73] hover:text-gradientPrimary hover:shadow-sm transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
       </header>
 
-      <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/60 sm:p-5">
-        <form method="post" class="grid gap-4 sm:grid-cols-2">
-          {% csrf_token %}
+      <form method="post" class="form-card rounded-[24px] p-6 sm:p-8">
+        {% csrf_token %}
 
-          {% for field in form %}
-          <label class="block {% if field.name == 'plan' or field.name == 'phone' %}sm:col-span-2{% endif %}">
-            <span class="mb-1.5 block text-sm font-bold text-slate-700">{{ field.label }}</span>
-            {{ field }}
-            {% if field.errors %}
-            <span class="mt-1 block text-xs text-rose-600">{{ field.errors|striptags }}</span>
-            {% endif %}
-          </label>
-          {% endfor %}
-
-          <div class="mt-2 flex items-center justify-end gap-2 sm:col-span-2">
-            <a href="{% url 'home' %}" class="rounded-full border border-[rgba(0,0,0,0.12)] px-4 py-2 text-sm font-semibold text-[#6E6E73]">إلغاء</a>
-            <button type="submit" class="rounded-full bg-[#0071E3] px-4 py-2 text-sm font-semibold text-white shadow-[0_6px_16px_rgba(0,113,227,0.2)]">حفظ</button>
+        <div class="grid gap-5">
+          <!-- PHONE -->
+          <div class="space-y-1.5">
+            <label class="block text-[10px] font-black text-[#86868B] uppercase tracking-wider pr-1">رقم الخط</label>
+            {{ form.phone }}
+            {% if form.phone.errors %}<p class="text-[10px] font-bold text-rose-500">{{ form.phone.errors|striptags }}</p>{% endif %}
           </div>
-        </form>
-      </section>
 
-      <footer class="mt-8 rounded-2xl border border-[rgba(0,0,0,0.06)] bg-white px-4 py-3 text-center text-[11px] text-[#6E6E73] shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
-        جميع الحقوق محفوظة © <a href="https://elekhwa.store/portfolio.html" target="_blank" rel="noopener noreferrer" class="font-semibold text-[#0071E3] transition hover:underline">A,Ala3m</a>
+          <!-- PLAN -->
+          <div class="space-y-1.5">
+            <label class="block text-[10px] font-black text-[#86868B] uppercase tracking-wider pr-1">نوع الباقة</label>
+            {{ form.plan }}
+            {% if form.plan.errors %}<p class="text-[10px] font-bold text-rose-500">{{ form.plan.errors|striptags }}</p>{% endif %}
+          </div>
+
+          <!-- COST & RENEWAL -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="block text-[10px] font-black text-[#86868B] uppercase tracking-wider pr-1">التكلفة الشهرية</label>
+              <div class="flex flex-row-reverse rounded-xl input-group-premium">
+                <div class="unit-label">EGP</div>
+                {{ form.plan_cost }}
+              </div>
+              {% if form.plan_cost.errors %}<p class="text-[10px] font-bold text-rose-500">{{ form.plan_cost.errors|striptags }}</p>{% endif %}
+            </div>
+            <div class="space-y-1.5">
+              <label class="block text-[10px] font-black text-[#86868B] uppercase tracking-wider pr-1">يوم التجديد</label>
+              {{ form.renewal_day }}
+              {% if form.renewal_day.errors %}<p class="text-[10px] font-bold text-rose-500">{{ form.renewal_day.errors|striptags }}</p>{% endif %}
+            </div>
+          </div>
+
+          <!-- TOTAL ALLOCATION -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="block text-[10px] font-black text-[#86868B] uppercase tracking-wider pr-1">إجمالي الجيجات</label>
+              <div class="flex flex-row-reverse rounded-xl input-group-premium opacity-60">
+                <div class="unit-label">GB</div>
+                {{ form.total_data }}
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <label class="block text-[10px] font-black text-[#86868B] uppercase tracking-wider pr-1">إجمالي الدقائق</label>
+              <div class="flex flex-row-reverse rounded-xl input-group-premium opacity-60">
+                <div class="unit-label">MIN</div>
+                {{ form.total_minutes }}
+              </div>
+            </div>
+          </div>
+
+          <!-- USED ALLOCATION -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="block text-[10px] font-black text-[#86868B] uppercase tracking-wider pr-1">المستهلك (GB)</label>
+              <div class="flex flex-row-reverse rounded-xl input-group-premium opacity-60">
+                <div class="unit-label">GB</div>
+                {{ form.used_data }}
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <label class="block text-[10px] font-black text-[#86868B] uppercase tracking-wider pr-1">المستهلك (MIN)</label>
+              <div class="flex flex-row-reverse rounded-xl input-group-premium opacity-60">
+                <div class="unit-label">MIN</div>
+                {{ form.used_minutes }}
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTIONS -->
+          <div class="flex items-center gap-3 mt-4 pt-2">
+            <button type="submit" class="btn-gradient flex-1 h-12 rounded-xl text-[14px] font-black text-white shadow-md">
+              حفظ التعديلات
+            </button>
+            <a href="{% url 'home' %}" class="px-6 h-12 flex items-center justify-center rounded-xl text-[13px] font-bold text-[#6E6E73] hover:bg-black/5 transition-colors">
+              إلغاء
+            </a>
+          </div>
+        </div>
+      </form>
+
+      <footer class="mt-8 text-center">
+        <p class="text-[9px] font-bold text-[#C1C1C1] uppercase tracking-widest">
+          WE Gold Management System
+        </p>
       </footer>
-    </main>
+    </div>
 
     <script>
-      const baseClasses = [
-        'w-full',
-        'rounded-xl',
-        'border',
-        'border-slate-200',
-        'bg-slate-50',
-        'px-3',
-        'py-2',
-        'text-sm',
-        'font-medium',
-        'text-slate-800',
-        'outline-none',
-        'focus:border-[#0071E3]',
-        'focus:bg-white',
-        'focus:ring-4',
-        'focus:ring-[rgba(0,113,227,0.15)]',
-      ];
-
-      document.querySelectorAll('input, select').forEach((field) => {
-        field.classList.add(...baseClasses);
-
-        if (field.disabled) {
-          field.classList.add('cursor-not-allowed', 'bg-slate-100', 'text-slate-500');
+      const inputs = document.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        if (input.name === 'phone' || input.name === 'plan' || input.name === 'renewal_day') {
+          input.className = 'w-full h-11 px-4 rounded-xl input-group-premium text-[13px] font-bold text-[#1D1D1F] outline-none num' + (input.tagName === 'SELECT' ? ' appearance-none' : '');
+          if (input.tagName === 'SELECT') {
+             input.className = 'w-full h-11 px-4 rounded-xl input-group-premium text-[13px] font-bold text-[#1D1D1F] outline-none num appearance-none select-arrow';
+             // Adjust background image for select in JS since we can't easily add complex classes
+             input.style.backgroundImage = 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%236E6E73\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'/%3E%3C/svg%3E")';
+             input.style.backgroundRepeat = 'no-repeat';
+             input.style.backgroundPosition = 'left 12px center';
+             input.style.backgroundSize = '16px';
+             input.style.paddingLeft = '36px';
+          }
+        } else {
+          input.className = 'input-field-premium num';
         }
       });
 
