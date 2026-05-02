@@ -373,6 +373,7 @@ class GlobalNote(models.Model):
     note_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='general', verbose_name="النوع")
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium', verbose_name="الأولوية")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active', verbose_name="الحالة")
+    is_automated = models.BooleanField(default=False, verbose_name="تلقائي")
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -1,3 +1,5 @@
+from django.db import utils as db_utils
+from django.core.management import call_command
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -9,7 +11,8 @@ from django.contrib.auth.decorators import login_required
 
 def notes_list(request):
     """Main notes dashboard with filtering."""
-    notes = GlobalNote.objects.all()
+    is_auto = request.GET.get('source') == 'automated'
+    notes = GlobalNote.objects.filter(is_automated=is_auto)
     
     # Simple filtering
     prio = request.GET.get('priority')
@@ -37,7 +40,9 @@ def note_create(request):
     if request.method == 'POST':
         form = GlobalNoteForm(request.POST)
         if form.is_valid():
-            form.save()
+            note = form.save(commit=False)
+            note.is_automated = False
+            note.save()
             return redirect('notes_list')
     return redirect('notes_list')
 
@@ -142,7 +147,7 @@ def accounting(request):
         'selected_line': selected_line,
         'line_stats': line_stats,
         'line_recent_entries': line_recent_entries,
-        'urgent_notes_count': GlobalNote.objects.filter(status='active', priority='urgent').count(),
+        'urgent_notes_count': GlobalNote.objects.filter(status='active', is_automated=True).count(),
         'page_title': 'المحاسبة',
     }
     return render(request, 'dashboard/accounting.html', context)
@@ -244,12 +249,64 @@ def accounting_delete(request, entry_id):
     return redirect('accounting')
 
 
+def sync_global_notes():
+    """Automated logic to create system reminders (as automated notifications)."""
+    today = timezone.localdate()
+    
+    # 1. Approaching Renewals (within 3 days)
+    for line in PrimaryLine.objects.all():
+        renew_day_int = 1 if line.renewal_day == PrimaryLine.RENEWAL_DAY_1 else 16
+        
+        # Calculate next renewal date
+        if today.day <= renew_day_int:
+            renew_date = today.replace(day=renew_day_int)
+        else:
+            if today.month == 12:
+                renew_date = today.replace(year=today.year+1, month=1, day=renew_day_int)
+            else:
+                renew_date = today.replace(month=today.month+1, day=renew_day_int)
+        
+        days_left = (renew_date - today).days
+        if 0 <= days_left <= 3:
+            GlobalNote.objects.get_or_create(
+                title=f"تجديد خط {line.phone}",
+                related_line=line,
+                status='active',
+                is_automated=True,
+                defaults={
+                    'content': f"موعد تجديد الباقة للخط {line.phone} خلال {days_left} أيام (بتاريخ {renew_date.strftime('%d/%m')})",
+                    'note_type': 'reminder',
+                    'priority': 'high' if days_left > 1 else 'urgent',
+                    'due_date': renew_date
+                }
+            )
+
+    # 2. Unpaid Members (Collection warnings)
+    for member in Member.objects.filter(status=Member.STATUS_UNPAID):
+        line = member.line
+        renew_day_int = 1 if line.renewal_day == PrimaryLine.RENEWAL_DAY_1 else 16
+        
+        # If it's past the renewal day of the current month
+        if today.day > renew_day_int:
+            GlobalNote.objects.get_or_create(
+                title=f"تحصيل من {member.name}",
+                related_member=member,
+                status='active',
+                is_automated=True,
+                defaults={
+                    'content': f"العضو {member.name} لم يقم بالسداد لخط {line.phone} رغم مرور موعد التجديد (يوم {renew_day_int}).",
+                    'note_type': 'collection',
+                    'priority': 'medium'
+                }
+            )
+
+
 def home(request):
     try:
-        # Check if table exists, if not migrate
-        GlobalNote.objects.exists()
+        sync_global_notes()
     except db_utils.ProgrammingError:
         call_command('migrate', interactive=False)
+        sync_global_notes()
     
     today = timezone.localdate()
     lines = list(PrimaryLine.objects.prefetch_related('members').order_by('id'))
@@ -261,9 +318,10 @@ def home(request):
         line.current_cost = line_ledger.filter(kind=FinancialTransaction.KIND_EXPENSE).aggregate(total=Sum('amount'))['total'] or 0
         line.current_profit = line.current_revenue - line.current_cost
 
-    # Fetch top 3 active notes for the widget
-    recent_notes = GlobalNote.objects.filter(status='active')[:3]
-    urgent_notes_count = GlobalNote.objects.filter(status='active', priority='urgent').count()
+    # Fetch top 3 active manual notes for the widget
+    recent_notes = GlobalNote.objects.filter(status='active', is_automated=False)[:3]
+    # urgent_notes_count will now be used for NOTIFICATIONS icon (automated notes)
+    urgent_notes_count = GlobalNote.objects.filter(status='active', is_automated=True).count()
 
     context = {
         'lines': lines,
@@ -273,7 +331,6 @@ def home(request):
         'recent_notes': recent_notes,
         'urgent_notes_count': urgent_notes_count,
     }
-
     return render(request, 'dashboard/home.html', context)
 
 
@@ -308,7 +365,7 @@ def members(request, line_id):
         'minutes_used_percentage': minutes_used_percentage,
         'minutes_remaining_percentage': minutes_remaining_percentage,
         'member_note_types': Member.NOTE_TYPE_CHOICES,
-        'urgent_notes_count': GlobalNote.objects.filter(status='active', priority='urgent').count(),
+        'urgent_notes_count': GlobalNote.objects.filter(status='active', is_automated=True).count(),
     }
 
     return render(request, 'dashboard/members.html', context)
