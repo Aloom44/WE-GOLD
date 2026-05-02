@@ -83,6 +83,41 @@ def accounting(request):
     return render(request, 'dashboard/accounting.html', context)
 
 
+def link_ledger_to_lines(request):
+    """Smartly link unlinked transactions to lines by parsing descriptions."""
+    import re
+    unlinked = FinancialTransaction.objects.filter(line__isnull=True)
+    linked_count = 0
+    
+    # Phone regex for Egyptian numbers
+    phone_pattern = re.compile(r'01[0-2,5]\d{8}')
+    
+    for tx in unlinked:
+        # 1. Try to find phone number in description
+        match = phone_pattern.search(tx.description)
+        if match:
+            phone = match.group()
+            line = PrimaryLine.objects.filter(phone=phone).first()
+            if line:
+                tx.line = line
+                tx.save()
+                linked_count += 1
+                continue
+        
+        # 2. Try to find line via member name if it's a member payment
+        # Assuming description contains member name from legacy AccountingEntry
+        if "مدفوعات الأفراد -" in tx.description:
+            name = tx.description.replace("مدفوعات الأفراد -", "").strip()
+            member = Member.objects.filter(name__icontains=name).first()
+            if member:
+                tx.line = member.line
+                tx.member = member
+                tx.save()
+                linked_count += 1
+                
+    return HttpResponse(f"✅ Successfully linked {linked_count} transactions to their lines!")
+
+
 def accounting_income_create(request):
     if request.method == 'POST':
         form = AccountingEntryForm(request.POST, prefix='income')
