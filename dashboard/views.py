@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from .forms import AccountingEntryForm, MemberForm, PrimaryLineForm, PrimaryLineRenewForm
-from .models import AccountingEntry, Member, MemberNote, PrimaryLine
+from .models import AccountingEntry, Member, MemberNote, PrimaryLine, FinancialTransaction
 
 
 def _ratio(part, whole):
@@ -18,29 +18,20 @@ def _financial_summary(entries, kind):
 
 def accounting(request):
     today = timezone.localdate()
-    current_month_entries = AccountingEntry.objects.filter(entry_date__year=today.year, entry_date__month=today.month)
-    all_entries = AccountingEntry.objects.all()
+    
+    # Financial queries using the new ledger
+    ledger = FinancialTransaction.objects.all()
+    current_ledger = ledger.filter(month=today.month, year=today.year)
 
-    current_income = (
-        sum(line.plan_cost for line in PrimaryLine.objects.all())
-        + sum(member.monthly_cost for member in Member.objects.filter(status=Member.STATUS_PAID))
-        + _financial_summary(current_month_entries, AccountingEntry.ENTRY_INCOME)
-    )
-    current_expense = (
-        _financial_summary(current_month_entries, AccountingEntry.ENTRY_EXPENSE)
-        + sum(line.plan_cost for line in PrimaryLine.objects.all())
-    )
+    def get_total(qs, kind):
+        return qs.filter(kind=kind).aggregate(total=Sum('amount'))['total'] or 0
+
+    current_income = get_total(current_ledger, FinancialTransaction.KIND_INCOME)
+    current_expense = get_total(current_ledger, FinancialTransaction.KIND_EXPENSE)
     current_net = current_income - current_expense
 
-    overall_income = (
-        sum(line.plan_cost for line in PrimaryLine.objects.all())
-        + sum(member.monthly_cost for member in Member.objects.filter(status=Member.STATUS_PAID))
-        + _financial_summary(all_entries, AccountingEntry.ENTRY_INCOME)
-    )
-    overall_expense = (
-        _financial_summary(all_entries, AccountingEntry.ENTRY_EXPENSE)
-        + sum(line.plan_cost for line in PrimaryLine.objects.all())
-    )
+    overall_income = get_total(ledger, FinancialTransaction.KIND_INCOME)
+    overall_expense = get_total(ledger, FinancialTransaction.KIND_EXPENSE)
     overall_net = overall_income - overall_expense
 
     income_form = AccountingEntryForm(prefix='income')
@@ -55,7 +46,7 @@ def accounting(request):
         'overall_income': overall_income,
         'overall_expense': overall_expense,
         'overall_net': overall_net,
-        'recent_entries': AccountingEntry.objects.all()[:10],
+        'recent_entries': ledger[:15], # Show ledger entries now
         'page_title': 'المحاسبة',
     }
     return render(request, 'dashboard/accounting.html', context)
@@ -65,9 +56,15 @@ def accounting_income_create(request):
     if request.method == 'POST':
         form = AccountingEntryForm(request.POST, prefix='income')
         if form.is_valid():
-            entry = form.save(commit=False)
-            entry.kind = AccountingEntry.ENTRY_INCOME
-            entry.save()
+            today = timezone.localdate()
+            FinancialTransaction.objects.create(
+                kind=FinancialTransaction.KIND_INCOME,
+                category=FinancialTransaction.CAT_MANUAL,
+                amount=form.cleaned_data['amount'],
+                description=form.cleaned_data['title'],
+                month=today.month,
+                year=today.year
+            )
             return redirect('accounting')
     return redirect('accounting')
 
@@ -76,27 +73,39 @@ def accounting_expense_create(request):
     if request.method == 'POST':
         form = AccountingEntryForm(request.POST, prefix='expense')
         if form.is_valid():
-            entry = form.save(commit=False)
-            entry.kind = AccountingEntry.ENTRY_EXPENSE
-            entry.save()
+            today = timezone.localdate()
+            FinancialTransaction.objects.create(
+                kind=FinancialTransaction.KIND_EXPENSE,
+                category=FinancialTransaction.CAT_MANUAL,
+                amount=form.cleaned_data['amount'],
+                description=form.cleaned_data['title'],
+                month=today.month,
+                year=today.year
+            )
             return redirect('accounting')
     return redirect('accounting')
 
 
 def accounting_delete(request, entry_id):
-    entry = get_object_or_404(AccountingEntry, id=entry_id)
+    entry = get_object_or_404(FinancialTransaction, id=entry_id)
     if request.method == 'POST':
         entry.delete()
     return redirect('accounting')
 
 
 def home(request):
+    today = timezone.localdate()
     lines = list(PrimaryLine.objects.prefetch_related('members').order_by('id'))
-    active_line = lines[0] if lines else None
+    
+    # Calculate per-line financial summary for the current month
+    for line in lines:
+        line_ledger = FinancialTransaction.objects.filter(line=line, month=today.month, year=today.year)
+        line.current_revenue = line_ledger.filter(kind=FinancialTransaction.KIND_INCOME).aggregate(total=Sum('amount'))['total'] or 0
+        line.current_cost = line_ledger.filter(kind=FinancialTransaction.KIND_EXPENSE).aggregate(total=Sum('amount'))['total'] or 0
+        line.current_profit = line.current_revenue - line.current_cost
 
     context = {
         'lines': lines,
-        'active_line': active_line,
         'total_primary_lines': len(lines),
         'total_data': sum(line.total_data for line in lines),
         'total_minutes': sum(line.total_minutes for line in lines),
@@ -180,15 +189,10 @@ def line_renew(request, line_id):
     if request.method == 'POST':
         form = PrimaryLineRenewForm(request.POST, line=line)
         if form.is_valid():
-            line.members.update(
-                status=Member.STATUS_UNPAID,
+            line.renew_line(
+                carryover_data=form.cleaned_data['carryover_data'],
+                carryover_minutes=form.cleaned_data['carryover_minutes']
             )
-            for member in line.members.all():
-                AccountingEntry.remove_system_entry(f'member-{member.pk}')
-
-            line.carryover_data = form.cleaned_data['carryover_data']
-            line.carryover_minutes = form.cleaned_data['carryover_minutes']
-            line.update_usage_from_members()
             return redirect('home')
     else:
         form = PrimaryLineRenewForm(line=line)

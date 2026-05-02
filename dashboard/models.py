@@ -65,17 +65,47 @@ class PrimaryLine(models.Model):
 			self.total_data = limits['data'] + self.carryover_data
 			self.total_minutes = limits['minutes'] + self.carryover_minutes
 		super().save(*args, **kwargs)
-		AccountingEntry.sync_system_entry(
-			system_key=f'line-{self.pk}',
-			kind=AccountingEntry.ENTRY_EXPENSE,
-			title=f'تكلفة الباقة - {self.phone}',
+		
+		# Record automated line cost for current month
+		now = timezone.localdate()
+		FinancialTransaction.record(
+			event_key=f"line-cost-{self.pk}-{now.month}-{now.year}",
+			kind=FinancialTransaction.KIND_EXPENSE,
 			amount=self.plan_cost,
-			notes=f'الخط {self.phone} / {self.plan}',
+			line=self,
+			description=f"تكلفة باقة الخط {self.phone}",
+			month=now.month,
+			year=now.year
 		)
 
 	def delete(self, *args, **kwargs):
-		AccountingEntry.remove_system_entry(f'line-{self.pk}')
+		# Cleanup transactions if needed, or keep for history
 		super().delete(*args, **kwargs)
+
+	def renew_line(self, carryover_data=0, carryover_minutes=0):
+		"""Resets usage and records renewal expense for the NEXT month or current if late."""
+		now = timezone.localdate()
+		# For simplicity, we assume renewal is for the CURRENT month's billing cycle if called now
+		# but if it's a 'renewal' action, it usually implies the start of a new period.
+		
+		# Reset member statuses
+		self.members.update(status=Member.STATUS_UNPAID)
+		
+		# Update carryovers
+		self.carryover_data = carryover_data
+		self.carryover_minutes = carryover_minutes
+		self.update_usage_from_members()
+		
+		# Record the renewal transaction
+		FinancialTransaction.record(
+			event_key=f"renewal-{self.pk}-{now.month}-{now.year}",
+			kind=FinancialTransaction.KIND_EXPENSE,
+			amount=self.plan_cost,
+			line=self,
+			description=f"تجديد باقة الخط {self.phone}",
+			month=now.month,
+			year=now.year
+		)
 
 	def update_usage_from_members(self):
 		aggregates = self.members.aggregate(
@@ -218,19 +248,32 @@ class Member(models.Model):
 		super().save(*args, **kwargs)
 		self.line.update_usage_from_members()
 		
-		# Sync accounting based on status
-		income_amount = self.monthly_cost if self.status == self.STATUS_PAID else 0
-		AccountingEntry.sync_system_entry(
-			system_key=f'member-{self.pk}',
-			kind=AccountingEntry.ENTRY_INCOME,
-			title=f'مدفوعات الأفراد - {self.name}',
-			amount=income_amount,
-			notes=f'الفرد {self.phone} على الخط {self.line.phone}',
-		)
+		# Record automated income if paid
+		now = timezone.localdate()
+		event_key = f"member-pay-{self.pk}-{now.month}-{now.year}"
+		
+		if self.status == self.STATUS_PAID:
+			FinancialTransaction.record(
+				event_key=event_key,
+				kind=FinancialTransaction.KIND_INCOME,
+				amount=self.monthly_cost,
+				line=self.line,
+				member=self,
+				description=f"تحصيل من {self.name} - خط {self.line.phone}",
+				month=now.month,
+				year=now.year
+			)
+		else:
+			# If unpaid, ensure no income record exists for this month/event
+			FinancialTransaction.objects.filter(event_key=event_key).delete()
 
 	def delete(self, *args, **kwargs):
 		line = self.line
-		AccountingEntry.remove_system_entry(f'member-{self.pk}')
+		# We don't necessarily delete transactions on member delete to keep ledger history
+		# but if it was for the current month, we might want to. 
+		# For now, let's just delete the current month's automated entry if it exists.
+		now = timezone.localdate()
+		FinancialTransaction.objects.filter(event_key=f"member-pay-{self.pk}-{now.month}-{now.year}").delete()
 		super().delete(*args, **kwargs)
 		line.update_usage_from_members()
 
@@ -249,3 +292,55 @@ class MemberNote(models.Model):
 
 	def __str__(self):
 		return f'Note for {self.member.name} - {self.note_type}'
+
+
+class FinancialTransaction(models.Model):
+	KIND_INCOME = 'income'
+	KIND_EXPENSE = 'expense'
+	KIND_CHOICES = [(KIND_INCOME, 'إيراد'), (KIND_EXPENSE, 'مصروف')]
+
+	CAT_AUTO = 'automated'
+	CAT_MANUAL = 'manual'
+	CAT_CHOICES = [(CAT_AUTO, 'آلي'), (CAT_MANUAL, 'يدوي')]
+
+	kind = models.CharField(max_length=10, choices=KIND_CHOICES)
+	category = models.CharField(max_length=10, choices=CAT_CHOICES, default=CAT_MANUAL)
+	amount = models.PositiveIntegerField(default=0)
+	line = models.ForeignKey(PrimaryLine, on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions')
+	member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions')
+	
+	month = models.PositiveSmallIntegerField()
+	year = models.PositiveIntegerField()
+	description = models.CharField(max_length=255)
+	event_key = models.CharField(max_length=100, unique=True, null=True, blank=True)
+	is_reversed = models.BooleanField(default=False)
+	
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		ordering = ['-created_at']
+
+	@classmethod
+	def record(cls, event_key, kind, amount, description, month, year, category=CAT_AUTO, line=None, member=None):
+		"""Idempotent transaction recording."""
+		if amount <= 0:
+			return None
+		
+		obj, created = cls.objects.update_or_create(
+			event_key=event_key,
+			defaults={
+				'kind': kind,
+				'category': category,
+				'amount': amount,
+				'description': description,
+				'month': month,
+				'year': year,
+				'line': line,
+				'member': member,
+				'is_reversed': False
+			}
+		)
+		return obj
+
+	def __str__(self):
+		return f"{self.get_kind_display()} - {self.amount} ({self.month}/{self.year})"

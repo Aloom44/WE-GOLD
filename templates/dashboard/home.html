@@ -268,9 +268,20 @@
             </div>
 
             <div class="mt-auto flex items-center justify-between pt-6">
-              <div class="flex items-center gap-2 rounded-full bg-[#F5F5F7] px-3 py-1.5">
-                <span class="text-[14px]">👥</span>
-                <span class="num text-[14px] font-black text-gradientText">{{ line.members_count }}</span>
+              <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5 rounded-full bg-[#F5F5F7] px-2.5 py-1.5">
+                  <span class="text-[12px]">👥</span>
+                  <span class="num text-[12px] font-black text-gradientText">{{ line.members_count }}</span>
+                </div>
+                
+                {% if line.current_profit != 0 %}
+                <div class="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 {% if line.current_profit > 0 %}bg-emerald-50 text-emerald-600{% else %}bg-rose-50 text-rose-600{% endif %}">
+                  <span class="num text-[11px] font-black">
+                    {% if line.current_profit > 0 %}+{% endif %}{{ line.current_profit }}
+                  </span>
+                  <span class="text-[9px] font-black">EGP</span>
+                </div>
+                {% endif %}
               </div>
               
               <div class="relative flex items-center">
