@@ -62,11 +62,12 @@
       .btn-base:active { transform: scale(0.96); opacity: 0.9; }
 
       /* Hero Stats */
-      .hero-net { font-size: 42px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+      .hero-net { font-size: 34px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+      .currency { font-size: 11px; font-weight: 800; color: #86868B; margin-right: 4px; display: inline-block; }
       .status-badge {
-        padding: 6px 14px;
+        padding: 5px 12px;
         border-radius: 9999px;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 800;
       }
 
@@ -95,6 +96,14 @@
         background: rgba(17, 24, 39, 0.6);
         backdrop-filter: blur(10px);
       }
+
+      /* Details Panel */
+      .details-panel {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+      }
+      .details-panel.is-open { max-height: 300px; }
     </style>
   </head>
   <body class="min-h-screen py-4 px-4 flex flex-col items-center">
@@ -114,16 +123,16 @@
       </nav>
 
       <!-- HERO SUMMARY -->
-      <header class="app-card p-6 mb-4 overflow-hidden relative border-none ring-1 ring-black/5">
+      <header class="app-card p-5 mb-4 overflow-hidden relative border-none ring-1 ring-black/5">
         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#990FFA] to-[#E60076]"></div>
         <div class="flex flex-col items-center text-center">
-          <p class="text-[10px] font-black text-[#86868B] uppercase tracking-[0.2em] mb-3">صافي هذا الشهر</p>
+          <p class="text-[10px] font-black text-[#86868B] uppercase tracking-[0.2em] mb-2">صافي هذا الشهر</p>
           
-          <div class="flex flex-col items-center gap-1 mb-4">
+          <div class="flex items-baseline gap-1 mb-3">
             <span class="hero-net num {% if current_net > 0 %}text-emerald-600{% elif current_net < 0 %}text-rose-600{% endif %}">
               {{ current_net }}
             </span>
-            <span class="text-[14px] font-black text-[#86868B] num">EGP</span>
+            <span class="currency num">EGP</span>
           </div>
           
           {% if current_net > 0 %}
@@ -134,18 +143,60 @@
             <span class="status-badge bg-gray-50 text-gray-500">متعادل</span>
           {% endif %}
           
-          <div class="w-full h-px bg-black/5 my-6"></div>
+          <div class="w-full h-px bg-black/5 my-5"></div>
           
           <div class="grid grid-cols-2 w-full">
-            <div class="text-center px-2">
-              <p class="text-[10px] font-black text-[#86868B] uppercase mb-1">الإيرادات</p>
-              <p class="text-[18px] font-black text-emerald-600 num">{{ current_income }}</p>
+            <!-- Income Column -->
+            <div class="text-center px-2 cursor-pointer" onclick="toggleDetails('incomeDetails')">
+              <p class="text-[9px] font-black text-[#86868B] uppercase mb-1 flex items-center justify-center gap-1">
+                إيرادات هذا الشهر
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+              </p>
+              <p class="text-[16px] font-black text-emerald-600 num">{{ current_income }} <span class="currency text-[10px]">EGP</span></p>
             </div>
-            <div class="text-center px-2 border-r border-black/5">
-              <p class="text-[10px] font-black text-[#86868B] uppercase mb-1">المصروفات</p>
-              <p class="text-[18px] font-black text-rose-600 num">{{ current_expense }}</p>
+            <!-- Expense Column -->
+            <div class="text-center px-2 border-r border-black/5 cursor-pointer" onclick="toggleDetails('expenseDetails')">
+              <p class="text-[9px] font-black text-[#86868B] uppercase mb-1 flex items-center justify-center gap-1">
+                مصروفات هذا الشهر
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+              </p>
+              <p class="text-[16px] font-black text-rose-600 num">{{ current_expense }} <span class="currency text-[10px]">EGP</span></p>
             </div>
           </div>
+
+          <!-- Calculation Details Panels -->
+          <div id="incomeDetails" class="details-panel w-full mt-4 text-right">
+            <div class="p-3 bg-emerald-50/30 rounded-xl border border-emerald-100/50">
+              <p class="text-[10px] font-black text-emerald-700 uppercase mb-2 border-b border-emerald-100 pb-1">تفاصيل الإيرادات</p>
+              <div class="space-y-1.5">
+                {% for tx in current_income_list %}
+                <div class="flex justify-between items-center text-[11px] font-bold">
+                  <span class="text-[#1D1D1F]">{{ tx.description }}</span>
+                  <span class="num text-emerald-600">{{ tx.amount }} EGP</span>
+                </div>
+                {% empty %}
+                <p class="text-[10px] text-center text-gray-400 py-2">لا توجد إيرادات مسجلة</p>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div id="expenseDetails" class="details-panel w-full mt-4 text-right">
+            <div class="p-3 bg-rose-50/30 rounded-xl border border-rose-100/50">
+              <p class="text-[10px] font-black text-rose-700 uppercase mb-2 border-b border-rose-100 pb-1">تفاصيل المصروفات</p>
+              <div class="space-y-1.5">
+                {% for tx in current_expense_list %}
+                <div class="flex justify-between items-center text-[11px] font-bold">
+                  <span class="text-[#1D1D1F]">{{ tx.description }}</span>
+                  <span class="num text-rose-600">{{ tx.amount }} EGP</span>
+                </div>
+                {% empty %}
+                <p class="text-[10px] text-center text-gray-400 py-2">لا توجد مصروفات مسجلة</p>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
         </div>
       </header>
 
@@ -162,18 +213,18 @@
       <!-- SNAPSHOT BAR -->
       <div class="flex items-center justify-between px-4 py-3 bg-white border border-black/5 rounded-[20px] mb-8">
         <div class="flex-1 text-center">
-          <span class="text-[10px] font-black text-[#86868B] uppercase block mb-0.5">الدخل</span>
-          <span class="text-[18px] font-black num leading-none">{{ overall_income }}</span>
+          <span class="text-[9px] font-black text-[#86868B] uppercase block mb-0.5">إجمالي الدخل الكلي</span>
+          <span class="text-[16px] font-black num leading-none">{{ overall_income }} <span class="currency text-[10px]">EGP</span></span>
         </div>
         <span class="w-px h-6 bg-black/5"></span>
         <div class="flex-1 text-center">
-          <span class="text-[10px] font-black text-[#86868B] uppercase block mb-0.5">الصرف</span>
-          <span class="text-[18px] font-black num text-rose-500 leading-none">{{ overall_expense }}</span>
+          <span class="text-[9px] font-black text-[#86868B] uppercase block mb-0.5">إجمالي المصروف الكلي</span>
+          <span class="text-[16px] font-black num text-rose-500 leading-none">{{ overall_expense }} <span class="currency text-[10px]">EGP</span></span>
         </div>
         <span class="w-px h-6 bg-black/5"></span>
         <div class="flex-1 text-center">
-          <span class="text-[10px] font-black text-[#86868B] uppercase block mb-0.5">الصافي</span>
-          <span class="text-[18px] font-black num text-gradientPrimary leading-none">{{ overall_net }}</span>
+          <span class="text-[9px] font-black text-[#86868B] uppercase block mb-0.5">إجمالي الصافي الكلي</span>
+          <span class="text-[16px] font-black num text-gradientPrimary leading-none">{{ overall_net }} <span class="currency text-[10px]">EGP</span></span>
         </div>
       </div>
 
@@ -222,15 +273,15 @@
             <div class="grid grid-cols-3 gap-4 mb-6">
               <div class="text-center">
                 <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">التكلفة</p>
-                <p class="text-[15px] font-black num text-rose-500">{{ line_stats.expense }}</p>
+                <p class="text-[15px] font-black num text-rose-500">{{ line_stats.expense }} <span class="currency">EGP</span></p>
               </div>
               <div class="text-center border-x border-black/5">
                 <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">الإيراد</p>
-                <p class="text-[15px] font-black num text-emerald-600">{{ line_stats.revenue }}</p>
+                <p class="text-[15px] font-black num text-emerald-600">{{ line_stats.revenue }} <span class="currency">EGP</span></p>
               </div>
               <div class="text-center">
                 <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">الصافي</p>
-                <p class="text-[15px] font-black num text-gradientPrimary">{{ line_stats.net }}</p>
+                <p class="text-[15px] font-black num text-gradientPrimary">{{ line_stats.net }} <span class="currency">EGP</span></p>
               </div>
             </div>
 
@@ -258,7 +309,7 @@
               <div class="flex items-center justify-between p-3 rounded-xl bg-[#FBFBFD] border border-black/5">
                 <div class="flex flex-col">
                   <span class="text-[13px] font-bold text-[#1D1D1F]">{{ member.name }}</span>
-                  <span class="text-[10px] font-bold text-[#86868B] num">{{ member.monthly_cost }} EGP</span>
+                  <span class="text-[10px] font-bold text-[#86868B] num">{{ member.monthly_cost }} <span class="currency">EGP</span></span>
                 </div>
                 <span class="text-[10px] font-black px-2.5 py-1 rounded-full {% if member.status == 'paid' %}bg-emerald-50 text-emerald-600{% else %}bg-rose-50 text-rose-600{% endif %}">
                   {% if member.status == 'paid' %}تم الدفع{% else %}انتظار{% endif %}
@@ -281,7 +332,7 @@
                   <span class="text-[10px] font-medium text-[#86868B] num">{{ entry.created_at|date:"d M Y" }}</span>
                 </div>
                 <span class="text-[13px] font-black num {% if entry.kind == 'income' %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                  {% if entry.kind == 'income' %}+{% else %}-{% endif %}{{ entry.amount }}
+                  {% if entry.kind == 'income' %}+{% else %}-{% endif %}{{ entry.amount }} <span class="currency">EGP</span>
                 </span>
               </div>
               {% empty %}
@@ -327,10 +378,10 @@
             <!-- TOP ROW -->
             <div class="flex items-start justify-between mb-2">
               <div class="flex items-baseline gap-1">
-                <span class="text-[26px] font-black num leading-none {% if entry.kind == 'income' %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                <span class="text-[24px] font-black num leading-none {% if entry.kind == 'income' %}text-emerald-600{% else %}text-rose-600{% endif %}">
                   {% if entry.kind == 'income' %}+{% else %}-{% endif %}{{ entry.amount }}
                 </span>
-                <span class="text-[10px] font-black text-[#86868B] num">EGP</span>
+                <span class="currency num">EGP</span>
               </div>
               <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full {% if entry.kind == 'income' %}bg-emerald-50 text-emerald-600{% else %}bg-rose-50 text-rose-600{% endif %}">
                 {% if entry.kind == 'income' %}إيراد{% else %}مصروف{% endif %}
@@ -339,7 +390,16 @@
 
             <!-- MIDDLE ROW -->
             <div class="mb-4">
-              <p class="text-[14px] font-bold text-[#1D1D1F] leading-tight mb-1">{{ entry.title }}</p>
+              <p class="text-[14px] font-bold text-[#1D1D1F] leading-tight mb-1">{{ entry.description }}</p>
+              {% if user.is_superuser %}
+              <!-- Admin Debug Support -->
+              <div class="mb-2 p-2 bg-gray-50 rounded-lg border border-gray-100 flex flex-wrap gap-2">
+                <span class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Key: {{ entry.event_key|default:"Manual" }}</span>
+                <span class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Source: {{ entry.category }}</span>
+                {% if entry.line %}<span class="text-[8px] font-black text-purple-400 uppercase tracking-tighter">Line: {{ entry.line.phone }}</span>{% endif %}
+                {% if entry.member %}<span class="text-[8px] font-black text-pink-400 uppercase tracking-tighter">Member: {{ entry.member.name }}</span>{% endif %}
+              </div>
+              {% endif %}
               <p class="text-[12px] font-medium text-[#86868B] line-clamp-2 leading-relaxed">
                 {{ entry.notes|default:"لا يوجد وصف إضافي لهذه الحركة" }}
               </p>
@@ -426,6 +486,13 @@
     </div>
 
     <script>
+      window.toggleDetails = (id) => {
+        const el = document.getElementById(id);
+        const isOpen = el.classList.contains('is-open');
+        document.querySelectorAll('.details-panel').forEach(p => p.classList.remove('is-open'));
+        if (!isOpen) el.classList.add('is-open');
+      };
+
       window.toggleMenu = (btn) => {
         event.stopPropagation();
         const menu = btn.nextElementSibling;

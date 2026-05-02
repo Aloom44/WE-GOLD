@@ -20,7 +20,7 @@ def accounting(request):
     today = timezone.localdate()
     
     # Global Financial queries
-    ledger = FinancialTransaction.objects.all()
+    ledger = FinancialTransaction.objects.all().order_by('-created_at')
     current_ledger = ledger.filter(month=today.month, year=today.year)
 
     def get_total(qs, kind):
@@ -33,6 +33,10 @@ def accounting(request):
     overall_income = get_total(ledger, FinancialTransaction.KIND_INCOME)
     overall_expense = get_total(ledger, FinancialTransaction.KIND_EXPENSE)
     overall_net = overall_income - overall_expense
+
+    # Financial Transparency Lists
+    current_income_list = current_ledger.filter(kind=FinancialTransaction.KIND_INCOME)
+    current_expense_list = current_ledger.filter(kind=FinancialTransaction.KIND_EXPENSE)
 
     # Line Financial Analyzer Logic
     all_lines = PrimaryLine.objects.all()
@@ -70,6 +74,8 @@ def accounting(request):
         'current_income': current_income,
         'current_expense': current_expense,
         'current_net': current_net,
+        'current_income_list': current_income_list,
+        'current_expense_list': current_expense_list,
         'overall_income': overall_income,
         'overall_expense': overall_expense,
         'overall_net': overall_net,
