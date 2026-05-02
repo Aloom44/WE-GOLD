@@ -19,7 +19,7 @@ def _financial_summary(entries, kind):
 def accounting(request):
     today = timezone.localdate()
     
-    # Financial queries using the new ledger
+    # Global Financial queries
     ledger = FinancialTransaction.objects.all()
     current_ledger = ledger.filter(month=today.month, year=today.year)
 
@@ -34,6 +34,33 @@ def accounting(request):
     overall_expense = get_total(ledger, FinancialTransaction.KIND_EXPENSE)
     overall_net = overall_income - overall_expense
 
+    # Line Financial Analyzer Logic
+    all_lines = PrimaryLine.objects.all()
+    selected_line_id = request.GET.get('line_id')
+    selected_line = None
+    line_stats = {}
+    line_recent_entries = []
+
+    if selected_line_id:
+        selected_line = get_object_or_404(PrimaryLine.objects.prefetch_related('members'), id=selected_line_id)
+        line_ledger = ledger.filter(line=selected_line, month=today.month, year=today.year)
+        
+        rev = get_total(line_ledger, FinancialTransaction.KIND_INCOME)
+        exp = get_total(line_ledger, FinancialTransaction.KIND_EXPENSE)
+        
+        m_total = selected_line.members.count()
+        m_paid = selected_line.members.filter(status=Member.STATUS_PAID).count()
+        
+        line_stats = {
+            'revenue': rev,
+            'expense': exp,
+            'net': rev - exp,
+            'members_total': m_total,
+            'members_paid': m_paid,
+            'collection_rate': _ratio(m_paid, m_total),
+        }
+        line_recent_entries = ledger.filter(line=selected_line)[:10]
+
     income_form = AccountingEntryForm(prefix='income')
     expense_form = AccountingEntryForm(prefix='expense')
 
@@ -46,7 +73,11 @@ def accounting(request):
         'overall_income': overall_income,
         'overall_expense': overall_expense,
         'overall_net': overall_net,
-        'recent_entries': ledger[:15], # Show ledger entries now
+        'recent_entries': ledger[:15],
+        'all_lines': all_lines,
+        'selected_line': selected_line,
+        'line_stats': line_stats,
+        'line_recent_entries': line_recent_entries,
         'page_title': 'المحاسبة',
     }
     return render(request, 'dashboard/accounting.html', context)

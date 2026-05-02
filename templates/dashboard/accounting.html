@@ -177,6 +177,148 @@
         </div>
       </div>
 
+      <!-- LINE FINANCIAL ANALYZER -->
+      <section class="mb-10">
+        <div class="mb-4 px-1">
+          <h2 class="text-[20px] font-black text-[#1D1D1F] font-display">تحليل الخط الأساسي</h2>
+          <p class="text-[12px] font-medium text-[#86868B]">اختر خطًا أساسيًا لعرض الأداء المالي الكامل</p>
+        </div>
+
+        <!-- Selector -->
+        <div class="mb-4">
+          <form method="get" class="relative">
+            <select name="line_id" onchange="this.form.submit()" class="w-full h-14 px-5 rounded-2xl bg-white border border-black/5 text-[15px] font-bold text-[#1D1D1F] appearance-none focus:ring-4 focus:ring-purple-500/5 transition-all outline-none">
+              <option value="">اختر الخط الأساسي...</option>
+              {% for line in all_lines %}
+              <option value="{{ line.id }}" {% if selected_line.id == line.id %}selected{% endif %}>
+                {{ line.phone }} — {{ line.plan }}
+              </option>
+              {% endfor %}
+            </select>
+            <div class="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#86868B]">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </form>
+        </div>
+
+        {% if selected_line %}
+        <!-- Fixed Analysis Panel -->
+        <div class="app-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <!-- Panel Header -->
+          <div class="p-5 border-b border-black/5 bg-[#FBFBFD]/50">
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <h3 class="text-[18px] font-black num font-display">{{ selected_line.phone }}</h3>
+                <p class="text-[11px] font-bold text-[#86868B]">{{ selected_line.plan }}</p>
+              </div>
+              <div class="flex flex-col items-end">
+                <span class="status-badge {% if line_stats.net > 0 %}bg-emerald-50 text-emerald-600{% elif line_stats.net < 0 %}bg-rose-50 text-rose-600{% else %}bg-gray-50 text-gray-500{% endif %}">
+                  {% if line_stats.net > 0 %}مربح{% elif line_stats.net < 0 %}خاسر{% else %}متعادل{% endif %}
+                </span>
+                <p class="text-[9px] font-black text-[#86868B] mt-1">تجديد يوم {{ selected_line.renewal_day }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI Grid -->
+          <div class="p-5">
+            <div class="grid grid-cols-3 gap-4 mb-6">
+              <div class="text-center">
+                <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">التكلفة</p>
+                <p class="text-[15px] font-black num text-rose-500">{{ line_stats.expense }}</p>
+              </div>
+              <div class="text-center border-x border-black/5">
+                <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">الإيراد</p>
+                <p class="text-[15px] font-black num text-emerald-600">{{ line_stats.revenue }}</p>
+              </div>
+              <div class="text-center">
+                <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">الصافي</p>
+                <p class="text-[15px] font-black num text-gradientPrimary">{{ line_stats.net }}</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+              <div class="text-center">
+                <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">الأفراد</p>
+                <p class="text-[15px] font-black num">{{ line_stats.members_total }}</p>
+              </div>
+              <div class="text-center border-x border-black/5">
+                <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">المدفوع</p>
+                <p class="text-[15px] font-black num text-emerald-600">{{ line_stats.members_paid }}</p>
+              </div>
+              <div class="text-center">
+                <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">التحصيل</p>
+                <p class="text-[15px] font-black num">{{ line_stats.collection_rate }}%</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Member Payment Breakdown -->
+          <div class="p-5 border-t border-black/5">
+            <h4 class="text-[12px] font-black text-[#1D1D1F] mb-4">تحصيل الأفراد</h4>
+            <div class="space-y-2">
+              {% for member in selected_line.members.all %}
+              <div class="flex items-center justify-between p-3 rounded-xl bg-[#FBFBFD] border border-black/5">
+                <div class="flex flex-col">
+                  <span class="text-[13px] font-bold text-[#1D1D1F]">{{ member.name }}</span>
+                  <span class="text-[10px] font-bold text-[#86868B] num">{{ member.monthly_cost }} EGP</span>
+                </div>
+                <span class="text-[10px] font-black px-2.5 py-1 rounded-full {% if member.status == 'paid' %}bg-emerald-50 text-emerald-600{% else %}bg-rose-50 text-rose-600{% endif %}">
+                  {% if member.status == 'paid' %}تم الدفع{% else %}انتظار{% endif %}
+                </span>
+              </div>
+              {% empty %}
+              <p class="text-[11px] font-bold text-[#86868B] text-center py-4">لا يوجد أفراد مرتبطون بهذا الخط</p>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Line Recent Transactions -->
+          <div class="p-5 border-t border-black/5 bg-[#FBFBFD]/30">
+            <h4 class="text-[12px] font-black text-[#1D1D1F] mb-4">آخر عمليات الخط</h4>
+            <div class="space-y-3">
+              {% for entry in line_recent_entries %}
+              <div class="flex items-center justify-between">
+                <div class="flex flex-col">
+                  <span class="text-[12px] font-bold text-[#1D1D1F]">{{ entry.description }}</span>
+                  <span class="text-[10px] font-medium text-[#86868B] num">{{ entry.created_at|date:"d M Y" }}</span>
+                </div>
+                <span class="text-[13px] font-black num {% if entry.kind == 'income' %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                  {% if entry.kind == 'income' %}+{% else %}-{% endif %}{{ entry.amount }}
+                </span>
+              </div>
+              {% empty %}
+              <p class="text-[11px] font-bold text-[#86868B] text-center py-4">لا توجد عمليات مسجلة</p>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Quick Actions Footer -->
+          <div class="p-4 bg-white border-t border-black/5 grid grid-cols-2 gap-2">
+            <a href="{% url 'line_renew' selected_line.id %}" class="btn-base h-10 text-[12px] bg-gradient-to-r from-[#990FFA] to-[#E60076] text-white">
+              تجديد الخط
+            </a>
+            <a href="{% url 'members' selected_line.id %}" class="btn-base h-10 text-[12px] bg-[#FBFBFD] border border-black/5 text-[#1D1D1F]">
+              عرض الأفراد
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="app-card border-dashed py-14 text-center bg-white/50">
+          <div class="h-16 w-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#990FFA">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <p class="text-[14px] font-bold text-[#1D1D1F]">اختر خطًا لعرض التحليل المالي</p>
+          <p class="text-[11px] font-medium text-[#86868B] mt-1">عرض الأرباح والتحصيلات بشكل تفصيلي</p>
+        </div>
+        {% endif %}
+      </section>
+
       <!-- LEDGER -->
       <section class="pb-10">
         <div class="flex items-center justify-between mb-4 px-1">
