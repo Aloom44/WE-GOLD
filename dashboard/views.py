@@ -31,7 +31,8 @@ def notes_list(request):
         'priorities': GlobalNote.PRIORITY_CHOICES,
         'types': GlobalNote.TYPE_CHOICES,
         'statuses': GlobalNote.STATUS_CHOICES,
-        'page_title': 'النوتة العامة',
+        'page_title': 'إشعارات النظام' if is_auto else 'النوتة العامة',
+        'is_notifications': is_auto,
     }
     return render(request, 'dashboard/notes.html', context)
 

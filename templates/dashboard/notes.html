@@ -82,8 +82,14 @@
         <!-- HEADER -->
         <nav class="flex items-center justify-between mb-6 px-1">
             <div class="flex-1">
-              <h1 class="text-[26px] font-black text-[#1D1D1F] font-display">النوتة العامة</h1>
-              <p class="text-[12px] font-semibold text-[#86868B] mt-1">الذاكرة التشغيلية للمشروع</p>
+              <h1 class="text-[26px] font-black text-[#1D1D1F] font-display">{{ page_title }}</h1>
+              <p class="text-[12px] font-semibold text-[#86868B] mt-1">
+                {% if is_notifications %}
+                تنبيهات النظام التلقائية
+                {% else %}
+                الذاكرة التشغيلية للمشروع
+                {% endif %}
+              </p>
             </div>
             <a href="{% url 'home' %}" class="flex h-11 w-11 items-center justify-center rounded-full bg-white border border-black/5 text-[#6E6E73] active:scale-95 transition-all">
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -191,11 +197,13 @@
     </div>
 
     <!-- FLOATING ACTION BUTTON -->
+    {% if not is_notifications %}
     <button data-open-modal="noteModal" class="floating-btn">
         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
     </button>
+    {% endif %}
 
     <!-- ADD NOTE MODAL -->
     <div id="noteModal" class="modal fixed inset-0 z-[110] hidden items-center justify-center modal-backdrop px-5">
