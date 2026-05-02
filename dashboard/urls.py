@@ -18,6 +18,11 @@ from .views import (
     member_note_add,
     member_note_delete,
     link_ledger_to_lines,
+    notes_list,
+    note_create,
+    note_toggle_pin,
+    note_toggle_status,
+    note_delete,
 )
 
 urlpatterns = [
@@ -38,4 +43,9 @@ urlpatterns = [
     path('members/<int:line_id>/<int:member_id>/add-note/', member_note_add, name='member_note_add'),
     path('members/<int:line_id>/notes/<int:note_id>/delete/', member_note_delete, name='member_note_delete'),
     path('link-ledger/', link_ledger_to_lines, name='link_ledger_to_lines'),
+    path('notes/', notes_list, name='notes_list'),
+    path('notes/new/', note_create, name='note_create'),
+    path('notes/<int:note_id>/pin/', note_toggle_pin, name='note_toggle_pin'),
+    path('notes/<int:note_id>/status/<str:status>/', note_toggle_status, name='note_toggle_status'),
+    path('notes/<int:note_id>/delete/', note_delete, name='note_delete'),
 ]

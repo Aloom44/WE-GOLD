@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import AccountingEntry, Member, PrimaryLine
+from .models import AccountingEntry, Member, PrimaryLine, GlobalNote
 
 
 class PrimaryLineForm(forms.ModelForm):
@@ -153,3 +153,36 @@ class AccountingEntryForm(forms.ModelForm):
         self.fields['amount'].label = 'المبلغ'
         self.fields['entry_date'].label = 'التاريخ'
         self.fields['notes'].label = 'ملاحظات'
+
+
+class GlobalNoteForm(forms.ModelForm):
+    class Meta:
+        model = GlobalNote
+        fields = [
+            'title', 
+            'content', 
+            'note_type', 
+            'priority', 
+            'status', 
+            'due_date', 
+            'is_pinned', 
+            'related_line', 
+            'related_member'
+        ]
+        widgets = {
+            'title': forms.TextInput(attrs={'placeholder': 'عنوان الملاحظة'}),
+            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'تفاصيل الملاحظة...'}),
+            'due_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].label = 'العنوان'
+        self.fields['content'].label = 'الوصف'
+        self.fields['note_type'].label = 'نوع الملاحظة'
+        self.fields['priority'].label = 'الأولوية'
+        self.fields['status'].label = 'الحالة'
+        self.fields['due_date'].label = 'تاريخ الاستحقاق'
+        self.fields['is_pinned'].label = 'تثبيت في الأعلى'
+        self.fields['related_line'].label = 'ربط بخط (اختياري)'
+        self.fields['related_member'].label = 'ربط بفرد (اختياري)'

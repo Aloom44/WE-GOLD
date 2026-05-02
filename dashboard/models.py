@@ -344,3 +344,55 @@ class FinancialTransaction(models.Model):
 
 	def __str__(self):
 		return f"{self.get_kind_display()} - {self.amount} ({self.month}/{self.year})"
+
+
+class GlobalNote(models.Model):
+    TYPE_CHOICES = [
+        ('reminder', 'تذكير'),
+        ('collection', 'تحصيل'),
+        ('expense', 'مصروف'),
+        ('issue', 'مشكلة عميل'),
+        ('followup', 'متابعة خط'),
+        ('admin', 'إداري'),
+        ('general', 'عام'),
+    ]
+    PRIORITY_CHOICES = [
+        ('low', 'منخفض'),
+        ('medium', 'متوسط'),
+        ('high', 'عالي'),
+        ('urgent', 'عاجل'),
+    ]
+    STATUS_CHOICES = [
+        ('active', 'نشطة'),
+        ('completed', 'مكتملة'),
+        ('archived', 'مؤرشفة'),
+    ]
+
+    title = models.CharField(max_length=200, verbose_name="العنوان")
+    content = models.TextField(verbose_name="الوصف")
+    note_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='general', verbose_name="النوع")
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium', verbose_name="الأولوية")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active', verbose_name="الحالة")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    due_date = models.DateField(null=True, blank=True, verbose_name="تاريخ الاستحقاق")
+    
+    is_pinned = models.BooleanField(default=False, verbose_name="تثبيت")
+    
+    related_line = models.ForeignKey(PrimaryLine, on_delete=models.SET_NULL, null=True, blank=True, related_name='global_notes', verbose_name="خط مرتبط")
+    related_member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, blank=True, related_name='global_notes', verbose_name="فرد مرتبط")
+
+    class Meta:
+        ordering = ['-is_pinned', '-priority', '-created_at']
+        verbose_name = "ملاحظة عامة"
+        verbose_name_plural = "الملاحظات العامة"
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def is_overdue(self):
+        if self.due_date and self.status == 'active':
+            return self.due_date < timezone.localdate()
+        return False

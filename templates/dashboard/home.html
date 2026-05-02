@@ -161,11 +161,29 @@
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-[#86868B] opacity-70">Family Dashboard</p>
           </div>
 
-          <button type="button" class="app-control flex h-11 w-11 items-center justify-center bg-white text-gradientPrimary hover:scale-110 active:scale-90" aria-label="الإشعارات">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
-            </svg>
-          </button>
+          <div class="flex items-center gap-2">
+            {% if urgent_notes_count > 0 %}
+            <div class="relative">
+              <a href="{% url 'notes_list' %}" class="app-control flex h-11 w-11 items-center justify-center bg-white text-rose-600 hover:scale-110 active:scale-90" aria-label="النوتة">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zM2 2v12h12V2H2z"/></svg>
+                <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-4 w-4 bg-rose-600 text-[9px] font-black text-white items-center justify-center">{{ urgent_notes_count }}</span>
+                </span>
+              </a>
+            </div>
+            {% else %}
+            <a href="{% url 'notes_list' %}" class="app-control flex h-11 w-11 items-center justify-center bg-white text-gradientPrimary hover:scale-110 active:scale-90" aria-label="النوتة">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zM2 2v12h12V2H2z"/></svg>
+            </a>
+            {% endif %}
+
+            <button type="button" class="app-control flex h-11 w-11 items-center justify-center bg-white text-gradientPrimary hover:scale-110 active:scale-90" aria-label="الإشعارات">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
+                </svg>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -191,6 +209,35 @@
           </div>
         </div>
       </header>
+
+      <!-- QUICK NOTES WIDGET -->
+      {% if recent_notes %}
+      <section class="mb-8" dir="rtl">
+        <div class="flex items-center justify-between mb-4 px-1">
+          <h3 class="text-lg font-black text-gradientText font-display">النوتة العامة</h3>
+          <a href="{% url 'notes_list' %}" class="text-[11px] font-black text-gradientPrimary uppercase tracking-widest hover:underline">عرض الكل</a>
+        </div>
+        <div class="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+          {% for note in recent_notes %}
+          <div class="app-control flex-shrink-0 w-[240px] bg-white p-4 relative overflow-hidden border-r-4 {% if note.priority == 'urgent' %}border-rose-500{% elif note.priority == 'high' %}border-orange-500{% elif note.priority == 'medium' %}border-blue-500{% else %}border-gray-400{% endif %}">
+            {% if note.is_pinned %}
+            <div class="absolute top-2 left-2 text-[#990FFA]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M4.146.146A.5.5 0 0 1 4.5 0h7a.5.5 0 0 1 .5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 0 1-.5.5h-4v4.5c0 .276-.224.5-.5.5s-.5-.224-.5-.5V10h-4a.5.5 0 0 1-.5-.5c0-.973.64-1.725 1.17-2.189A5.921 5.921 0 0 1 5 6.758V2.323a2.302 2.302 0 0 1-.354-.298C4.342 1.724 4 1.23 4 .5a.5.5 0 0 1 .146-.354z"/></svg>
+            </div>
+            {% endif %}
+            <div class="flex items-center gap-2 mb-2">
+                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-black/5 text-[#86868B]">{{ note.get_note_type_display }}</span>
+                {% if note.is_overdue %}
+                <span class="text-[8px] font-black bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded animate-pulse">متأخر</span>
+                {% endif %}
+            </div>
+            <h4 class="text-[14px] font-black text-gradientText mb-1 line-clamp-1">{{ note.title }}</h4>
+            <p class="text-[11px] font-bold text-[#6E6E73] line-clamp-2 leading-relaxed">{{ note.content }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
 
       <!-- MAIN CONTENT AREA -->
       <section class="mb-10 space-y-6">
@@ -331,6 +378,19 @@
     <div id="copyToast" class="pointer-events-none fixed bottom-10 left-1/2 z-[70] w-max -translate-x-1/2 rounded-full gradient-bg px-8 py-3.5 text-[13px] font-black text-white shadow-2xl opacity-0 transition-all duration-300 translate-y-10" role="status">
       تم نسخ الرقم بنجاح ✨
     </div>
+
+    <!-- GLOBAL NOTES FLOATING BUTTON -->
+    <a href="{% url 'notes_list' %}" class="fixed bottom-6 left-6 z-50 flex h-14 w-14 items-center justify-center rounded-full gradient-bg text-white shadow-2xl shadow-purple-500/40 transition-all hover:scale-110 active:scale-90 sm:h-16 sm:w-16">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zM2 2v12h12V2H2z"/>
+      </svg>
+      {% if urgent_notes_count > 0 %}
+      <span class="absolute -right-1 -top-1 flex h-6 w-6">
+        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75"></span>
+        <span class="relative inline-flex h-6 w-6 items-center justify-center rounded-full bg-rose-600 text-[10px] font-black text-white">{{ urgent_notes_count }}</span>
+      </span>
+      {% endif %}
+    </a>
 
     <script>
       (() => {

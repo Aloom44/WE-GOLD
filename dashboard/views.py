@@ -2,8 +2,71 @@ from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .forms import AccountingEntryForm, MemberForm, PrimaryLineForm, PrimaryLineRenewForm
-from .models import AccountingEntry, Member, MemberNote, PrimaryLine, FinancialTransaction
+from .forms import AccountingEntryForm, MemberForm, PrimaryLineForm, PrimaryLineRenewForm, GlobalNoteForm
+from .models import AccountingEntry, Member, MemberNote, PrimaryLine, FinancialTransaction, GlobalNote
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def notes_list(request):
+    """Main notes dashboard with filtering."""
+    notes = GlobalNote.objects.all()
+    
+    # Simple filtering
+    prio = request.GET.get('priority')
+    ntype = request.GET.get('type')
+    status = request.GET.get('status', 'active')
+    
+    if prio: notes = notes.filter(priority=prio)
+    if ntype: notes = notes.filter(note_type=ntype)
+    if status: notes = notes.filter(status=status)
+    
+    form = GlobalNoteForm()
+    
+    context = {
+        'notes': notes,
+        'form': form,
+        'priorities': GlobalNote.PRIORITY_CHOICES,
+        'types': GlobalNote.TYPE_CHOICES,
+        'statuses': GlobalNote.STATUS_CHOICES,
+        'page_title': 'النوتة العامة',
+    }
+    return render(request, 'dashboard/notes.html', context)
+
+
+@login_required
+def note_create(request):
+    if request.method == 'POST':
+        form = GlobalNoteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('notes_list')
+    return redirect('notes_list')
+
+
+@login_required
+def note_toggle_pin(request, note_id):
+    note = get_object_or_404(GlobalNote, id=note_id)
+    note.is_pinned = not note.is_pinned
+    note.save()
+    return redirect(request.META.get('HTTP_REFERER', 'notes_list'))
+
+
+@login_required
+def note_toggle_status(request, note_id, status):
+    note = get_object_or_404(GlobalNote, id=note_id)
+    if status in dict(GlobalNote.STATUS_CHOICES):
+        note.status = status
+        note.save()
+    return redirect(request.META.get('HTTP_REFERER', 'notes_list'))
+
+
+@login_required
+def note_delete(request, note_id):
+    note = get_object_or_404(GlobalNote, id=note_id)
+    if request.method == 'POST':
+        note.delete()
+    return redirect('notes_list')
 
 
 def _ratio(part, whole):
@@ -196,11 +259,17 @@ def home(request):
         line.current_cost = line_ledger.filter(kind=FinancialTransaction.KIND_EXPENSE).aggregate(total=Sum('amount'))['total'] or 0
         line.current_profit = line.current_revenue - line.current_cost
 
+    # Fetch top 3 active notes for the widget
+    recent_notes = GlobalNote.objects.filter(status='active')[:3]
+    urgent_notes_count = GlobalNote.objects.filter(status='active', priority='urgent').count()
+
     context = {
         'lines': lines,
         'total_primary_lines': len(lines),
         'total_data': sum(line.total_data for line in lines),
         'total_minutes': sum(line.total_minutes for line in lines),
+        'recent_notes': recent_notes,
+        'urgent_notes_count': urgent_notes_count,
     }
 
     return render(request, 'dashboard/home.html', context)
