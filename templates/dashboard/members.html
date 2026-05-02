@@ -579,5 +579,17 @@
         </div>
       </div>
     </div>
+    <!-- GLOBAL NOTES FLOATING BUTTON -->
+    <a href="{% url 'notes_list' %}" class="fixed bottom-6 left-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#990FFA] to-[#E60076] text-white shadow-2xl shadow-purple-500/40 transition-all hover:scale-110 active:scale-90 sm:h-16 sm:w-16">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zM2 2v12h12V2H2z"/>
+      </svg>
+      {% if urgent_notes_count > 0 %}
+      <span class="absolute -right-1 -top-1 flex h-6 w-6">
+        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75"></span>
+        <span class="relative inline-flex h-6 w-6 items-center justify-center rounded-full bg-rose-600 text-[10px] font-black text-white">{{ urgent_notes_count }}</span>
+      </span>
+      {% endif %}
+    </a>
   </body>
 </html>
