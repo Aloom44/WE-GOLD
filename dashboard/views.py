@@ -244,6 +244,9 @@ def accounting_delete(request, entry_id):
     return redirect('accounting')
 
 
+from django.db import utils as db_utils
+from django.core.management import call_command
+
 def sync_global_notes():
     """Automated logic to create system reminders."""
     today = timezone.localdate()
@@ -295,7 +298,13 @@ def sync_global_notes():
 
 
 def home(request):
-    sync_global_notes()
+    try:
+        sync_global_notes()
+    except db_utils.ProgrammingError:
+        # Table might be missing on server (Vercel), try auto-migrating
+        call_command('migrate', interactive=False)
+        sync_global_notes()
+    
     today = timezone.localdate()
     lines = list(PrimaryLine.objects.prefetch_related('members').order_by('id'))
     
