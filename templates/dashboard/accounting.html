@@ -365,69 +365,82 @@
         {% endif %}
       </section>
 
-      <!-- LEDGER -->
+      <!-- LEDGER TABLE -->
       <section class="pb-10">
         <div class="flex items-center justify-between mb-4 px-1">
           <h2 class="text-[20px] font-black text-[#1D1D1F] font-display">آخر الحركات</h2>
           <span class="text-[11px] font-black text-[#86868B] uppercase">{{ recent_entries|length }} حركة</span>
         </div>
-
-        <div class="space-y-3">
-          {% for entry in recent_entries %}
-          <article class="app-card p-4 relative overflow-hidden">
-            <!-- TOP ROW -->
-            <div class="flex items-start justify-between mb-2">
-              <div class="flex items-baseline gap-1">
-                <span class="text-[24px] font-black num leading-none {% if entry.kind == 'income' %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                  {% if entry.kind == 'income' %}+{% else %}-{% endif %}{{ entry.amount }}
-                </span>
-                <span class="currency num">EGP</span>
-              </div>
-              <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full {% if entry.kind == 'income' %}bg-emerald-50 text-emerald-600{% else %}bg-rose-50 text-rose-600{% endif %}">
-                {% if entry.kind == 'income' %}إيراد{% else %}مصروف{% endif %}
-              </span>
+        <div class="app-card overflow-hidden">
+          <div class="overflow-x-auto">
+            <div class="max-h-[450px] overflow-y-auto">
+              <table class="w-full text-right border-collapse">
+                <thead class="sticky top-0 z-10 bg-[#FBFBFD] border-b border-black/5">
+                  <tr>
+                    <th class="px-4 py-3 text-[10px] font-black text-[#86868B] uppercase tracking-wider">التاريخ</th>
+                    <th class="px-4 py-3 text-[10px] font-black text-[#86868B] uppercase tracking-wider">البيان</th>
+                    <th class="px-4 py-3 text-[10px] font-black text-[#86868B] uppercase tracking-wider">المبلغ</th>
+                    <th class="px-4 py-3 text-[10px] font-black text-[#86868B] uppercase tracking-wider text-left"></th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-black/5">
+                  {% for entry in recent_entries %}
+                  <tr class="hover:bg-gray-50/50 transition-colors">
+                    <!-- Date -->
+                    <td class="px-4 py-4 whitespace-nowrap">
+                      <span class="text-[11px] font-bold text-[#86868B] num">{{ entry.entry_date|date:"d M" }}</span>
+                    </td>
+                    <!-- Description -->
+                    <td class="px-4 py-4 min-w-[160px]">
+                      <div class="flex flex-col">
+                        <span class="text-[13px] font-bold text-[#1D1D1F] leading-tight mb-0.5">{{ entry.description }}</span>
+                        {% if entry.notes %}
+                        <span class="text-[10px] font-medium text-[#86868B] line-clamp-1">{{ entry.notes }}</span>
+                        {% endif %}
+                        
+                        {% if user.is_superuser %}
+                        <div class="mt-1 flex flex-wrap gap-1 opacity-60">
+                          <span class="text-[7px] font-black text-gray-400 uppercase tracking-tighter bg-gray-100 px-1 rounded">Key: {{ entry.event_key|default:"Manual" }}</span>
+                          {% if entry.line %}<span class="text-[7px] font-black text-purple-400 uppercase tracking-tighter bg-purple-50 px-1 rounded">{{ entry.line.phone }}</span>{% endif %}
+                        </div>
+                        {% endif %}
+                      </div>
+                    </td>
+                    <!-- Amount -->
+                    <td class="px-4 py-4 whitespace-nowrap">
+                      <div class="flex flex-col items-start">
+                        <span class="text-[15px] font-black num {% if entry.kind == 'income' %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                          {% if entry.kind == 'income' %}+{% else %}-{% endif %}{{ entry.amount }}
+                        </span>
+                        <span class="currency num text-[9px]">EGP</span>
+                      </div>
+                    </td>
+                    <!-- Actions -->
+                    <td class="px-4 py-4 text-left">
+                      <div class="relative inline-block text-left">
+                        <button type="button" onclick="toggleMenu(this)" class="h-8 w-8 flex items-center justify-center rounded-full bg-[#FBFBFD] border border-black/5 text-[#86868B] active:scale-90 transition-transform">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                          </svg>
+                        </button>
+                        <div class="action-menu left-0">
+                          <form method="post" action="{% url 'accounting_delete' entry.id %}" class="js-delete-entry-form">
+                            {% csrf_token %}
+                            <button type="submit" class="w-full text-right px-3 py-2.5 text-[12px] font-bold text-rose-600 hover:bg-rose-50 rounded-lg">حذف الحركة</button>
+                          </form>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="4" class="py-16 text-center text-[13px] font-bold text-[#86868B]">لا توجد حركات مسجلة</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
-
-            <!-- MIDDLE ROW -->
-            <div class="mb-4">
-              <p class="text-[14px] font-bold text-[#1D1D1F] leading-tight mb-1">{{ entry.description }}</p>
-              {% if user.is_superuser %}
-              <!-- Admin Debug Support -->
-              <div class="mb-2 p-2 bg-gray-50 rounded-lg border border-gray-100 flex flex-wrap gap-2">
-                <span class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Key: {{ entry.event_key|default:"Manual" }}</span>
-                <span class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Source: {{ entry.category }}</span>
-                {% if entry.line %}<span class="text-[8px] font-black text-purple-400 uppercase tracking-tighter">Line: {{ entry.line.phone }}</span>{% endif %}
-                {% if entry.member %}<span class="text-[8px] font-black text-pink-400 uppercase tracking-tighter">Member: {{ entry.member.name }}</span>{% endif %}
-              </div>
-              {% endif %}
-              <p class="text-[12px] font-medium text-[#86868B] line-clamp-2 leading-relaxed">
-                {{ entry.notes|default:"لا يوجد وصف إضافي لهذه الحركة" }}
-              </p>
-            </div>
-
-            <!-- BOTTOM ROW -->
-            <div class="flex items-center justify-between pt-3 border-t border-black/5">
-              <span class="text-[11px] font-bold text-[#C1C1C1] num">{{ entry.entry_date|date:"d M Y" }}</span>
-              <div class="relative">
-                <button type="button" onclick="toggleMenu(this)" class="h-8 w-8 flex items-center justify-center rounded-full bg-[#FBFBFD] border border-black/5 text-[#86868B]">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
-                  </svg>
-                </button>
-                <div class="action-menu">
-                  <form method="post" action="{% url 'accounting_delete' entry.id %}" class="js-delete-entry-form">
-                    {% csrf_token %}
-                    <button type="submit" class="w-full text-right px-3 py-2.5 text-[13px] font-bold text-rose-600 hover:bg-rose-50 rounded-lg">حذف الحركة</button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </article>
-          {% empty %}
-          <div class="py-16 text-center app-card border-dashed bg-white/50">
-            <p class="text-[14px] font-bold text-[#86868B]">لا توجد حركات مسجلة</p>
           </div>
-          {% endfor %}
         </div>
       </section>
 
