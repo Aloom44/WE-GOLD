@@ -84,41 +84,32 @@ def accounting(request):
 
 
 def link_ledger_to_lines(request):
-    """Force rebuild/sync the ledger for the current month and link legacy data."""
+    """Clean and rebuild the ledger to fix duplicates and ensure accuracy."""
     import re
     today = timezone.localdate()
-    linked_count = 0
-    synced_count = 0
     
-    # 1. LINK LEGACY DATA
-    unlinked = FinancialTransaction.objects.filter(line__isnull=True)
-    phone_pattern = re.compile(r'01[0-2,5]\d{8}')
+    # 1. CLEAR EXISTING LEDGER (Start Fresh to fix duplicates)
+    FinancialTransaction.objects.all().delete()
     
-    for tx in unlinked:
-        # Match Phone
-        match = phone_pattern.search(tx.description)
-        if match:
-            line = PrimaryLine.objects.filter(phone=match.group()).first()
-            if line:
-                tx.line = line
-                tx.save()
-                linked_count += 1
-                continue
-        
-        # Match Member Name (More flexible)
-        if "مدفوعات" in tx.description:
-            # Try to extract any name after common prefixes
-            clean_desc = tx.description.replace("مدفوعات الأفراد -", "").replace("مدفوعات -", "").strip()
-            member = Member.objects.filter(name__icontains=clean_desc[:5]).first() # Match first few chars
-            if member:
-                tx.line = member.line
-                tx.member = member
-                tx.save()
-                linked_count += 1
+    # 2. MIGRATE ONLY MANUAL/CUSTOM OLD ENTRIES
+    # Automated ones will be handled by the new sync logic below
+    old_manual_entries = AccountingEntry.objects.filter(system_key__isnull=True)
+    for entry in old_manual_entries:
+        FinancialTransaction.objects.create(
+            kind=entry.kind,
+            category=FinancialTransaction.CAT_MANUAL,
+            amount=entry.amount,
+            description=entry.title,
+            month=entry.entry_date.month,
+            year=entry.entry_date.year,
+            created_at=entry.created_at
+        )
 
-    # 2. SYNC CURRENT MONTH (Ensure every line/paid member has a record)
+    # 3. SYNC CURRENT MONTH AUTOMATED RECORDS
+    # This ensures every line and paid member has exactly ONE record for May 2026
+    synced_count = 0
     for line in PrimaryLine.objects.all():
-        # Record line cost for this month if missing
+        # Record line cost
         FinancialTransaction.record(
             event_key=f"line-cost-{line.pk}-{today.month}-{today.year}",
             kind=FinancialTransaction.KIND_EXPENSE,
@@ -130,7 +121,7 @@ def link_ledger_to_lines(request):
         )
         synced_count += 1
         
-        # Record member payments for this month if they are PAID
+        # Record member payments
         for member in line.members.filter(status=Member.STATUS_PAID):
             FinancialTransaction.record(
                 event_key=f"member-pay-{member.pk}-{today.month}-{today.year}",
@@ -144,7 +135,7 @@ def link_ledger_to_lines(request):
             )
             synced_count += 1
                 
-    return HttpResponse(f"✅ Process Complete: Linked {linked_count} legacy records and Synced {synced_count} current month records!")
+    return HttpResponse(f"✅ Ledger cleaned and rebuilt! Synced {synced_count} automated records for the current month.")
 
 
 def accounting_income_create(request):
