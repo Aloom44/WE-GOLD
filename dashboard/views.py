@@ -1,7 +1,6 @@
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.http import HttpResponse
 
 from .forms import AccountingEntryForm, MemberForm, PrimaryLineForm, PrimaryLineRenewForm
 from .models import AccountingEntry, Member, MemberNote, PrimaryLine, FinancialTransaction
@@ -294,28 +293,3 @@ def member_note_delete(request, line_id, note_id):
         note.delete()
         
     return redirect('members', line_id=line_id)
-
-
-def migrate_accounting_data(request):
-    """Temporary view to migrate old AccountingEntry data to FinancialTransaction."""
-    old_entries = AccountingEntry.objects.all()
-    count = 0
-    for entry in old_entries:
-        # Avoid duplicating automated entries that might have been created already
-        event_key = entry.system_key or f"legacy-{entry.id}"
-        
-        FinancialTransaction.objects.update_or_create(
-            event_key=event_key,
-            defaults={
-                'kind': entry.kind,
-                'category': FinancialTransaction.CAT_AUTO if entry.system_key else FinancialTransaction.CAT_MANUAL,
-                'amount': entry.amount,
-                'description': entry.title,
-                'month': entry.entry_date.month,
-                'year': entry.entry_date.year,
-                'created_at': entry.created_at
-            }
-        )
-        count += 1
-    
-    return HttpResponse(f"✅ Migrated {count} entries to the new ledger!")

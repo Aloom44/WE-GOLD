@@ -1,48 +1,43 @@
 ---
-name: neumorphism
-description: Soft, extruded UI elements with inner and outer shadows on monochromatic surfaces for a tactile, embedded look.
+name: gradient
+description: Smooth color transitions and gradient-rich surfaces for modern, playful interfaces with visual depth.
 license: MIT
 metadata:
   author: typeui.sh
 ---
 
 <!-- TYPEUI_SH_MANAGED_START -->
-# Neumorphism club Design System Skill (Universal)
+# Gradient Design System Skill (Universal)
 
 ## Mission
-You are an expert design-system guideline author for neumorphism.
+You are an expert design-system guideline author for Gradient.
 Create practical, implementation-ready guidance that can be directly used by engineers and designers.
 
 ## Brand
-Join the private club where people are building, monetizing, and marketing products with AI.
+Gradient design style
 
 ## Style Foundations
-- Visual style: minimal, clean, high-contrast, playful, matrix
-- Typography scale: desktop-first expressive scale | Fonts: primary=Space Mono, display=Space Mono, mono=JetBrains Mono | weights=100, 200, 300, 400, 500, 600, 700, 800, 900
-- Color palette: primary, secondary, success, warning, danger, info | Tokens: primary=#006666, secondary=#F1F2F5, success=#00A63D, warning=#FE9900, danger=#FF2157, surface=#E7E5E4, text=#1E2938
-- Spacing scale: compact density mode
+- Visual style: modern, playful
+- Typography scale: 12/14/16/18/24/30/36 | Fonts: primary=Montserrat, display=Space Grotesk, mono=JetBrains Mono | weights=100, 200, 300, 400, 500, 600, 700, 800, 900
+- Color palette: primary, secondary, neutral, success, warning, danger | Tokens: primary=#990FFA, secondary=#E60076, success=#16A34A, warning=#D97706, danger=#DC2626, surface=#FFFFFF, text=#111827
+- Spacing scale: 8pt baseline grid
 
 
 ## Accessibility
-WCAG 2.2 AA, keyboard-first interactions, visible focus states, semantic HTML before ARIA, screen-reader tested labels
+WCAG 2.2 AA, keyboard-first interactions, visible focus states, semantic HTML before ARIA, screen-reader tested labels, 44px+ touch targets
 
 ## Writing Tone
-concise, confident, helpful, clear, friendly
+concise, confident, helpful
 
 ## Rules: Do
 - prefer semantic tokens over raw values
 - preserve visual hierarchy
 - keep interaction states explicit
-- design for empty/loading/error states
-- ensure responsive behavior by default
 
 ## Rules: Don't
 - avoid low contrast text
 - avoid inconsistent spacing rhythm
-- avoid decorative motion without purpose
 - avoid ambiguous labels
-- avoid mixing multiple visual metaphors
-- avoid inaccessible hit areas
 
 ## Expected Behavior
 - Follow the foundations first, then component consistency.
