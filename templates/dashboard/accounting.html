@@ -187,7 +187,7 @@
         <!-- Selector -->
         <div class="mb-4">
           <form method="get" class="relative">
-            <select name="line_id" onchange="this.form.submit()" class="w-full h-14 px-5 rounded-2xl bg-white border border-black/5 text-[15px] font-bold text-[#1D1D1F] appearance-none focus:ring-4 focus:ring-purple-500/5 transition-all outline-none">
+            <select name="line_id" onchange="this.form.submit()" class="w-full h-14 px-5 rounded-2xl bg-white border border-black/5 text-[15px] font-bold text-[#1D1D1F] focus:ring-4 focus:ring-purple-500/5 transition-all outline-none">
               <option value="">اختر الخط الأساسي...</option>
               {% for line in all_lines %}
               <option value="{{ line.id }}" {% if selected_line.id == line.id %}selected{% endif %}>
@@ -195,11 +195,6 @@
               </option>
               {% endfor %}
             </select>
-            <div class="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#86868B]">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
           </form>
         </div>
 
