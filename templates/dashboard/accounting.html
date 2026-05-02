@@ -4,247 +4,299 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>المحاسبة المالية - WE Gold</title>
+    <title>{{ page_title }} - باقات WE Gold</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'dashboard/style.css' %}" />
     <style>
       :root {
-        --gradient-primary: linear-gradient(135deg, #990FFA 0%, #E60076 100%);
-        --glass-bg: rgba(255, 255, 255, 0.85);
-        --glass-border: rgba(255, 255, 255, 0.4);
+        --app-radius: 1.5rem;
+        --app-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+        --app-shadow-deep: 0 12px 34px rgba(0, 0, 0, 0.08);
+        --app-border: 1px solid rgba(0, 0, 0, 0.05);
+        --color-profit: #34C759;
+        --color-loss: #FF3B30;
+        --color-neutral: #86868B;
       }
-      body {
-        font-family: 'Inter', sans-serif;
-        background: radial-gradient(circle at 0% 0%, rgba(153, 15, 250, 0.03) 0%, transparent 50%),
-                    radial-gradient(circle at 100% 100%, rgba(230, 0, 118, 0.03) 0%, transparent 50%),
-                    #FBFBFD;
-        color: #1D1D1F;
+
+      .app-control {
+        border-radius: var(--app-radius);
+        border: var(--app-border);
+        box-shadow: var(--app-shadow);
+        transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
       }
-      .font-display { font-family: 'Outfit', sans-serif; }
-      .glass-card {
-        background: var(--glass-bg);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+
+      .num { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+      .hero-centerpiece {
+        padding: 3.5rem 2rem;
+        background: #ffffff;
       }
-      .num { font-family: 'Outfit', sans-serif; font-variant-numeric: tabular-nums; }
-      .text-gradient {
-        background: var(--gradient-primary);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+
+      .status-pill {
+        padding: 0.5rem 1.5rem;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
       }
-      .btn-premium {
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      .btn-premium:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-      }
-      .btn-premium:active { transform: translateY(0); }
-      
+
       .metric-card {
-        background: white;
-        border: 1px solid rgba(0,0,0,0.05);
-        border-radius: 2rem;
         padding: 1.5rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        border-radius: var(--app-radius);
+        border: var(--app-border);
+        box-shadow: var(--app-shadow);
+        background: #ffffff;
       }
+
+      .action-btn-rail {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      .action-btn {
+        height: 3.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        font-size: 15px;
+        font-weight: 700;
+        border-radius: var(--app-radius);
+        transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      }
+
+      .action-btn--primary {
+        background: #0071E3;
+        color: #ffffff;
+        box-shadow: 0 8px 20px rgba(0, 113, 227, 0.15);
+      }
+
+      .action-btn--secondary {
+        background: #ffffff;
+        color: #1d1d1f;
+        border: var(--app-border);
+        box-shadow: var(--app-shadow);
+      }
+
+      .action-btn:active {
+        transform: scale(0.97);
+      }
+
+      /* Entry Card */
+      .entry-card {
+        background: #ffffff;
+        padding: 1.25rem;
+        border-radius: var(--app-radius);
+        border: var(--app-border);
+        box-shadow: var(--app-shadow);
+        transition: transform 0.2s ease;
+      }
+
+      /* Glass Modal */
       .modal-backdrop {
-        background: rgba(0,0,0,0.3);
-        backdrop-filter: blur(10px);
+        background: rgba(29, 29, 31, 0.4);
+        backdrop-filter: blur(8px);
       }
     </style>
   </head>
-  <body class="antialiased min-h-screen">
-    <main class="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6">
+  <body class="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] antialiased flex flex-col">
+    <main class="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
       
-      <!-- NAV -->
-      <nav class="flex items-center justify-between mb-10">
-        <a href="{% url 'home' %}" class="h-11 w-11 flex items-center justify-center rounded-full bg-white ring-1 ring-black/5 shadow-sm hover:scale-110 active:scale-95 transition-all">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+      <!-- PREMIUM HEADER -->
+      <nav class="mb-10 flex items-center justify-between" dir="rtl">
+        <a href="{% url 'home' %}" class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#1D1D1F] shadow-sm ring-1 ring-[rgba(0,0,0,0.05)] transition hover:scale-105 active:scale-95">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
           </svg>
         </a>
-        <h1 class="text-xl font-black text-[#1D1D1F] font-display uppercase tracking-tight">المحاسبة المالية</h1>
+        <h1 class="text-xl font-black tracking-tight text-[#1D1D1F]">المحاسبة المالية</h1>
       </nav>
 
-      <!-- HERO SUMMARY -->
-      <section class="glass-card rounded-[2.5rem] p-10 mb-8 text-center relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-500/5 to-pink-500/5 -z-10"></div>
-        <p class="text-[11px] font-black uppercase tracking-[0.2em] text-[#86868B] mb-4">صافي الأرباح هذا الشهر</p>
-        <div class="flex items-baseline justify-center gap-3">
-          <h2 class="text-6xl sm:text-7xl font-black text-[#1D1D1F] font-display tracking-tighter num">{{ current_net }}</h2>
-          <span class="text-2xl font-black text-[#86868B] font-display">EGP</span>
+      <!-- COMMAND CENTER: HERO -->
+      <section class="app-control hero-centerpiece mb-8 flex flex-col items-center text-center">
+        <p class="text-[12px] font-bold uppercase tracking-[0.15em] text-[#86868B]">صافي هذا الشهر</p>
+        <div class="mt-4 flex items-baseline justify-center gap-2">
+          <span class="text-[22px] font-bold text-[#86868B]">EGP</span>
+          <h2 class="text-6xl font-black tracking-tighter text-[#1D1D1F] sm:text-7xl">
+            <span class="num">{{ current_net }}</span>
+          </h2>
         </div>
-        
-        <div class="mt-8 flex justify-center">
+        <div class="mt-8">
           {% if current_net > 0 %}
-          <div class="flex items-center gap-2 px-6 py-2.5 rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-500/20 text-[14px] font-black">
-            <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            في حالة ربح
-          </div>
+            <div class="status-pill bg-[#34C759]/10 text-[#34C759]">
+              <span class="h-2 w-2 rounded-full bg-[#34C759] animate-pulse"></span>
+              ربح
+            </div>
           {% elif current_net < 0 %}
-          <div class="flex items-center gap-2 px-6 py-2.5 rounded-full bg-rose-50 text-rose-600 ring-1 ring-rose-500/20 text-[14px] font-black">
-            <span class="h-2 w-2 rounded-full bg-rose-500"></span>
-            في حالة خسارة
-          </div>
+            <div class="status-pill bg-[#FF3B30]/10 text-[#FF3B30]">
+              <span class="h-2 w-2 rounded-full bg-[#FF3B30]"></span>
+              خسارة
+            </div>
           {% else %}
-          <div class="flex items-center gap-2 px-6 py-2.5 rounded-full bg-gray-50 text-gray-600 ring-1 gray-500/20 text-[14px] font-black">
-            <span class="h-2 w-2 rounded-full bg-gray-400"></span>
-            متعادل
-          </div>
+            <div class="status-pill bg-[#86868B]/10 text-[#86868B]">
+              <span class="h-2 w-2 rounded-full bg-[#86868B]"></span>
+              متعادل
+            </div>
           {% endif %}
         </div>
       </section>
 
-      <!-- MONTHLY METRICS -->
-      <div class="grid grid-cols-2 gap-4 mb-10">
-        <div class="metric-card flex flex-col items-center justify-center text-center">
-          <span class="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-2">إجمالي الإيرادات</span>
-          <p class="text-3xl font-black text-[#1D1D1F] font-display num">{{ current_income }}</p>
+      <!-- SUPPORT RAIL: SYMMETRICAL METRICS -->
+      <div class="mb-10 grid grid-cols-2 gap-4">
+        <div class="metric-card flex flex-col items-center justify-center">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-[#34C759] opacity-80">الإيرادات</p>
+          <p class="mt-2 text-3xl font-black text-[#1D1D1F]"><span class="num">{{ current_income }}</span></p>
         </div>
-        <div class="metric-card flex flex-col items-center justify-center text-center">
-          <span class="text-[10px] font-black uppercase tracking-widest text-rose-500 mb-2">إجمالي المصروفات</span>
-          <p class="text-3xl font-black text-[#1D1D1F] font-display num">{{ current_expense }}</p>
+        <div class="metric-card flex flex-col items-center justify-center">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-[#FF3B30] opacity-80">المصروفات</p>
+          <p class="mt-2 text-3xl font-black text-[#1D1D1F]"><span class="num">{{ current_expense }}</span></p>
         </div>
       </div>
 
-      <!-- OVERALL STATS -->
+      <!-- ANALYTICAL RAIL: GENERAL TOTALS -->
       <section class="mb-12">
-        <h3 class="text-[11px] font-black uppercase tracking-[0.2em] text-[#86868B] mb-5 px-2">الإحصائيات الكلية</h3>
+        <div class="mb-4 flex items-center px-2">
+          <h3 class="text-[13px] font-bold uppercase tracking-widest text-[#86868B]">الإجمالي العام</h3>
+        </div>
         <div class="grid grid-cols-3 gap-3">
-          <div class="glass-card rounded-3xl p-5 text-center">
-            <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">الدخل الكلي</p>
-            <p class="text-lg font-black text-[#1D1D1F] font-display num">{{ overall_income }}</p>
+          <div class="app-control bg-white/60 p-4 text-center backdrop-blur-sm">
+            <p class="text-[10px] font-bold text-[#86868B]">إجمالي الدخل</p>
+            <p class="mt-1 text-[16px] font-black text-[#1D1D1F]"><span class="num">{{ overall_income }}</span></p>
           </div>
-          <div class="glass-card rounded-3xl p-5 text-center">
-            <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">الصرف الكلي</p>
-            <p class="text-lg font-black text-[#1D1D1F] font-display num">{{ overall_expense }}</p>
+          <div class="app-control bg-white/60 p-4 text-center backdrop-blur-sm">
+            <p class="text-[10px] font-bold text-[#86868B]">إجمالي الصرف</p>
+            <p class="mt-1 text-[16px] font-black text-[#1D1D1F]"><span class="num">{{ overall_expense }}</span></p>
           </div>
-          <div class="glass-card rounded-3xl p-5 text-center">
-            <p class="text-[9px] font-black text-[#86868B] uppercase mb-1">الصافي العام</p>
-            <p class="text-lg font-black text-[#1D1D1F] font-display num">{{ overall_net }}</p>
+          <div class="app-control bg-white/60 p-4 text-center backdrop-blur-sm">
+            <p class="text-[10px] font-bold text-[#86868B]">الصافي الكلي</p>
+            <p class="mt-1 text-[16px] font-black text-[#1D1D1F]"><span class="num">{{ overall_net }}</span></p>
           </div>
         </div>
       </section>
 
-      <!-- ACTIONS -->
-      <div class="grid grid-cols-2 gap-4 mb-12">
-        <button data-open-modal="incomeModal" class="btn-premium h-14 rounded-2xl bg-gradient-to-r from-[#990FFA] to-[#E60076] text-white text-[15px] font-black shadow-lg shadow-purple-500/20">
-          + إضافة إيراد
-        </button>
-        <button data-open-modal="expenseModal" class="btn-premium h-14 rounded-2xl bg-white ring-1 ring-black/5 text-[#1D1D1F] text-[15px] font-black hover:bg-black/5">
-          + إضافة مصروف
-        </button>
-      </div>
+      <!-- UNIFIED ACTION SYSTEM -->
+      <section class="mb-12">
+        <div class="action-btn-rail">
+          <button type="button" data-open-modal="incomeModal" class="action-btn action-btn--primary">
+            <span>+</span> إضافة إيراد
+          </button>
+          <button type="button" data-open-modal="expenseModal" class="action-btn action-btn--secondary">
+            <span>+</span> إضافة مصروف
+          </button>
+        </div>
+      </section>
 
-      <!-- RECENT TRANSACTIONS -->
+      <!-- FEED: RECENT ENTRIES -->
       <section class="mb-16">
-        <div class="flex items-center justify-between mb-6 px-2">
-          <h2 class="text-2xl font-black text-[#1D1D1F] font-display">آخر العمليات</h2>
-          <div class="px-3 py-1 rounded-full bg-black/5 text-[11px] font-black text-[#6E6E73]">
-            {{ recent_entries|length }} حركة
+        <div class="mb-6 flex items-center justify-between px-2">
+          <h2 class="text-xl font-black text-[#1D1D1F]">آخر الحركات</h2>
+          <div class="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 shadow-sm ring-1 ring-[rgba(0,0,0,0.05)]">
+            <span class="text-[12px] font-bold text-[#1D1D1F]">{{ recent_entries|length }}</span>
+            <span class="text-[10px] font-bold text-[#86868B]">حركة</span>
           </div>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2">
           {% for entry in recent_entries %}
-          <article class="glass-card rounded-[2rem] p-6 flex flex-col group animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <div class="flex items-start justify-between mb-4">
+          <article class="entry-card flex flex-col">
+            <div class="flex items-start justify-between">
               <div>
-                <span class="text-[9px] font-black uppercase tracking-widest {% if entry.kind == 'income' %}text-emerald-500{% else %}text-rose-500{% endif %} mb-1 block">
-                  {% if entry.kind == 'income' %}إيراد مالي{% else %}مصروف تشغيلي{% endif %}
-                </span>
-                <h3 class="text-[17px] font-black text-[#1D1D1F] tracking-tight leading-tight">{{ entry.title }}</h3>
+                <p class="text-[10px] font-bold uppercase tracking-[0.1em] {% if entry.kind == 'income' %}text-[#34C759]{% else %}text-[#FF3B30]{% endif %}">
+                  {% if entry.kind == 'income' %}إيراد{% else %}مصروف{% endif %}
+                </p>
+                <h3 class="mt-1.5 text-[17px] font-bold tracking-tight text-[#1D1D1F]">{{ entry.title }}</h3>
               </div>
               <div class="text-right">
-                <p class="text-[20px] font-black text-[#1D1D1F] font-display num">{{ entry.amount }}</p>
-                <p class="text-[9px] font-black text-[#86868B] uppercase">EGP</p>
+                <p class="text-[18px] font-black text-[#1D1D1F]"><span class="num">{{ entry.amount }}</span></p>
+                <p class="text-[10px] font-bold text-[#86868B]">EGP</p>
               </div>
             </div>
-
+            
+            <p class="mt-4 text-[12px] font-medium text-[#86868B]">{{ entry.entry_date }}</p>
+            
             {% if entry.notes %}
-            <div class="p-4 rounded-2xl bg-black/5 text-[13px] font-medium text-[#6E6E73] leading-relaxed mb-4">
+            <div class="mt-4 rounded-2xl bg-[#F5F5F7] p-4 text-[13px] leading-relaxed text-[#6E6E73]">
               {{ entry.notes }}
             </div>
             {% endif %}
-
-            <div class="mt-auto pt-4 border-t border-black/5 flex items-center justify-between">
-              <span class="text-[11px] font-bold text-[#86868B]">{{ entry.entry_date }}</span>
+            
+            <div class="mt-5 flex items-center justify-end border-t border-[rgba(0,0,0,0.03)] pt-4">
               <form method="post" action="{% url 'accounting_delete' entry.id %}" class="js-delete-entry-form">
                 {% csrf_token %}
-                <button type="submit" class="text-[11px] font-black text-rose-500 hover:underline">حذف السجل</button>
+                <button type="submit" class="text-[12px] font-bold text-[#FF3B30] opacity-60 transition hover:opacity-100">حذف الحركة</button>
               </form>
             </div>
           </article>
           {% empty %}
-          <div class="col-span-full py-20 text-center glass-card rounded-[2.5rem] border-dashed border-black/10">
-            <p class="text-[15px] font-bold text-[#86868B]">سجل الحركات المالية فارغ حالياً.</p>
+          <div class="col-span-full flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-[rgba(0,0,0,0.1)] bg-white/50 py-20 text-center">
+            <p class="text-[15px] font-bold text-[#86868B]">لا توجد حركات مسجلة حالياً</p>
           </div>
           {% endfor %}
         </div>
       </section>
 
-      <footer class="py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-[#C1C1C1]">
-        جميع الحقوق محفوظة © A.Ala3m
+      <!-- FOOTER -->
+      <footer class="mt-auto py-8 text-center border-t border-[rgba(0,0,0,0.03)]">
+        <p class="text-[11px] font-bold tracking-wider text-[#86868B]">جميع الحقوق محفوظة © A.Ala3m</p>
       </footer>
     </main>
 
     <!-- MODALS -->
     <div id="incomeModal" class="modal fixed inset-0 z-50 hidden items-center justify-center modal-backdrop px-4">
-      <div class="glass-card w-full max-w-lg rounded-[2.5rem] p-8 sm:p-10 relative overflow-hidden animate-in zoom-in-95 duration-200">
-        <div class="flex items-center justify-between mb-8">
-          <h3 class="text-2xl font-black font-display text-[#1D1D1F]">إضافة إيراد مالي</h3>
-          <button data-close-modal class="h-10 w-10 flex items-center justify-center rounded-full bg-black/5 text-[#1D1D1F] hover:bg-black/10 transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+      <div class="app-control w-full max-w-lg bg-white p-10 shadow-2xl">
+        <div class="mb-8 flex items-center justify-between">
+          <h3 class="text-2xl font-black">إضافة إيراد</h3>
+          <button type="button" data-close-modal class="h-10 w-10 flex items-center justify-center rounded-full bg-[#F5F5F7] text-[#1D1D1F] transition hover:bg-[#EBEBEE]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
             </svg>
           </button>
         </div>
         <form method="post" action="{% url 'accounting_income_create' %}" class="space-y-6">
           {% csrf_token %}
           {% for field in income_form %}
-          <div class="space-y-1.5">
-            <label class="block text-[11px] font-black text-[#86868B] uppercase tracking-wider pr-2">{{ field.label }}</label>
+          <div>
+            <label class="mb-2 block text-[13px] font-bold text-[#1D1D1F]">{{ field.label }}</label>
             {{ field }}
           </div>
           {% endfor %}
           <div class="pt-4">
-            <button type="submit" class="w-full h-14 rounded-2xl bg-gradient-to-r from-[#990FFA] to-[#E60076] text-white text-[15px] font-black shadow-lg">حفظ العملية</button>
+            <button type="submit" class="app-control flex h-14 w-full items-center justify-center bg-[#0071E3] font-bold text-white shadow-lg">حفظ الإيراد</button>
           </div>
         </form>
       </div>
     </div>
 
     <div id="expenseModal" class="modal fixed inset-0 z-50 hidden items-center justify-center modal-backdrop px-4">
-      <div class="glass-card w-full max-w-lg rounded-[2.5rem] p-8 sm:p-10 relative overflow-hidden animate-in zoom-in-95 duration-200">
-        <div class="flex items-center justify-between mb-8">
-          <h3 class="text-2xl font-black font-display text-[#1D1D1F]">إضافة مصروف جديد</h3>
-          <button data-close-modal class="h-10 w-10 flex items-center justify-center rounded-full bg-black/5 text-[#1D1D1F] hover:bg-black/10 transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+      <div class="app-control w-full max-w-lg bg-white p-10 shadow-2xl">
+        <div class="mb-8 flex items-center justify-between">
+          <h3 class="text-2xl font-black">إضافة مصروف</h3>
+          <button type="button" data-close-modal class="h-10 w-10 flex items-center justify-center rounded-full bg-[#F5F5F7] text-[#1D1D1F] transition hover:bg-[#EBEBEE]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
             </svg>
           </button>
         </div>
         <form method="post" action="{% url 'accounting_expense_create' %}" class="space-y-6">
           {% csrf_token %}
           {% for field in expense_form %}
-          <div class="space-y-1.5">
-            <label class="block text-[11px] font-black text-[#86868B] uppercase tracking-wider pr-2">{{ field.label }}</label>
+          <div>
+            <label class="mb-2 block text-[13px] font-bold text-[#1D1D1F]">{{ field.label }}</label>
             {{ field }}
           </div>
           {% endfor %}
           <div class="pt-4">
-            <button type="submit" class="w-full h-14 rounded-2xl bg-[#1D1D1F] text-white text-[15px] font-black shadow-lg">حفظ العملية</button>
+            <button type="submit" class="app-control flex h-14 w-full items-center justify-center bg-[#1D1D1F] font-bold text-white shadow-lg">حفظ المصروف</button>
           </div>
         </form>
       </div>
     </div>
 
     <script>
-      const baseClasses = 'w-full h-14 px-5 rounded-2xl bg-black/5 ring-1 ring-black/5 text-[14px] font-bold text-[#1D1D1F] outline-none focus:bg-white focus:ring-2 focus:ring-gradientPrimary/20 transition-all num';
+      const baseClasses = 'app-control w-full bg-[#F5F5F7] px-5 py-4 text-[15px] font-medium outline-none transition-all focus:bg-white focus:ring-4 focus:ring-[rgba(0,113,227,0.08)]';
       document.querySelectorAll('input, select, textarea').forEach(f => f.className = baseClasses);
 
       const modals = document.querySelectorAll('.modal');
@@ -259,6 +311,7 @@
 
       document.querySelectorAll('[data-close-modal]').forEach(b => b.addEventListener('click', closeAll));
       modals.forEach(m => m.addEventListener('click', e => { if(e.target === m) closeAll(); }));
+      
       document.addEventListener('keydown', e => { if(e.key === 'Escape') closeAll(); });
     </script>
   </body>

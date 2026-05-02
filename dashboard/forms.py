@@ -104,11 +104,10 @@ class MemberForm(forms.ModelForm):
         self.fields['note_type'].label = 'نوع الملاحظة'
         self.fields['notes_text'].label = 'نص الملاحظة'
 
-        # Payment status and Notes are operational; hide them during profile editing.
-        if self.instance and self.instance.pk:
-            for field in ['status', 'note_type', 'notes_text']:
-                if field in self.fields:
-                    del self.fields[field]
+        # Payment status and Notes are operational; hide them from the main profile form.
+        for field in ['status', 'note_type', 'notes_text']:
+            if field in self.fields:
+                del self.fields[field]
 
     def clean(self):
         cleaned_data = super().clean()
